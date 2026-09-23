@@ -1,1 +1,379 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NexusMusic — cliente de YouTube Music para Android</title>
+<meta name="description" content="NexusMusic: cliente de YouTube Music para Android con segundo plano real, descargas sin conexión, salas para escuchar juntos y sin anuncios. Con el respaldo de Nexus Forge.">
+<meta name="theme-color" content="#14100B">
+<meta property="og:title" content="NexusMusic">
+<meta property="og:description" content="Cliente de YouTube Music para Android: segundo plano real, sin conexión, salas compartidas y sin anuncios.">
+<meta property="og:image" content="assets/Nexus-banner.png">
+<meta property="og:type" content="website">
+<link rel="icon" href="assets/Nexus-logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="33ds.css">
+</head>
+<body>
 
+<!-- ── Ticker de categorías ─────────────────────────────────────────── -->
+<div class="ticker" aria-hidden="true">
+  <div class="ticker__track">
+    <span data-i18n="ticker.calm">Calma</span>
+    <span data-i18n="ticker.focus">Concentración</span>
+    <span data-i18n="ticker.sleep">Dormir</span>
+    <span data-i18n="ticker.workout">Ejercicio</span>
+    <span data-i18n="ticker.energy">Energía</span>
+    <span data-i18n="ticker.radio">Emisoras en vivo</span>
+    <span data-i18n="ticker.lyrics">Letras sincronizadas</span>
+    <span data-i18n="ticker.rooms">Salas en tiempo real</span>
+    <span data-i18n="ticker.noAds">Sin anuncios, nunca</span>
+    <span data-i18n="ticker.calm">Calma</span>
+    <span data-i18n="ticker.focus">Concentración</span>
+    <span data-i18n="ticker.sleep">Dormir</span>
+    <span data-i18n="ticker.workout">Ejercicio</span>
+    <span data-i18n="ticker.energy">Energía</span>
+    <span data-i18n="ticker.radio">Emisoras en vivo</span>
+    <span data-i18n="ticker.lyrics">Letras sincronizadas</span>
+    <span data-i18n="ticker.rooms">Salas en tiempo real</span>
+    <span data-i18n="ticker.noAds">Sin anuncios, nunca</span>
+  </div>
+</div>
+
+<!-- ── Barra ───────────────────────────────────────────────────────── -->
+<header class="nav">
+  <div class="wrap nav__in">
+    <a class="brand" href="#top">
+      <img src="assets/Nexus-logo.png" alt="">
+      NexusMusic
+      <span class="eq" aria-hidden="true"><span></span><span></span><span></span><span></span></span>
+    </a>
+    <div class="nav__spacer"></div>
+
+    <div class="lang" role="group" aria-label="Idioma">
+      <button type="button" data-lang="es" aria-pressed="true">ES</button>
+      <button type="button" data-lang="en" aria-pressed="false">EN</button>
+      <button type="button" data-lang="pt" aria-pressed="false">PT</button>
+    </div>
+
+    <a class="btn btn--ghost btn--sm" id="gh-link" href="https://github.com/santhiagocaro05-debug/Nexus-Update/releases" target="_blank" rel="noopener noreferrer">
+      <svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><path d="M12 .5C5.7.5.5 5.7.5 12c0 5.1 3.3 9.4 7.9 10.9.6.1.8-.2.8-.6v-2c-3.2.7-3.9-1.5-3.9-1.5-.5-1.3-1.3-1.7-1.3-1.7-1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.7 1.3 3.4 1 .1-.7.4-1.3.7-1.6-2.6-.3-5.3-1.3-5.3-5.8 0-1.3.5-2.3 1.2-3.1-.1-.3-.5-1.5.1-3.1 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0C17.6 4.3 18.6 4.6 18.6 4.6c.6 1.6.2 2.8.1 3.1.8.8 1.2 1.8 1.2 3.1 0 4.5-2.7 5.5-5.3 5.8.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6 4.6-1.5 7.9-5.8 7.9-10.9C23.5 5.7 18.3.5 12 .5z"/></svg>
+      <span class="btn-text" data-i18n="nav.github">Código</span>
+    </a>
+
+    <a class="btn btn--sm" href="#descargar" data-i18n="nav.download">Descargar</a>
+  </div>
+</header>
+
+<main id="top">
+
+  <!-- ── Portada ───────────────────────────────────────────────────── -->
+  <section class="hero">
+    <div class="wrap hero__grid">
+      <div>
+        <div class="hero__status">
+          <span class="eq" aria-hidden="true"><span></span><span></span><span></span><span></span></span>
+          <span id="hero-version">v0.6.4</span> <span data-i18n="hero.eyebrow">ya disponible</span>
+        </div>
+        <h1 data-i18n="hero.title">Todo tu YouTube Music, sin nada que no pediste</h1>
+        <p class="lead" data-i18n="hero.lead">Suena de verdad en segundo plano, se descarga para escuchar sin datos y se comparte en una sala con alguien más, en tiempo real. Sin anuncios.</p>
+
+        <div class="hero__cta">
+          <a class="btn btn--pulse" id="apk-link" href="OpenYTMusic-0.6.4.apk" download>
+            <span data-i18n="hero.cta">Descargar el APK</span>
+          </a>
+          <a class="btn btn--ghost" href="https://github.com/santhiagocaro05-debug/Nexus-Update/releases" target="_blank" rel="noopener noreferrer" data-i18n="hero.repo">Ver el versiones</a>
+        </div>
+
+        <p class="hero__meta"><span id="apk-version">v0.6.4</span> <span data-i18n="hero.meta">· requiere Android 7.0 o superior, gratis y sin compras dentro de la app.</span></p>
+
+        <div class="specs">
+          <span class="spec-tag" data-i18n="chip.glass">Efecto cristal</span>
+          <span class="spec-tag" data-i18n="chip.rooms">Escuchar juntos</span>
+          <span class="spec-tag" data-i18n="chip.offline">Sin conexión</span>
+          <span class="spec-tag" data-i18n="chip.m3">Material 3</span>
+          <span class="spec-tag" data-i18n="chip.noAds">Sin anuncios</span>
+          <span class="spec-tag" data-i18n="chip.noTrackers">Sin rastreadores</span>
+        </div>
+
+        <div class="plate" id="descargar">
+          <div class="plate__label">
+            <span data-i18n="hash.label">Huella SHA-256 de este APK</span>
+            <button class="copy" type="button" id="copy-hash" data-i18n="hash.copy">Copiar</button>
+          </div>
+          <code id="hash-value">—</code>
+          <span class="plate__note" data-i18n="hash.note">Cambia con cada versión nueva: no te preocupes si no coincide con una anterior, compárala solo con la que acabas de descargar.</span>
+        </div>
+      </div>
+
+      <div class="receiver">
+        <svg class="receiver__dial" viewBox="0 0 350 260" aria-hidden="true">
+          <g stroke="var(--brass-dim)" stroke-width="1.4" opacity=".7">
+            <path d="M40 175 A135 135 0 0 1 310 175" fill="none"/>
+          </g>
+          <g stroke="var(--line)" stroke-width="1">
+            <line x1="175" y1="175" x2="175" y2="45"/>
+            <line x1="175" y1="175" x2="272" y2="82"/>
+            <line x1="175" y1="175" x2="78" y2="82"/>
+            <line x1="175" y1="175" x2="308" y2="175"/>
+            <line x1="175" y1="175" x2="42" y2="175"/>
+          </g>
+          <line class="needle" x1="175" y1="175" x2="175" y2="60" stroke="var(--brass)" stroke-width="2.4"/>
+          <circle cx="175" cy="175" r="6" fill="var(--brass)"/>
+        </svg>
+        <div class="receiver__screen">
+          <span class="receiver__corner tl"></span><span class="receiver__corner tr"></span>
+          <span class="receiver__corner bl"></span><span class="receiver__corner br"></span>
+          <img src="assets/Nexus-banner.png" alt="NexusMusic" width="1080" height="540" loading="eager">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Nexus Forge ───────────────────────────────────────────────── -->
+  <section class="ally" aria-label="Nexus Forge">
+    <div class="wrap">
+      <div class="ally__plate">
+        <div>
+          <span class="ally__tag" data-i18n="nexus.badge">Propietario del proyecto</span>
+          <div class="ally__head">
+            <div class="ally__logo">
+              <img src="assets/Nexus-logo.png" alt="Nexus Forge" width="704" height="704">
+            </div>
+            <div>
+              <h2 style="font-size:22px">Nexus Forge</h2>
+              <div class="ally__role" data-i18n="nexus.role">Nexus Studios, línea AI Suite</div>
+            </div>
+          </div>
+          <p class="ally__body" data-i18n="nexus.body">NexusMusic forma parte de la vitrina de proyectos de Nexus Forge. Nos dieron membresía de desarrollador y un lugar en su plataforma, así que la app se mantiene gratis, sin anuncios y sin nada raro.</p>
+        </div>
+
+        <div>
+          <div class="ally__stats">
+            <div class="ally__stat"><b>5K+</b><span data-i18n="nexus.stat.users">en su comunidad</span></div>
+            <div class="ally__stat"><b>99.9%</b><span data-i18n="nexus.stat.uptime">de disponibilidad</span></div>
+            <div class="ally__stat"><b>4.2★</b><span data-i18n="nexus.stat.rating">de valoración</span></div>
+            <div class="ally__stat"><b>24/7</b><span data-i18n="nexus.stat.support">soporte en Discord</span></div>
+          </div>
+          <div class="ally__actions" style="margin-top:16px">
+            <a class="btn btn--patina btn--sm" href="https://nexusforgex.vercel.app" target="_blank" rel="noopener noreferrer">
+              <span data-i18n="nexus.cta">Conocer Nexus Forge</span>
+            </a>
+            <span class="ally__note" data-i18n="nexus.note">Gracias por el respaldo.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Ficha técnica ─────────────────────────────────────────────── -->
+  <section>
+    <div class="wrap">
+      <div class="chapter"><span class="chapter__n">§01</span><span class="chapter__label" data-i18n="what.eyebrow">Ficha técnica</span></div>
+      <h2 data-i18n="what.title">Hecha para escucharse todos los días</h2>
+      <p class="lead" style="margin-top:10px" data-i18n="what.body">Usa la misma música que ya tienes en tu cuenta, con una interfaz propia. Nada de anuncios, nada de pantallas que no pediste.</p>
+
+      <div class="spec-list">
+        <div class="spec-row">
+          <div class="spec-row__code">BG</div>
+          <div>
+            <h3 data-i18n="feat.1.t">Segundo plano real</h3>
+            <p data-i18n="feat.1.d">Sigue sonando al bloquear el teléfono, cambiar de app o ir manejando, con controles en la pantalla de bloqueo.</p>
+          </div>
+        </div>
+        <div class="spec-row">
+          <div class="spec-row__code">RM</div>
+          <div>
+            <h3 data-i18n="feat.2.t">Salas para escuchar juntos</h3>
+            <p data-i18n="feat.2.d">Creas una sala, pasas el código y los dos oyen lo mismo al mismo tiempo: pausa, cambia de canción o busca sin salir. Con chat y foto de perfil.</p>
+          </div>
+        </div>
+        <div class="spec-row">
+          <div class="spec-row__code">DL</div>
+          <div>
+            <h3 data-i18n="feat.3.t">Sin conexión</h3>
+            <p data-i18n="feat.3.d">Descarga lo que quieras y escúchalo sin datos ni wifi, con la misma calidad y sin cortes.</p>
+          </div>
+        </div>
+        <div class="spec-row">
+          <div class="spec-row__code">LIB</div>
+          <div>
+            <h3 data-i18n="feat.4.t">Tu biblioteca completa</h3>
+            <p data-i18n="feat.4.d">Canciones, álbumes, artistas, playlists, estados de ánimo y géneros: lo que ya tienes en YouTube Music, con buscador propio.</p>
+          </div>
+        </div>
+        <div class="spec-row">
+          <div class="spec-row__code">RADIO</div>
+          <div>
+            <h3 data-i18n="feat.7.t">Radio y modos de ánimo</h3>
+            <p data-i18n="feat.7.d">Emisoras en vivo y modos como Calma, Concentración o Energía, para cuando no quieres armar tú la lista.</p>
+          </div>
+        </div>
+        <div class="spec-row">
+          <div class="spec-row__code">LX</div>
+          <div>
+            <h3 data-i18n="feat.5.t">Letras, con descarga</h3>
+            <p data-i18n="feat.5.d">Letra sincronizada cuando existe, con varios proveedores y la opción de bajarla para verla después.</p>
+          </div>
+        </div>
+        <div class="spec-row">
+          <div class="spec-row__code">PRIV</div>
+          <div>
+            <h3 data-i18n="feat.6.t">Privada por diseño</h3>
+            <p data-i18n="feat.6.d">Sin cuentas, sin correos y sin rastreadores. Las estadísticas son anónimas y se apagan desde la app cuando quieras.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Registro de cambios ──────────────────────────────────────── -->
+  <section>
+    <div class="wrap">
+      <div class="chapter">
+        <span class="chapter__n">§02</span>
+        <span class="chapter__label" data-i18n="news.eyebrow">Registro de cambios</span>
+        <span class="chapter__label" style="opacity:.7">— v<span id="news-version">0.6.4</span></span>
+      </div>
+      <h2 data-i18n="news.title">Qué trae esta versión</h2>
+      <p class="lead" style="margin-top:10px" data-i18n="news.body">Lo que cambió, contado por quien lo hizo.</p>
+
+      <div class="log">
+        <div class="log__item">
+          <span class="log__n">1</span>
+          <div>
+            <strong data-i18n="news.1.t">Efecto cristal en toda la app</strong>
+            <p data-i18n="news.1.d">Las barras de título, la píldora de abajo, los avisos y las hojas son translúcidos: el contenido se adivina por debajo, con un canto de luz y un brillo del color de la portada arriba y abajo. Se apaga en Ajustes → Apariencia si prefieres el negro liso.</p>
+          </div>
+        </div>
+        <div class="log__item">
+          <span class="log__n">2</span>
+          <div>
+            <strong data-i18n="news.2.t">Foto de perfil en las salas</strong>
+            <p data-i18n="news.2.d">Al tocar tu ficha eliges una foto del teléfono y el otro te ve la cara en el círculo de la sala. Se recorta y se encoge antes de salir, no se guarda en ningún servidor y se quita cuando quieras.</p>
+          </div>
+        </div>
+        <div class="log__item">
+          <span class="log__n">3</span>
+          <div>
+            <strong data-i18n="news.3.t">NexusMusic entra a Nexus Forge</strong>
+            <p data-i18n="news.3.d">Nexus Studios nos dio membresía de desarrollador y un lugar en su plataforma. Agregué su sección dentro de la app, con logo y enlace. Gracias a ese respaldo la app sigue gratis y sin anuncios.</p>
+          </div>
+        </div>
+        <div class="log__item">
+          <span class="log__n">4</span>
+          <div>
+            <strong data-i18n="news.4.t">De NexusMusicYT a NexusMusic</strong>
+            <p data-i18n="news.4.d">El nombre y la identidad de la app cambiaron para reflejar su nuevo hogar en Nexus Forge.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Interfaz ──────────────────────────────────────────────────── -->
+  <section>
+    <div class="wrap">
+      <div class="chapter"><span class="chapter__n">§03</span><span class="chapter__label" data-i18n="shot.eyebrow">Interfaz</span></div>
+      <h2 data-i18n="shot.title">Se pinta con lo que estás escuchando</h2>
+      <div class="shot">
+        <div class="shot__phones">
+          <figure class="phone-card">
+            <div class="phone">
+              <div class="phone__notch"></div>
+              <div class="phone__screen">
+                <img src="assets/nexusppc.jpg" alt="Pantalla principal de NexusMusic" loading="lazy">
+              </div>
+            </div>
+            <figcaption data-i18n="shot.main">Pantalla principal</figcaption>
+          </figure>
+          <figure class="phone-card">
+            <div class="phone">
+              <div class="phone__notch"></div>
+              <div class="phone__screen">
+                <img src="assets/Nexuspp.jpg" alt="Salas de NexusMusic" loading="lazy">
+              </div>
+            </div>
+            <figcaption data-i18n="shot.rooms">Salas</figcaption>
+          </figure>
+        </div>
+        <div>
+          <p class="lead" data-i18n="shot.body">Interfaz en Material 3 con tema oscuro y color de acento tomado de la portada de la canción: la app se pinta sola con lo que estás oyendo.</p>
+          <div class="cert" style="margin-top:20px">
+            <div class="cert__row">
+              <span class="cert__stamp">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l4 4 10-10"/></svg>
+              </span>
+              <strong data-i18n="trust.title">Analizado y verificado</strong>
+            </div>
+            <p data-i18n="trust.note">Este APK fue escaneado y no contiene virus, malware ni anuncios. Es el mismo archivo que puedes comprobar con el SHA-256 de arriba, que cambia en cada actualización.</p>
+            <div class="cert__logos">
+              <img src="assets/cm-security.png" alt="CM Security">
+              <img src="assets/lookout.png" alt="Lookout">
+              <img src="assets/mcafee.png" alt="McAfee">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Preguntas frecuentes ─────────────────────────────────────── -->
+  <section>
+    <div class="wrap">
+      <div class="chapter"><span class="chapter__n">§04</span><span class="chapter__label" data-i18n="faq.eyebrow">Preguntas</span></div>
+      <h2 data-i18n="faq.title">Lo que más preguntan</h2>
+
+      <div class="faq">
+        <details class="faq-row">
+          <summary data-i18n="faq.1.q">¿Es gratis?</summary>
+          <div class="a"><p data-i18n="faq.1.a">Sí, sin anuncios y sin compras dentro de la app. Es un proyecto personal: si te sirve, compartirlo ya es suficiente.</p></div>
+        </details>
+        <details class="faq-row">
+          <summary data-i18n="faq.2.q">¿Necesito cuenta de YouTube Music?</summary>
+          <div class="a"><p data-i18n="faq.2.a">Puedes usarla sin entrar, y si entras con tu cuenta aparecen tus playlists, tus "me gusta" y tu historial, igual que en la app oficial.</p></div>
+        </details>
+        <details class="faq-row">
+          <summary data-i18n="faq.3.q">¿Qué es "escuchar juntos"?</summary>
+          <div class="a"><p data-i18n="faq.3.a">Una sala con código: quien la crea la comparte y los dos oyen exactamente lo mismo al mismo tiempo. Si uno pausa, cambia de canción o se adelanta, al otro le pasa igual. Trae chat, foto de perfil y el buscador funciona dentro de la sala.</p></div>
+        </details>
+        <details class="faq-row">
+          <summary data-i18n="faq.4.q">¿Quién está detrás?</summary>
+          <div class="a"><p data-i18n="faq.4.a">Un desarrollador al que le gusta la música. Nexus Forge (Nexus Studios) apoya el proyecto: le dio un lugar en su plataforma y membresía de desarrollador. NexusMusic no está afiliado ni respaldado por YouTube ni por Google LLC.</p></div>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Cierre ────────────────────────────────────────────────────── -->
+  <section class="end">
+    <div class="wrap">
+      <h2 data-i18n="end.title">Llévatela contigo</h2>
+      <p class="lead" data-i18n="end.body">Descarga el APK, instálalo y listo. No pide cuentas ni permisos que no use.</p>
+      <div class="hero__cta">
+        <a class="btn btn--pulse" href="OpenYTMusic-0.6.4.apk" download data-i18n="hero.cta">Descargar el APK</a>
+        <a class="btn btn--ghost" href="https://github.com/santhiagocaro05-debug/Nexus-Update/releases" target="_blank" rel="noopener noreferrer" data-i18n="hero.repo">Ver el Releases</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <img src="assets/Nexus-logo.png" alt="NexusMusic">
+    <strong>NexusMusic</strong>
+    <div class="row">
+      <a href="https://github.com/santhiagocaro05-debug/Nexus-Update" target="_blank" rel="noopener noreferrer" data-i18n="footer.repo">Código en GitHub</a>
+      <a href="https://nexusforgex.vercel.app" target="_blank" rel="noopener noreferrer" data-i18n="footer.nexus">Nexus Forge</a>
+    </div>
+    <small data-i18n="footer.disclaimer">NexusMusic es un cliente independiente, hecho por un aficionado a la música. No está afiliado ni respaldado por YouTube ni por Google LLC. «YouTube» y «YouTube Music» son marcas de Google LLC.</small>
+    <small data-i18n="footer.license">Código visible (solo lectura): puedes leerlo, estudiarlo y compilarlo para uso personal. No se permite copiarlo, modificarlo ni redistribuirlo.</small>
+    <small><span id="footer-version">v0.6.4</span> — <span data-i18n="footer.rights">todos los derechos reservados.</span></small>
+  </div>
+</footer>
+
+<script src="33dr.js"></script>
+</body>
+</html>
