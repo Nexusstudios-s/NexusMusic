@@ -2,6 +2,29 @@
    NexusMusic — lógica del sitio (33dr.js)
    ═══════════════════════════════════════════════════════════════════ */
 (function () {
+  var loader = document.getElementById("site-loader");
+  if (loader) {
+    document.body.classList.add("is-loading");
+    var loaderStartedAt = Date.now();
+    var pageLoaded = document.readyState === "complete";
+    var minimumLoaderTime = 2000;
+    var loaderHidden = false;
+    var hideLoader = function () {
+      if (loaderHidden || !pageLoaded || Date.now() - loaderStartedAt < minimumLoaderTime) return;
+      loaderHidden = true;
+      loader.classList.add("is-done");
+      document.body.classList.remove("is-loading");
+      setTimeout(function () { loader.remove(); }, 650);
+    };
+    if (!pageLoaded) {
+      window.addEventListener("load", function () {
+        pageLoaded = true;
+        hideLoader();
+      }, { once: true });
+    }
+    setTimeout(hideLoader, minimumLoaderTime);
+  }
+
   /* ── Textos en los tres idiomas (el HTML ya trae el español) ─────── */
   var I18N = {
     en: {
@@ -66,8 +89,12 @@
       "news.2.d": "Tap your chip, pick a photo from your phone, and the other person sees your face in the room circle. It's cropped and shrunk before it leaves, never stored on a server, and removable whenever you want.",
       "news.3.t": "NexusMusic joins Nexus Forge",
       "news.3.d": "Nexus Studios gave us developer membership and a place on their platform. I added their section inside the app, with logo and link. Thanks to that backing the app stays free and ad-free.",
+      "news.3b.t": "Log in with your Nexus Forge account",
+      "news.3b.d": "Platform login is now available in the app, with cloud song saving, comments on tracks and the option to follow artists.",
       "news.4.t": "From OpenYTMusic to NexusMusic",
       "news.4.d": "The app's name and identity changed to reflect its new home at Nexus Forge.",
+      "news.4b.t": "Import from SoundCloud and Spotify",
+      "news.4b.d": "Import your SoundCloud tracks by URL, and your Spotify library by signing in with your account.",
       "shot.eyebrow": "Interface",
       "shot.title": "It paints itself with whatever you're hearing",
       "shot.body": "A Material 3 interface in dark theme, with an accent colour taken from the song's artwork: the app colours itself around whatever you're listening to.",
@@ -155,8 +182,12 @@
       "news.2.d": "Ao tocar no seu cartão você escolhe uma foto do celular e a outra pessoa vê seu rosto no círculo da sala. É recortada e reduzida antes de sair, nunca fica em servidor algum e pode ser removida quando quiser.",
       "news.3.t": "NexusMusic entra na Nexus Forge",
       "news.3.d": "A Nexus Studios nos deu assinatura de desenvolvedor e um lugar na plataforma. Adicionei a seção deles dentro do app, com logo e link. Graças a esse apoio o app continua grátis e sem anúncios.",
+      "news.3b.t": "Login com sua conta da Nexus Forge",
+      "news.3b.d": "Agora dá pra entrar com a conta da plataforma no app, com salvamento de músicas na nuvem, comentários nas faixas e a opção de seguir artistas.",
       "news.4.t": "De OpenYTMusic para NexusMusic",
       "news.4.d": "O nome e a identidade do app mudaram para refletir seu novo lar na Nexus Forge.",
+      "news.4b.t": "Importação do SoundCloud e Spotify",
+      "news.4b.d": "Importe suas faixas do SoundCloud por URL, e sua biblioteca do Spotify entrando com sua conta.",
       "shot.eyebrow": "Interface",
       "shot.title": "Se pinta com o que você está ouvindo",
       "shot.body": "Interface em Material 3 com tema escuro e cor de destaque tirada da capa da música: o app se pinta sozinho com o que você está ouvindo.",
