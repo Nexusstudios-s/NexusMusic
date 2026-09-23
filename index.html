@@ -42,7 +42,18 @@
   .compare .app-col svg{flex:none}
   .compare .yes{color:#6fbf73}
   .compare .no{color:#8a8074}
+  .compare .warn{color:#e3b341}
+  .compare .dash{color:var(--cream-dim,#cabfa4);opacity:.5}
+  .compare .txt{color:var(--cream,#f3ecdc);font-weight:500}
+  .compare .txt--brass{color:var(--brass,#caa057);font-weight:600}
   .compare .highlight{background:rgba(202,160,87,.06)}
+  .compare .compare__group th,.compare .compare__group td{
+    background:rgba(214,160,63,.06);color:var(--brass,#caa057);
+    font-family:"IBM Plex Mono",monospace;font-weight:600;font-size:11.5px;
+    letter-spacing:.05em;text-transform:uppercase;padding:10px 16px;
+    border-bottom:1px solid var(--line,#2a241c);
+  }
+  .compare--wide table{min-width:680px}
 
   .more-info{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:18px;margin-top:24px}
   .more-info__card{border:1px solid var(--line,#2a241c);border-radius:14px;padding:18px}
@@ -433,6 +444,104 @@
               <td class="no">Gratis con anuncios</td>
               <td class="no">Gratis con anuncios</td>
             </tr>
+      </div>
+
+      <h3 class="reveal" style="margin-top:52px;font-size:19px">Frente a otros clientes independientes</h3>
+      <p class="lead reveal" style="margin-top:10px">OpenYTMusic y Metrolist son otros clientes no oficiales de YouTube Music. Comparación de funciones, categoría por categoría — no son marcas afiliadas a NexusMusic.</p>
+
+      <div class="compare compare--wide reveal">
+        <table>
+          <thead>
+            <tr>
+              <th>Característica</th>
+              <th>
+                <span class="app-col">
+                  <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="var(--brass,#caa057)"/></svg>
+                  NexusMusic
+                </span>
+              </th>
+              <th>
+                <span class="app-col">
+                  <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="#5b9bd5"/></svg>
+                  OpenYTMusic
+                </span>
+              </th>
+              <th>
+                <span class="app-col">
+                  <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="var(--patina,#3f8471)"/></svg>
+                  Metrolist
+                </span>
+              </th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr class="compare__group"><td colspan="4">Núcleo del reproductor</td></tr>
+            <tr><td>Android</td><td class="yes">Sí</td><td class="yes">Sí</td><td class="yes">Sí</td></tr>
+            <tr><td>Cliente de YouTube Music</td><td class="yes">Sí</td><td class="yes">Sí</td><td class="yes">Sí</td></tr>
+            <tr><td>Reproducción en segundo plano</td><td class="yes">Sí</td><td class="yes">Sí</td><td class="yes">Sí</td></tr>
+            <tr><td>Descargas offline</td><td class="yes">Sí</td><td class="yes">Sí</td><td class="yes">Sí</td></tr>
+            <tr><td>Cola / biblioteca</td><td class="yes">Sí</td><td class="yes">Sí</td><td class="yes">Sí</td></tr>
+            <tr><td>Letras sincronizadas</td><td class="yes">Sí</td><td class="yes">Sí</td><td class="yes">Sí</td></tr>
+
+            <tr class="compare__group"><td colspan="4">Cuenta y nube</td></tr>
+            <tr><td>Login propio</td><td class="txt txt--brass">Nexus Forge</td><td class="no">No</td><td class="no">No</td></tr>
+            <tr><td>Login con YouTube Music</td><td class="yes">Sí</td><td class="warn">Parcial</td><td class="yes">Sí</td></tr>
+            <tr><td>Biblioteca en la nube propia</td><td class="yes">Sí</td><td class="no">No</td><td class="dash">—</td></tr>
+            <tr><td>Sincronización entre dispositivos</td><td class="txt txt--brass">Sí, con Nexus</td><td class="no">No</td><td class="txt">Sí, con YTM</td></tr>
+
+            <tr class="compare__group"><td colspan="4">Comunidad y social</td></tr>
+            <tr><td>Comentarios en canciones</td><td class="yes">Sí</td><td class="no">No</td><td class="no">No</td></tr>
+            <tr><td>Responder comentarios</td><td class="yes">Sí</td><td class="no">No</td><td class="no">No</td></tr>
+            <tr><td>Perfil social</td><td class="yes">Sí</td><td class="no">No</td><td class="no">No</td></tr>
+            <tr><td>Seguir artistas dentro de Nexus</td><td class="yes">Sí</td><td class="no">No</td><td class="no">No</td></tr>
+
+            <tr class="compare__group"><td colspan="4">Salas y escucha compartida</td></tr>
+            <tr><td>Escuchar juntos (Listen Together)</td><td class="yes">Sí</td><td class="yes">Sí</td><td class="yes">Sí</td></tr>
+            <tr><td>Chat en salas</td><td class="yes">Sí</td><td class="yes">Sí</td><td class="warn">No destacado en su documentación</td></tr>
+            <tr><td>Foto de perfil en la sala</td><td class="yes">Sí</td><td class="yes">Sí</td><td class="no">No</td></tr>
+            <tr><td>Búsqueda dentro de la sala</td><td class="yes">Sí</td><td class="yes">Sí</td><td class="no">No</td></tr>
+
+            <tr class="compare__group"><td colspan="4">Personalización visual</td></tr>
+            <tr><td>Temas personalizados</td><td class="yes">Sí</td><td class="yes">Sí</td><td class="yes">Sí</td></tr>
+            <tr><td>Fondo personalizado</td><td class="yes">Sí</td><td class="no">No</td><td class="no">No</td></tr>
+            <tr><td>Color dinámico</td><td class="yes">Sí</td><td class="yes">Sí</td><td class="txt">Sí, +19 paletas</td></tr>
+
+            <tr class="compare__group"><td colspan="4">Motor de audio</td></tr>
+            <tr><td>Ecualizador</td><td class="yes">Sí</td><td class="no">No</td><td class="yes">Sí</td></tr>
+            <tr><td>Control de velocidad / tempo</td><td class="yes">Sí</td><td class="no">No</td><td class="yes">Sí</td></tr>
+            <tr><td>Control de tono / pitch</td><td class="yes">Sí</td><td class="no">No</td><td class="yes">Sí</td></tr>
+            <tr><td>Saltar silencios</td><td class="yes">Sí</td><td class="no">No</td><td class="yes">Sí</td></tr>
+            <tr><td>Normalización de audio</td><td class="yes">Sí</td><td class="no">No</td><td class="yes">Sí</td></tr>
+            <tr><td>Crossfade</td><td class="yes">Sí</td><td class="no">No</td><td class="yes">Sí</td></tr>
+            <tr><td>Sleep timer</td><td class="yes">Sí</td><td class="no">No</td><td class="yes">Sí</td></tr>
+
+            <tr class="compare__group"><td colspan="4">Extras</td></tr>
+            <tr><td>Widget de inicio</td><td class="yes">Sí</td><td class="no">No</td><td class="yes">Sí</td></tr>
+            <tr><td>Importar playlists</td><td class="yes">Sí</td><td class="no">No</td><td class="yes">Sí</td></tr>
+            <tr><td>Importar por enlace</td><td class="yes">Sí</td><td class="no">No</td><td class="warn">Parcial</td></tr>
+            <tr><td>Radio / modos de ánimo</td><td class="yes">Sí</td><td class="no">No</td><td class="warn">Parcial</td></tr>
+
+            <tr class="compare__group"><td colspan="4">Importación entre plataformas</td></tr>
+            <tr><td>Spotify → Nexus</td><td class="yes">Sí</td><td class="no">No</td><td class="warn">Parcial</td></tr>
+            <tr><td>YouTube Music → Nexus</td><td class="yes">Sí</td><td class="no">No</td><td class="txt">Nativo</td></tr>
+            <tr><td>SoundCloud → Nexus</td><td class="yes">Sí</td><td class="no">No</td><td class="no">No</td></tr>
+            <tr><td>Guardar de NexusMusic a YT Music</td><td class="yes">Sí</td><td class="no">No</td><td class="dash">—</td></tr>
+
+            <tr class="compare__group"><td colspan="4">Premium</td></tr>
+            <tr><td>Nexus+ / Nexus Coins</td><td class="yes">Sí</td><td class="no">No</td><td class="no">No</td></tr>
+
+            <tr class="compare__group"><td colspan="4">Transparencia</td></tr>
+            <tr><td>Sin anuncios</td><td class="yes">Sí</td><td class="yes">Sí</td><td class="yes">Sí</td></tr>
+            <tr><td>Sin rastreadores</td><td class="txt">Declarado</td><td class="txt">Declarado</td><td class="txt">Código abierto</td></tr>
+            <tr><td>Código abierto</td><td class="no">No</td><td class="warn">Parcial</td><td class="yes">Sí</td></tr>
+            <tr><td>Código visible</td><td class="txt">Sí, lectura</td><td class="dash">—</td><td class="txt">Sí, completo</td></tr>
+
+            <tr class="compare__group"><td colspan="4">El proyecto</td></tr>
+            <tr><td>Proyecto empresarial</td><td class="txt txt--brass">Nexus Studios</td><td class="warn">Sin datos claros</td><td class="txt">Comunidad / open source</td></tr>
+            <tr><td>Ecosistema propio</td><td class="txt txt--brass">Sí, Nexus Forge</td><td class="no">No</td><td class="no">No</td></tr>
+            <tr><td>Red social propia</td><td class="txt txt--brass">Sí</td><td class="no">No</td><td class="no">No</td></tr>
+            <tr><td>Desarrollo</td><td class="txt">Activo, según Nexus</td><td class="txt">Activo, según su web</td><td class="txt">En mantenimiento</td></tr>
           </tbody>
         </table>
       </div>
