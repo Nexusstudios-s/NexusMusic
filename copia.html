@@ -45,6 +45,15 @@
 </head>
 <body>
 
+<div class="loader" id="site-loader" role="status" aria-live="polite" aria-label="Cargando NexusMusic">
+  <div class="loader__orb" aria-hidden="true">
+    <span class="loader__ring"></span>
+    <img src="assets/Nexus-logo.png" alt="" width="72" height="72">
+  </div>
+  <div class="loader__brand">NexusMusic <span class="eq" aria-hidden="true"><span></span><span></span><span></span><span></span></span></div>
+  <div class="loader__track" aria-hidden="true"><span></span></div>
+</div>
+
 <!-- ── Ticker de categorías ─────────────────────────────────────────── -->
 <div class="ticker" aria-hidden="true">
   <div class="ticker__track">
@@ -385,24 +394,28 @@
         </div>
         <div class="log__item reveal">
           <span class="log__n">3</span>
-          <div>
-            <strong data-i18n="news.3.t">NexusMusic entra a Nexus Forge</strong>
-            <p data-i18n="news.3.d">Nexus Studios. Propietario. Gracias a todos ustedes por confiar en nosotros y usar a NexusMusic.</p>
-          </div>
-           <div>
-            <strong data-i18n="news.3b.t">Login en la app con tu cuenta de la web de Nexus Forge</strong>
-            <p data-i18n="news.3b.d">Nexus Studios. Propietario. Se agrega login a la plataforma y guardado de música en la nube, más comentarios en las canciones y la opción de suscribirte a los artistas.</p>
+          <div class="log__group">
+            <div>
+              <strong data-i18n="news.3.t">NexusMusic entra a Nexus Forge</strong>
+              <p data-i18n="news.3.d">Nexus Studios. Propietario. Gracias a todos ustedes por confiar en nosotros y usar a NexusMusic.</p>
+            </div>
+            <div>
+              <strong data-i18n="news.3b.t">Login en la app con tu cuenta de la web de Nexus Forge</strong>
+              <p data-i18n="news.3b.d">Nexus Studios. Propietario. Se agrega login a la plataforma y guardado de música en la nube, más comentarios en las canciones y la opción de suscribirte a los artistas.</p>
+            </div>
           </div>
         </div>
         <div class="log__item reveal">
           <span class="log__n">4</span>
-          <div>
-            <strong data-i18n="news.4.t">De NexusMusicYT a NexusMusic</strong>
-            <p data-i18n="news.4.d">El nombre y la identidad de la app cambiaron para reflejar su nuevo hogar en Nexus Forge.</p>
-          </div>
-          <div>
-            <strong data-i18n="news.4b.t">Importación desde SoundCloud y Spotify</strong>
-            <p data-i18n="news.4b.d">Podés importar tus temas de SoundCloud por URL, y de Spotify iniciando sesión con tu cuenta.</p>
+          <div class="log__group">
+            <div>
+              <strong data-i18n="news.4.t">De NexusMusicYT a NexusMusic</strong>
+              <p data-i18n="news.4.d">El nombre y la identidad de la app cambiaron para reflejar su nuevo hogar en Nexus Forge.</p>
+            </div>
+            <div>
+              <strong data-i18n="news.4b.t">Importación desde SoundCloud y Spotify</strong>
+              <p data-i18n="news.4b.d">Podés importar tus temas de SoundCloud por URL, y de Spotify iniciando sesión con tu cuenta.</p>
+            </div>
           </div>
         </div>
       </div>
@@ -498,7 +511,7 @@
       <p class="lead" data-i18n="end.body">Descarga el APK, instálalo y listo. No pide cuentas ni permisos que no use.</p>
       <div class="hero__cta">
         <a class="btn btn--pulse" href="https://github.com/santhiagocaro05-debug/Nexus-Update/releases/download/v0.6.28/NexusMusic.apk" download data-i18n="hero.cta">Descargar el APK</a>
-        <a class="btn btn--ghost" href="https://github.com/santhiagocaro05-debug/Nexus-Update/releases/download/v0.6.28/NexusMusic.apk" target="_blank" rel="noopener noreferrer" data-i18n="hero.repo">Ver el Releases</a>
+        <a class="btn btn--ghost" href="https://github.com/santhiagocaro05-debug/Nexus-Update/releases" target="_blank" rel="noopener noreferrer" data-i18n="hero.repo">Ver el Releases</a>
       </div>
     </div>
   </section>
