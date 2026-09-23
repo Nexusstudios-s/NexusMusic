@@ -15,6 +15,33 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="33ds.css">
+<style>
+  /* ── Extensiones para las secciones nuevas (comparación + reveal) ── */
+  /* Usa las mismas variables de tu tema; si no existen, cae en estos valores */
+  .reveal{opacity:0;transform:translateY(18px);transition:opacity .6s ease,transform .6s ease}
+  .reveal.is-visible{opacity:1;transform:translateY(0)}
+
+  .compare{overflow-x:auto;margin-top:28px;border:1px solid var(--line,#2a241c);border-radius:14px}
+  .compare table{width:100%;border-collapse:collapse;min-width:560px;font-family:"IBM Plex Sans",sans-serif}
+  .compare th,.compare td{padding:14px 16px;text-align:left;border-bottom:1px solid var(--line,#2a241c);font-size:14px}
+  .compare thead th{font-family:"Space Grotesk",sans-serif;font-weight:600;font-size:13px;letter-spacing:.02em;color:var(--brass,#caa057)}
+  .compare tbody tr:last-child td{border-bottom:none}
+  .compare tbody tr:hover{background:rgba(202,160,87,.05)}
+  .compare .app-col{display:flex;align-items:center;gap:8px;font-weight:600}
+  .compare .app-col svg{flex:none}
+  .compare .yes{color:#6fbf73}
+  .compare .no{color:#8a8074}
+  .compare .highlight{background:rgba(202,160,87,.06)}
+
+  .more-info{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:18px;margin-top:24px}
+  .more-info__card{border:1px solid var(--line,#2a241c);border-radius:14px;padding:18px}
+  .more-info__card h3{font-family:"Space Grotesk",sans-serif;font-size:15px;margin:0 0 8px}
+  .more-info__card p{font-size:13.5px;line-height:1.55;opacity:.85;margin:0}
+
+  .cert__logos img[alt="VirusTotal"]{background:transparent}
+  .cert__link{display:inline-flex;align-items:center;gap:6px;margin-top:10px;font-size:13px;color:var(--brass,#caa057);text-decoration:none;border-bottom:1px dashed var(--brass-dim,#8a7550)}
+  .cert__link:hover{opacity:.8}
+</style>
 </head>
 <body>
 
@@ -103,7 +130,7 @@
             <span data-i18n="hash.label">Huella SHA-256 de este APK</span>
             <button class="copy" type="button" id="copy-hash" data-i18n="hash.copy">Copiar</button>
           </div>
-          <code id="hash-value">—</code>
+          <code id="hash-value">4fafe521fb50cce9e0249895451b515f517e9816cb3aed546103d36bd7e02ec9</code>
           <span class="plate__note" data-i18n="hash.note">Cambia con cada versión nueva: no te preocupes si no coincide con una anterior, compárala solo con la que acabas de descargar.</span>
         </div>
       </div>
@@ -133,7 +160,7 @@
   </section>
 
   <!-- ── Nexus Forge ───────────────────────────────────────────────── -->
-  <section class="ally" aria-label="Nexus Forge">
+  <section class="ally reveal" aria-label="Nexus Forge">
     <div class="wrap">
       <div class="ally__plate">
         <div>
@@ -171,54 +198,54 @@
   <!-- ── Ficha técnica ─────────────────────────────────────────────── -->
   <section>
     <div class="wrap">
-      <div class="chapter"><span class="chapter__n">§01</span><span class="chapter__label" data-i18n="what.eyebrow">Ficha técnica</span></div>
-      <h2 data-i18n="what.title">Hecha para escucharse todos los días</h2>
-      <p class="lead" style="margin-top:10px" data-i18n="what.body">Usa la misma música que ya tienes en tu cuenta, con una interfaz propia. Nada de anuncios, nada de pantallas que no pediste.</p>
+      <div class="chapter reveal"><span class="chapter__n">§01</span><span class="chapter__label" data-i18n="what.eyebrow">Ficha técnica</span></div>
+      <h2 class="reveal" data-i18n="what.title">Hecha para escucharse todos los días</h2>
+      <p class="lead reveal" style="margin-top:10px" data-i18n="what.body">Usa la misma música que ya tienes en tu cuenta, con una interfaz propia. Nada de anuncios, nada de pantallas que no pediste.</p>
 
       <div class="spec-list">
-        <div class="spec-row">
+        <div class="spec-row reveal">
           <div class="spec-row__code">BG</div>
           <div>
             <h3 data-i18n="feat.1.t">Segundo plano real</h3>
             <p data-i18n="feat.1.d">Sigue sonando al bloquear el teléfono, cambiar de app o ir manejando, con controles en la pantalla de bloqueo.</p>
           </div>
         </div>
-        <div class="spec-row">
+        <div class="spec-row reveal">
           <div class="spec-row__code">RM</div>
           <div>
             <h3 data-i18n="feat.2.t">Salas para escuchar juntos</h3>
             <p data-i18n="feat.2.d">Creas una sala, pasas el código y los dos oyen lo mismo al mismo tiempo: pausa, cambia de canción o busca sin salir. Con chat y foto de perfil.</p>
           </div>
         </div>
-        <div class="spec-row">
+        <div class="spec-row reveal">
           <div class="spec-row__code">DL</div>
           <div>
             <h3 data-i18n="feat.3.t">Sin conexión</h3>
             <p data-i18n="feat.3.d">Descarga lo que quieras y escúchalo sin datos ni wifi, con la misma calidad y sin cortes.</p>
           </div>
         </div>
-        <div class="spec-row">
+        <div class="spec-row reveal">
           <div class="spec-row__code">LIB</div>
           <div>
             <h3 data-i18n="feat.4.t">Tu biblioteca completa</h3>
             <p data-i18n="feat.4.d">Canciones, álbumes, artistas, playlists, estados de ánimo y géneros: lo que ya tienes en YouTube Music, con buscador propio.</p>
           </div>
         </div>
-        <div class="spec-row">
+        <div class="spec-row reveal">
           <div class="spec-row__code">RADIO</div>
           <div>
             <h3 data-i18n="feat.7.t">Radio y modos de ánimo</h3>
             <p data-i18n="feat.7.d">Emisoras en vivo y modos como Calma, Concentración o Energía, para cuando no quieres armar tú la lista.</p>
           </div>
         </div>
-        <div class="spec-row">
+        <div class="spec-row reveal">
           <div class="spec-row__code">LX</div>
           <div>
             <h3 data-i18n="feat.5.t">Letras, con descarga</h3>
             <p data-i18n="feat.5.d">Letra sincronizada cuando existe, con varios proveedores y la opción de bajarla para verla después.</p>
           </div>
         </div>
-        <div class="spec-row">
+        <div class="spec-row reveal">
           <div class="spec-row__code">PRIV</div>
           <div>
             <h3 data-i18n="feat.6.t">Privada por diseño</h3>
@@ -226,55 +253,156 @@
           </div>
         </div>
       </div>
+
+      <!-- ── Más info de la app ─────────────────────────────────────── -->
+      <div class="more-info">
+        <div class="more-info__card reveal">
+          <h3>¿Por qué existe?</h3>
+          <p>Nació como un cliente alternativo para escuchar la misma música de siempre sin las interrupciones ni las pantallas de más que trae la app oficial en su versión gratuita.</p>
+        </div>
+        <div class="more-info__card reveal">
+          <h3>Actualizaciones</h3>
+          <p>Cada versión nueva se publica primero en GitHub Releases, con su propio hash SHA-256 y, cuando corresponde, su reporte de VirusTotal para que lo compruebes vos mismo antes de instalar.</p>
+        </div>
+        <div class="more-info__card reveal">
+          <h3>Compatibilidad</h3>
+          <p>Android 7.0 en adelante. No requiere Play Services para lo básico, y el APK se instala como cualquier app fuera de la tienda (activando "orígenes desconocidos" una sola vez).</p>
+        </div>
+        <div class="more-info__card reveal">
+          <h3>Código visible</h3>
+          <p>El repositorio es de solo lectura: podés revisar el código para confirmar qué hace la app antes de instalarla, aunque no está pensado para forks ni redistribución.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Comparación ───────────────────────────────────────────────── -->
+  <section>
+    <div class="wrap">
+      <div class="chapter reveal"><span class="chapter__n">§02</span><span class="chapter__label">Comparación</span></div>
+      <h2 class="reveal">En qué se diferencia de lo que ya conocés</h2>
+      <p class="lead reveal" style="margin-top:10px">Una foto rápida frente a las apps oficiales, en su versión gratuita. No son marcas afiliadas a NexusMusic — es solo una comparación de funciones.</p>
+
+      <div class="compare reveal">
+        <table>
+          <thead>
+            <tr>
+              <th>Función</th>
+              <th>
+                <span class="app-col">
+                  <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="var(--brass,#caa057)"/><polygon points="10,8 16,12 10,16" fill="#14100B"/></svg>
+                  NexusMusic
+                </span>
+              </th>
+              <th>
+                <span class="app-col">
+                  <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="#8a8074"/><polygon points="10,8 16,12 10,16" fill="#14100B"/></svg>
+                  YouTube Music (free)
+                </span>
+              </th>
+              <th>
+                <span class="app-col">
+                  <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="#8a8074"/><path d="M7 12a6 6 0 0 1 9-1M7.5 15a5 5 0 0 1 8-1M8 9a7 7 0 0 1 10-1" stroke="#14100B" stroke-width="1.6" fill="none" stroke-linecap="round"/></svg>
+                  Spotify (free)
+                </span>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="highlight">
+              <td>Sin anuncios</td>
+              <td class="yes">Sí</td>
+              <td class="no">No</td>
+              <td class="no">No</td>
+            </tr>
+            <tr>
+              <td>Reproducción en segundo plano</td>
+              <td class="yes">Sí</td>
+              <td class="no">Limitada</td>
+              <td class="no">Limitada</td>
+            </tr>
+            <tr class="highlight">
+              <td>Descargas sin conexión</td>
+              <td class="yes">Sí</td>
+              <td class="no">Requiere Premium</td>
+              <td class="no">Requiere Premium</td>
+            </tr>
+            <tr>
+              <td>Escuchar juntos en tiempo real</td>
+              <td class="yes">Sí</td>
+              <td class="no">No</td>
+              <td class="no">No</td>
+            </tr>
+            <tr class="highlight">
+              <td>Letras sincronizadas</td>
+              <td class="yes">Sí</td>
+              <td class="yes">Sí</td>
+              <td class="yes">Sí</td>
+            </tr>
+            <tr>
+              <td>Cuenta obligatoria</td>
+              <td class="yes">No</td>
+              <td class="no">Sí</td>
+              <td class="no">Sí</td>
+            </tr>
+            <tr class="highlight">
+              <td>Costo</td>
+              <td class="yes">Gratis</td>
+              <td class="no">Gratis con anuncios</td>
+              <td class="no">Gratis con anuncios</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
   </section>
 
   <!-- ── Registro de cambios ──────────────────────────────────────── -->
   <section>
     <div class="wrap">
-      <div class="chapter">
-        <span class="chapter__n">§02</span>
+      <div class="chapter reveal">
+        <span class="chapter__n">§03</span>
         <span class="chapter__label" data-i18n="news.eyebrow">Registro de cambios</span>
         <span class="chapter__label" style="opacity:.7">— v<span id="news-version">0.6.4</span></span>
       </div>
-      <h2 data-i18n="news.title">Qué trae esta versión</h2>
-      <p class="lead" style="margin-top:10px" data-i18n="news.body">Lo que cambió, contado por quien lo hizo.</p>
+      <h2 class="reveal" data-i18n="news.title">Qué trae esta versión</h2>
+      <p class="lead reveal" style="margin-top:10px" data-i18n="news.body">Lo que cambió, contado por quien lo hizo.</p>
 
       <div class="log">
-        <div class="log__item">
+        <div class="log__item reveal">
           <span class="log__n">1</span>
           <div>
-            <strong data-i18n="news.1.t">Efecto Liquid Glassp</strong>
+            <strong data-i18n="news.1.t">Efecto Liquid Glass</strong>
             <p data-i18n="news.1.d">Las barras de título, la píldora de abajo, los avisos y las hojas son translúcidos: el contenido se adivina por debajo, con un canto de luz y un brillo del color de la portada arriba y abajo. Se apaga en Ajustes → Apariencia si prefieres el negro liso.</p>
           </div>
         </div>
-        <div class="log__item">
+        <div class="log__item reveal">
           <span class="log__n">2</span>
           <div>
             <strong data-i18n="news.2.t">Foto de perfil en las salas</strong>
             <p data-i18n="news.2.d">Al tocar tu ficha eliges una foto del teléfono y el otro te ve la cara en el círculo de la sala. Se recorta y se encoge antes de salir, no se guarda en ningún servidor y se quita cuando quieras.</p>
           </div>
         </div>
-        <div class="log__item">
+        <div class="log__item reveal">
           <span class="log__n">3</span>
           <div>
             <strong data-i18n="news.3.t">NexusMusic entra a Nexus Forge</strong>
-            <p data-i18n="news.3.d">Nexus Studios. Propietario, Gracias a todos usteddes por confiar en nosotros y usar a NexusMuusic.</p>
+            <p data-i18n="news.3.d">Nexus Studios. Propietario. Gracias a todos ustedes por confiar en nosotros y usar a NexusMusic.</p>
           </div>
            <div>
-            <strong data-i18n="news.3.t">Login en al app con tu cuenta de la web de Nexus Forge</strong>
-            <p data-i18n="news.3.d">Nexus Studios. Propietario, Agrego login a su plataforma y guardado de musica en la nube mas comentarios en las canciones y poderte suscribir a los artistas.</p>
+            <strong data-i18n="news.3b.t">Login en la app con tu cuenta de la web de Nexus Forge</strong>
+            <p data-i18n="news.3b.d">Nexus Studios. Propietario. Se agrega login a la plataforma y guardado de música en la nube, más comentarios en las canciones y la opción de suscribirte a los artistas.</p>
           </div>
         </div>
-        <div class="log__item">
+        <div class="log__item reveal">
           <span class="log__n">4</span>
           <div>
             <strong data-i18n="news.4.t">De NexusMusicYT a NexusMusic</strong>
             <p data-i18n="news.4.d">El nombre y la identidad de la app cambiaron para reflejar su nuevo hogar en Nexus Forge.</p>
           </div>
           <div>
-            <strong data-i18n="news.4.t">Importacion de SoundCloud por url y Spotify por login con premium</strong>
-            <p data-i18n="news.4.d">\Puedes importar ttus temas de sound cloud y de spotify.</p>
+            <strong data-i18n="news.4b.t">Importación desde SoundCloud y Spotify</strong>
+            <p data-i18n="news.4b.d">Podés importar tus temas de SoundCloud por URL, y de Spotify iniciando sesión con tu cuenta.</p>
           </div>
         </div>
       </div>
@@ -284,10 +412,10 @@
   <!-- ── Interfaz ──────────────────────────────────────────────────── -->
   <section>
     <div class="wrap">
-      <div class="chapter"><span class="chapter__n">§03</span><span class="chapter__label" data-i18n="shot.eyebrow">Interfaz</span></div>
-      <h2 data-i18n="shot.title">Se pinta con lo que estás escuchando</h2>
+      <div class="chapter reveal"><span class="chapter__n">§04</span><span class="chapter__label" data-i18n="shot.eyebrow">Interfaz</span></div>
+      <h2 class="reveal" data-i18n="shot.title">Se pinta con lo que estás escuchando</h2>
       <div class="shot">
-        <div class="shot__phones">
+        <div class="shot__phones reveal">
           <figure class="phone-card">
             <div class="phone">
               <div class="phone__notch"></div>
@@ -307,7 +435,7 @@
             <figcaption data-i18n="shot.rooms">Salas</figcaption>
           </figure>
         </div>
-        <div>
+        <div class="reveal">
           <p class="lead" data-i18n="shot.body">Interfaz en Material 3 con tema oscuro y color de acento tomado de la portada de la canción: la app se pinta sola con lo que estás oyendo.</p>
           <div class="cert" style="margin-top:20px">
             <div class="cert__row">
@@ -316,12 +444,16 @@
               </span>
               <strong data-i18n="trust.title">Analizado y verificado</strong>
             </div>
-            <p data-i18n="trust.note">Este APK fue escaneado y no contiene virus, malware ni anuncios. Es el mismo archivo que puedes comprobar con el SHA-256 de arriba, que cambia en cada actualización.</p>
+            <p data-i18n="trust.note">Este APK fue escaneado en VirusTotal: 0 de 67 motores antivirus lo marcaron como malicioso. Es el mismo archivo que puedes comprobar con el SHA-256 de arriba, que cambia en cada actualización.</p>
             <div class="cert__logos">
+              <img src="assets/virust.png" alt="VirusTotal">
               <img src="assets/cm-security.png" alt="CM Security">
               <img src="assets/lookout.png" alt="Lookout">
               <img src="assets/mcafee.png" alt="McAfee">
             </div>
+            <a class="cert__link" href="https://www.virustotal.com/gui/file/4fafe521fb50cce9e0249895451b515f517e9816cb3aed546103d36bd7e02ec9/detection" target="_blank" rel="noopener noreferrer">
+              Ver el reporte completo en VirusTotal (0/67) →
+            </a>
           </div>
         </div>
       </div>
@@ -331,10 +463,10 @@
   <!-- ── Preguntas frecuentes ─────────────────────────────────────── -->
   <section>
     <div class="wrap">
-      <div class="chapter"><span class="chapter__n">§04</span><span class="chapter__label" data-i18n="faq.eyebrow">Preguntas</span></div>
-      <h2 data-i18n="faq.title">Lo que más preguntan</h2>
+      <div class="chapter reveal"><span class="chapter__n">§05</span><span class="chapter__label" data-i18n="faq.eyebrow">Preguntas</span></div>
+      <h2 class="reveal" data-i18n="faq.title">Lo que más preguntan</h2>
 
-      <div class="faq">
+      <div class="faq reveal">
         <details class="faq-row">
           <summary data-i18n="faq.1.q">¿Es gratis?</summary>
           <div class="a"><p data-i18n="faq.1.a">Sí, sin anuncios y sin compras dentro de la app. Es un proyecto personal: si te sirve, compartirlo ya es suficiente.</p></div>
@@ -349,7 +481,11 @@
         </details>
         <details class="faq-row">
           <summary data-i18n="faq.4.q">¿Quién está detrás?</summary>
-          <div class="a"><p data-i18n="faq.4.a">Un Studio al que le gusta la música. Nexus Forge (Nexus Studios) hizo el proyecto: le dio un lugar en su plataforma y creo esta web segundaria. NexusMusic no está afiliado ni respaldado por YouTube ni por Google LLC.</p></div>
+          <div class="a"><p data-i18n="faq.4.a">Un Studio al que le gusta la música. Nexus Forge (Nexus Studios) hizo el proyecto: le dio un lugar en su plataforma y creó esta web secundaria. NexusMusic no está afiliado ni respaldado por YouTube ni por Google LLC.</p></div>
+        </details>
+        <details class="faq-row">
+          <summary>¿Cómo sé que el APK es seguro?</summary>
+          <div class="a"><p>Cada versión se sube a VirusTotal antes de publicarse; el enlace al reporte completo está en la sección de interfaz, arriba, junto al hash SHA-256 para que compares el archivo que descargaste.</p></div>
         </details>
       </div>
     </div>
@@ -376,12 +512,31 @@
       <a href="https://github.com/santhiagocaro05-debug/Nexus-Update" target="_blank" rel="noopener noreferrer" data-i18n="footer.repo">Código en GitHub</a>
       <a href="https://nexusforgex.vercel.app" target="_blank" rel="noopener noreferrer" data-i18n="footer.nexus">Nexus Forge</a>
     </div>
-    <small data-i18n="footer.disclaimer">NexusMusic es un cliente independiente, hecho por un aficionado a la música. No está afiliado ni respaldado por YouTube ni por Google LLC. «YouTube» y «YouTube Music» son marcas de Google LLC.</small>
+    <small data-i18n="footer.disclaimer">NexusMusic es un cliente independiente, hecho por un aficionado a la música. No está afiliado ni respaldado por YouTube ni por Google LLC. «YouTube» y «YouTube Music» son marcas de Google LLC. «Spotify» es marca de Spotify AB. Los íconos usados en la comparación son genéricos y no representan esas marcas.</small>
     <small data-i18n="footer.license">Código visible (solo lectura): puedes leerlo, estudiarlo y compilarlo para uso personal. No se permite copiarlo, modificarlo ni redistribuirlo.</small>
     <small><span id="footer-version">v0.6.4</span> — <span data-i18n="footer.rights">todos los derechos reservados.</span></small>
   </div>
 </footer>
 
 <script src="33dr.js"></script>
+<script>
+  // Scroll-reveal simple: agrega .is-visible cuando el elemento entra en pantalla.
+  (function(){
+    var els = document.querySelectorAll('.reveal');
+    if (!('IntersectionObserver' in window)) {
+      els.forEach(function(el){ el.classList.add('is-visible'); });
+      return;
+    }
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(entry){
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-visible');
+          io.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
+    els.forEach(function(el){ io.observe(el); });
+  })();
+</script>
 </body>
 </html>
