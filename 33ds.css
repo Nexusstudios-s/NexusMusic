@@ -272,51 +272,90 @@ section { padding: 62px 0; position: relative; }
 .spec-row p { color: var(--cream-dim); font-size: 15px; }
 
 /* ── Nexus+ / Nexus Coins ─────────────────────────────────────────── */
-.plus-grid { margin-top: 30px; display: grid; gap: 20px; grid-template-columns: 1fr; }
+.plus-grid { margin-top: 34px; display: grid; gap: 22px; grid-template-columns: 1fr; }
 .plus-card {
-  position: relative; display: block; border-radius: 16px; padding: 26px 24px 24px;
-  border: 1px solid var(--line); background: var(--panel); overflow: hidden;
-  transition: transform .18s ease, border-color .18s ease;
+  position: relative; display: flex; flex-direction: column; border-radius: 20px;
+  padding: 30px 28px 28px; border: 1px solid var(--line); background: var(--panel);
+  overflow: hidden; isolation: isolate;
+  transition: transform .22s ease, border-color .22s ease, box-shadow .22s ease;
 }
-.plus-card:hover { transform: translateY(-3px); }
+.plus-card:hover { transform: translateY(-4px); }
+.plus-card__top { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 18px; }
 .plus-card__badge {
-  display: inline-flex; font: 600 11px/1 var(--mono); letter-spacing: .03em;
-  border-radius: 4px; padding: 6px 9px; margin-bottom: 16px;
+  display: inline-flex; align-items: center; gap: 6px; font: 700 11px/1 var(--mono);
+  letter-spacing: .04em; text-transform: uppercase; border-radius: 20px; padding: 7px 12px 7px 10px;
 }
-.plus-card__logo { width: 52px; height: 52px; border-radius: 12px; overflow: hidden; background: var(--panel-2); border: 1px solid var(--line); margin-bottom: 16px; }
+.plus-card__logo { width: 56px; height: 56px; border-radius: 14px; overflow: hidden; background: var(--panel-2); border: 1px solid var(--line); flex: 0 0 auto; }
 .plus-card__logo img { width: 100%; height: 100%; object-fit: cover; }
-.plus-card__title { margin-bottom: 10px; }
-.plus-card__body { color: var(--cream-dim); font-size: 14.5px; max-width: 46ch; }
-.plus-card__cta { display: inline-flex; align-items: center; gap: 7px; margin-top: 18px; font: 600 13.5px/1 var(--sans); }
+.plus-card__title { margin-bottom: 10px; font-size: 24px; }
+.plus-card__body { position: relative; z-index: 1; color: var(--cream-dim); font-size: 14.5px; max-width: 46ch; }
+.plus-card__list { position: relative; z-index: 1; list-style: none; margin: 18px 0 0; padding: 0; display: grid; gap: 9px; }
+.plus-card__list li { display: flex; align-items: flex-start; gap: 9px; font-size: 13.5px; color: var(--cream); }
+.plus-card__list li::before {
+  content: ""; flex: 0 0 auto; width: 15px; height: 15px; margin-top: 2px; border-radius: 50%;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2314100B' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12l4 4 10-10'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: center; background-size: 60%;
+}
+.plus-card__cta {
+  position: relative; z-index: 1; display: inline-flex; align-items: center; justify-content: center;
+  gap: 8px; margin-top: 24px; padding: 13px 18px; border-radius: 10px;
+  font: 700 13.5px/1 var(--sans); transition: gap .15s ease;
+}
+.plus-card:hover .plus-card__cta { gap: 11px; }
 
-/* Nexus+: acabado dorado premium, con brillo diagonal recorriendo el borde */
+/* Nexus+: acabado dorado premium — sello concéntrico, brillo diagonal y resplandor */
 .plus-card--gold {
-  border-color: rgba(214,160,63,.4);
-  background: linear-gradient(160deg, rgba(214,160,63,.12), var(--panel) 60%);
+  border-color: rgba(214,160,63,.45);
+  background:
+    radial-gradient(120% 140% at 100% 0%, rgba(214,160,63,.16), transparent 55%),
+    linear-gradient(160deg, rgba(214,160,63,.08), var(--panel) 62%);
+  box-shadow: 0 20px 50px -25px rgba(214,160,63,.35);
 }
 .plus-card--gold::before {
-  content: ""; position: absolute; inset: 0; padding: 1px; border-radius: inherit;
-  background: linear-gradient(120deg, transparent 20%, rgba(255,224,153,.65) 50%, transparent 80%);
-  background-size: 250% 250%;
+  content: ""; position: absolute; inset: 0; padding: 1px; border-radius: inherit; z-index: 2;
+  background: linear-gradient(120deg, transparent 15%, rgba(255,224,153,.75) 48%, transparent 82%);
+  background-size: 260% 260%;
   -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
   -webkit-mask-composite: xor; mask-composite: exclude;
   animation: goldSheen 5s ease-in-out infinite;
   pointer-events: none;
 }
 @keyframes goldSheen { 0% { background-position: 0% 0%; } 100% { background-position: 100% 100%; } }
-.plus-card--gold .plus-card__badge { background: linear-gradient(90deg, var(--brass), #f4cf82); color: var(--brass-ink); }
-.plus-card--gold .plus-card__cta { color: var(--brass); }
-.plus-card--gold:hover { border-color: rgba(214,160,63,.7); }
+.plus-card__seal {
+  position: absolute; top: -34px; right: -34px; width: 150px; height: 150px;
+  color: var(--brass); opacity: .16; z-index: 0; pointer-events: none;
+  animation: sealSpin 40s linear infinite;
+}
+@keyframes sealSpin { to { transform: rotate(360deg); } }
+.plus-card--gold .plus-card__badge { background: linear-gradient(90deg, var(--brass), #f4cf82); color: var(--brass-ink); box-shadow: 0 4px 14px -4px rgba(214,160,63,.7); }
+.plus-card--gold .plus-card__title { background: linear-gradient(100deg, var(--cream) 40%, var(--brass) 75%, #f4cf82); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.plus-card--gold .plus-card__list li::before { background-color: var(--brass); }
+.plus-card--gold .plus-card__cta { background: var(--brass); color: var(--brass-ink); box-shadow: 0 10px 24px -10px rgba(214,160,63,.7); }
+.plus-card--gold:hover { border-color: rgba(214,160,63,.8); box-shadow: 0 24px 60px -22px rgba(214,160,63,.5); }
 
-/* Nexus Coins: acabado más discreto, en tono patina/cobre */
+/* Nexus Coins: acabado patina/cobre, con monedas apiladas de fondo */
 .plus-card--coins {
-  background: linear-gradient(160deg, rgba(63,132,113,.09), var(--panel) 60%);
+  background:
+    radial-gradient(120% 140% at 100% 0%, rgba(63,132,113,.14), transparent 55%),
+    linear-gradient(160deg, rgba(63,132,113,.07), var(--panel) 62%);
   border-color: var(--patina-dim);
 }
+.plus-card__coins-bg {
+  position: absolute; top: -10px; right: -18px; width: 150px; height: 150px;
+  color: var(--patina); opacity: .18; z-index: 0; pointer-events: none;
+  animation: coinsFloat 6s ease-in-out infinite;
+}
+@keyframes coinsFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
 .plus-card--coins .plus-card__badge { background: transparent; border: 1px solid var(--patina-dim); color: var(--patina); }
-.plus-card--coins .plus-card__cta { color: var(--patina); }
-.plus-card--coins:hover { border-color: var(--patina); }
+.plus-card--coins .plus-card__title { color: var(--cream); }
+.plus-card--coins .plus-card__list li::before { background-color: var(--patina); }
+.plus-card--coins .plus-card__cta { background: transparent; border: 1.5px solid var(--patina); color: var(--patina); }
+.plus-card--coins:hover { border-color: var(--patina); box-shadow: 0 20px 50px -25px rgba(63,132,113,.4); }
+.plus-card--coins:hover .plus-card__cta { background: var(--patina); color: #08160f; }
 
+@media (prefers-reduced-motion: reduce) {
+  .plus-card--gold::before, .plus-card__seal, .plus-card__coins-bg { animation: none; }
+}
 @media (min-width: 720px) {
   .plus-grid { grid-template-columns: 1fr 1fr; }
 }
