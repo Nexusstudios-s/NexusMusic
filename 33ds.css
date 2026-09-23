@@ -37,11 +37,21 @@ body {
   overflow-x: hidden;
 }
 body.is-loading { overflow: hidden; }
+
+/* ── Cargador ──────────────────────────────────────────────────────── */
 .loader {
   position: fixed; inset: 0; z-index: 100; display: grid; place-items: center;
-  align-content: center; gap: 18px; background: var(--ink); color: var(--cream);
+  align-content: center; gap: 14px; background: var(--ink); color: var(--cream);
   transition: opacity .55s ease, visibility .55s ease;
+  overflow: hidden;
 }
+.loader::before {
+  content: ""; position: absolute; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(214,160,63,.55), transparent);
+  animation: loaderScan 2.6s ease-in-out infinite;
+  filter: blur(.5px);
+}
+@keyframes loaderScan { 0% { top: -5%; } 100% { top: 105%; } }
 .loader.is-done { opacity: 0; visibility: hidden; pointer-events: none; }
 .loader__orb { position: relative; display: grid; place-items: center; width: 112px; height: 112px; }
 .loader__orb::before {
@@ -53,15 +63,23 @@ body.is-loading { overflow: hidden; }
 .loader__ring { position: absolute; inset: 2px; border: 1px solid rgba(214,160,63,.26); border-top-color: var(--brass); border-radius: 50%; animation: loaderSpin 1.1s linear infinite; }
 .loader__brand { display: flex; align-items: center; gap: 10px; font: 600 18px/1 var(--display); }
 .loader__brand .eq { height: 14px; }
+.loader__status { display: flex; align-items: center; gap: 3px; font: 500 12.5px/1 var(--mono); color: var(--cream-dim); letter-spacing: .01em; }
+.loader__dots { display: inline-flex; gap: 2px; }
+.loader__dots span { width: 3px; height: 3px; border-radius: 50%; background: var(--brass); animation: loaderDot 1.2s ease-in-out infinite; }
+.loader__dots span:nth-child(2) { animation-delay: .15s; }
+.loader__dots span:nth-child(3) { animation-delay: .3s; }
+@keyframes loaderDot { 0%, 80%, 100% { opacity: .2; transform: translateY(0); } 40% { opacity: 1; transform: translateY(-2px); } }
 .loader__track { width: 132px; height: 2px; overflow: hidden; background: var(--line); }
 .loader__track span { display: block; width: 42%; height: 100%; background: var(--brass); animation: loaderProgress 1.25s ease-in-out infinite; }
+.loader__pct { font: 600 12px/1 var(--mono); color: var(--brass-dim); letter-spacing: .04em; }
 @keyframes loaderSpin { to { transform: rotate(360deg); } }
 @keyframes loaderFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
 @keyframes loaderProgress { 0% { transform: translateX(-140%); } 100% { transform: translateX(340%); } }
 @media (prefers-reduced-motion: reduce) {
-  .loader__orb img, .loader__ring, .loader__track span { animation: none; }
+  .loader__orb img, .loader__ring, .loader__track span, .loader::before, .loader__dots span { animation: none; }
   .loader__track span { width: 100%; }
 }
+
 a { color: inherit; text-decoration: none; }
 img { max-width: 100%; height: auto; display: block; }
 h1, h2, h3 { font-family: var(--display); line-height: 1.1; margin: 0; color: var(--cream); }
@@ -72,6 +90,46 @@ p { margin: 0; }
 .wrap { width: min(100% - 36px, var(--max)); margin: 0 auto; }
 section { padding: 62px 0; position: relative; }
 .lead { color: var(--cream-dim); font-size: 17px; max-width: 640px; }
+
+/* ── Titular con glitch (un solo momento orquestado, no continuo) ──── */
+.glitch { position: relative; display: inline-block; }
+.glitch::before, .glitch::after {
+  content: attr(data-text);
+  position: absolute; inset: 0;
+  color: var(--cream);
+  background: var(--ink);
+  overflow: hidden;
+  opacity: 0;
+}
+.glitch::before { text-shadow: -2px 0 #ff3b6b; clip-path: inset(0 0 0 0); }
+.glitch::after { text-shadow: 2px 0 #3fd6d6; clip-path: inset(0 0 0 0); }
+.glitch { animation: glitchTrigger 9s ease-in-out infinite; }
+.glitch::before { animation: glitchSliceA 9s steps(1) infinite; }
+.glitch::after { animation: glitchSliceB 9s steps(1) infinite; }
+@keyframes glitchTrigger {
+  0%, 96%, 100% { transform: translate(0,0); }
+  96.5% { transform: translate(-1px, 1px); }
+  97% { transform: translate(1px, -1px); }
+  97.5% { transform: translate(-1px, 0); }
+  98% { transform: translate(0,0); }
+}
+@keyframes glitchSliceA {
+  0%, 96%, 100% { opacity: 0; clip-path: inset(0 0 100% 0); transform: translate(0,0); }
+  96.2% { opacity: 1; clip-path: inset(10% 0 60% 0); transform: translate(-3px,0); }
+  96.6% { opacity: 1; clip-path: inset(60% 0 5% 0); transform: translate(2px,0); }
+  97.1% { opacity: 1; clip-path: inset(30% 0 40% 0); transform: translate(-2px,0); }
+  97.6% { opacity: 0; }
+}
+@keyframes glitchSliceB {
+  0%, 96%, 100% { opacity: 0; clip-path: inset(100% 0 0 0); transform: translate(0,0); }
+  96.3% { opacity: 1; clip-path: inset(45% 0 20% 0); transform: translate(3px,0); }
+  96.7% { opacity: 1; clip-path: inset(5% 0 70% 0); transform: translate(-2px,0); }
+  97.2% { opacity: 1; clip-path: inset(65% 0 10% 0); transform: translate(2px,0); }
+  97.6% { opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .glitch, .glitch::before, .glitch::after { animation: none; opacity: 0; }
+}
 
 /* ── Marca de capítulo ────────────────────────────────────────────── */
 .chapter { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; margin-bottom: 14px; }
@@ -127,6 +185,7 @@ section { padding: 62px 0; position: relative; }
 .btn--patina { background: var(--patina); border-color: var(--patina); color: #08160f; }
 .btn--patina:hover { background: #4a9683; }
 #gh-link svg { fill: currentColor; }
+.apk-dl[aria-disabled="true"] { opacity: .55; pointer-events: none; }
 
 /* Resplandor pulsante en el botón principal de descarga */
 .btn--pulse::after {
@@ -212,6 +271,56 @@ section { padding: 62px 0; position: relative; }
 .spec-row h3 { margin-bottom: 6px; }
 .spec-row p { color: var(--cream-dim); font-size: 15px; }
 
+/* ── Nexus+ / Nexus Coins ─────────────────────────────────────────── */
+.plus-grid { margin-top: 30px; display: grid; gap: 20px; grid-template-columns: 1fr; }
+.plus-card {
+  position: relative; display: block; border-radius: 16px; padding: 26px 24px 24px;
+  border: 1px solid var(--line); background: var(--panel); overflow: hidden;
+  transition: transform .18s ease, border-color .18s ease;
+}
+.plus-card:hover { transform: translateY(-3px); }
+.plus-card__badge {
+  display: inline-flex; font: 600 11px/1 var(--mono); letter-spacing: .03em;
+  border-radius: 4px; padding: 6px 9px; margin-bottom: 16px;
+}
+.plus-card__logo { width: 52px; height: 52px; border-radius: 12px; overflow: hidden; background: var(--panel-2); border: 1px solid var(--line); margin-bottom: 16px; }
+.plus-card__logo img { width: 100%; height: 100%; object-fit: cover; }
+.plus-card__title { margin-bottom: 10px; }
+.plus-card__body { color: var(--cream-dim); font-size: 14.5px; max-width: 46ch; }
+.plus-card__cta { display: inline-flex; align-items: center; gap: 7px; margin-top: 18px; font: 600 13.5px/1 var(--sans); }
+
+/* Nexus+: acabado dorado premium, con brillo diagonal recorriendo el borde */
+.plus-card--gold {
+  border-color: rgba(214,160,63,.4);
+  background: linear-gradient(160deg, rgba(214,160,63,.12), var(--panel) 60%);
+}
+.plus-card--gold::before {
+  content: ""; position: absolute; inset: 0; padding: 1px; border-radius: inherit;
+  background: linear-gradient(120deg, transparent 20%, rgba(255,224,153,.65) 50%, transparent 80%);
+  background-size: 250% 250%;
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor; mask-composite: exclude;
+  animation: goldSheen 5s ease-in-out infinite;
+  pointer-events: none;
+}
+@keyframes goldSheen { 0% { background-position: 0% 0%; } 100% { background-position: 100% 100%; } }
+.plus-card--gold .plus-card__badge { background: linear-gradient(90deg, var(--brass), #f4cf82); color: var(--brass-ink); }
+.plus-card--gold .plus-card__cta { color: var(--brass); }
+.plus-card--gold:hover { border-color: rgba(214,160,63,.7); }
+
+/* Nexus Coins: acabado más discreto, en tono patina/cobre */
+.plus-card--coins {
+  background: linear-gradient(160deg, rgba(63,132,113,.09), var(--panel) 60%);
+  border-color: var(--patina-dim);
+}
+.plus-card--coins .plus-card__badge { background: transparent; border: 1px solid var(--patina-dim); color: var(--patina); }
+.plus-card--coins .plus-card__cta { color: var(--patina); }
+.plus-card--coins:hover { border-color: var(--patina); }
+
+@media (min-width: 720px) {
+  .plus-grid { grid-template-columns: 1fr 1fr; }
+}
+
 /* ── Registro de cambios ──────────────────────────────────────────── */
 .log { margin-top: 30px; display: grid; gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
 .log__item { display: flex; gap: 16px; padding: 18px 20px; background: var(--panel); align-items: flex-start; }
@@ -223,9 +332,9 @@ section { padding: 62px 0; position: relative; }
 .log__group { display: flex; flex-direction: column; gap: 18px; }
 .log__group > div + div { padding-top: 16px; border-top: 1px solid var(--line-soft); }
 
-/* ── Interfaz: dos capturas + certificado ─────────────────────────── */
+/* ── Interfaz: capturas + certificado ──────────────────────────────── */
 .shot { margin-top: 30px; display: grid; gap: 26px; }
-.shot__phones { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.shot__phones { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 18px; }
 .phone-card { display: grid; gap: 10px; justify-items: center; }
 .phone-card figcaption { font: 600 13px/1.3 var(--mono); color: var(--cream-dim); text-align: center; }
 .phone { width: 100%; max-width: 320px; border-radius: 32px; background: var(--panel); border: 1px solid var(--line); padding: 10px; box-shadow: 0 24px 50px rgba(0,0,0,.5); }
@@ -275,7 +384,7 @@ footer small { display: block; color: var(--cream-dim); opacity: .75; font-size:
   .spec-list { column-count: 2; column-gap: 40px; }
   .spec-row { break-inside: avoid; }
   .shot { grid-template-columns: auto 1fr; align-items: center; gap: 44px; }
-  .shot__phones { grid-template-columns: 240px 240px; gap: 24px; }
+  .shot__phones { grid-template-columns: repeat(3, 190px); gap: 20px; }
 }
 @media (max-width: 540px) {
   #gh-link .btn-text { display: none; }

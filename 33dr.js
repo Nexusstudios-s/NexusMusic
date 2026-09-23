@@ -3,15 +3,52 @@
    ═══════════════════════════════════════════════════════════════════ */
 (function () {
   var loader = document.getElementById("site-loader");
+  var loaderPct = document.getElementById("loader-pct");
+  var loaderStatus = document.getElementById("loader-status");
+  var STATUS_PHRASES = {
+    es: ["Afinando el receptor", "Cargando la biblioteca", "Encendiendo las válvulas", "Sintonizando"],
+    en: ["Tuning the receiver", "Loading the library", "Warming up the tubes", "Dialing in"],
+    pt: ["Afinando o receptor", "Carregando a biblioteca", "Aquecendo as válvulas", "Sintonizando"]
+  };
+
   if (loader) {
     document.body.classList.add("is-loading");
     var loaderStartedAt = Date.now();
     var pageLoaded = document.readyState === "complete";
     var minimumLoaderTime = 2000;
     var loaderHidden = false;
+
+    // Progreso falso pero suave, ligado al tiempo mínimo del loader.
+    var pctInterval = null;
+    if (loaderPct) {
+      pctInterval = setInterval(function () {
+        var elapsed = Date.now() - loaderStartedAt;
+        var pct = Math.min(99, Math.round((elapsed / minimumLoaderTime) * 100));
+        loaderPct.textContent = pct + "%";
+      }, 60);
+    }
+
+    // Rota la frase de estado mientras carga.
+    var statusLang = (localStorage.getItem("oym.lang") || (navigator.language || "es").slice(0, 2).toLowerCase());
+    if (!STATUS_PHRASES[statusLang]) statusLang = "es";
+    var statusIdx = 0;
+    var statusInterval = null;
+    if (loaderStatus) {
+      var dotsMarkup = '<span class="loader__dots" aria-hidden="true"><span></span><span></span><span></span></span>';
+      var setStatus = function () {
+        loaderStatus.innerHTML = STATUS_PHRASES[statusLang][statusIdx % STATUS_PHRASES[statusLang].length] + dotsMarkup;
+        statusIdx++;
+      };
+      setStatus();
+      statusInterval = setInterval(setStatus, 900);
+    }
+
     var hideLoader = function () {
       if (loaderHidden || !pageLoaded || Date.now() - loaderStartedAt < minimumLoaderTime) return;
       loaderHidden = true;
+      if (pctInterval) { clearInterval(pctInterval); }
+      if (statusInterval) { clearInterval(statusInterval); }
+      if (loaderPct) { loaderPct.textContent = "100%"; }
       loader.classList.add("is-done");
       document.body.classList.remove("is-loading");
       setTimeout(function () { loader.remove(); }, 650);
@@ -100,6 +137,7 @@
       "shot.body": "A Material 3 interface in dark theme, with an accent colour taken from the song's artwork: the app colours itself around whatever you're listening to.",
       "shot.main": "Home screen",
       "shot.rooms": "Rooms",
+      "shot.player": "Player",
       "trust.title": "Scanned and verified",
       "trust.note": "This APK was scanned and contains no viruses, malware or ads. It's the same file you can check against the SHA-256 above, which changes with every update.",
       "faq.eyebrow": "Questions",
@@ -193,6 +231,7 @@
       "shot.body": "Interface em Material 3 com tema escuro e cor de destaque tirada da capa da música: o app se pinta sozinho com o que você está ouvindo.",
       "shot.main": "Tela principal",
       "shot.rooms": "Salas",
+      "shot.player": "Reprodutor",
       "trust.title": "Analisado e verificado",
       "trust.note": "Este APK foi analisado e não contém vírus, malware nem anúncios. É o mesmo arquivo que você pode conferir com o SHA-256 acima, que muda a cada atualização.",
       "faq.eyebrow": "Perguntas",
@@ -216,6 +255,7 @@
   };
 
   var nodes = document.querySelectorAll("[data-i18n]");
+  var glitchNodes = document.querySelectorAll(".glitch[data-i18n]");
   var buttons = document.querySelectorAll(".lang button");
   var COPIED = { es: "Copiado", en: "Copied", pt: "Copiado" };
 
@@ -225,6 +265,10 @@
       var key = el.getAttribute("data-i18n");
       if (!el.hasAttribute("data-es")) el.setAttribute("data-es", el.innerHTML);
       el.innerHTML = dict && dict[key] ? dict[key] : el.getAttribute("data-es");
+    });
+    // El glitch usa attr(data-text) en CSS, así que hay que refrescarlo con el texto del idioma activo.
+    Array.prototype.forEach.call(glitchNodes, function (el) {
+      el.setAttribute("data-text", el.textContent);
     });
     Array.prototype.forEach.call(buttons, function (b) {
       b.setAttribute("aria-pressed", String(b.getAttribute("data-lang") === lang));
@@ -243,7 +287,12 @@
     b.addEventListener("click", function () { applyLang(b.getAttribute("data-lang")); });
   });
 
-  /* ── Versión y hash reales, desde version.json ───────────────────── */
+  /* ── Versión, hash y APK reales, siempre desde version.json ──────── *
+   * Los botones de descarga arrancan deshabilitados (href="#") y solo
+   * apuntan al APK una vez que version.json responde: así nunca queda
+   * un link directo "a mano" en el HTML, y basta con editar ese JSON
+   * en cada release para que todo el sitio (versión, hash y descarga)
+   * se actualice solo.                                                */
   fetch("version.json", { cache: "no-store" })
     .then(function (r) { return r.json(); })
     .then(function (v) {
@@ -257,8 +306,10 @@
         el.textContent = v.version;
       });
       if (v.apkUrl) {
-        Array.prototype.forEach.call(document.querySelectorAll('#apk-link, a[href$=".apk"]'), function (a) {
+        Array.prototype.forEach.call(document.querySelectorAll(".apk-dl"), function (a) {
           a.setAttribute("href", v.apkUrl);
+          a.setAttribute("download", "");
+          a.removeAttribute("aria-disabled");
         });
       }
       var hash = document.getElementById("hash-value");
