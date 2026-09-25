@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Política de privacidad — NexusMusic</title>
+<meta name="description" content="Política de privacidad de NexusMusic: qué datos se usan, qué no se guarda y cómo funcionan las estadísticas anónimas.">
+<meta name="theme-color" content="#14100B">
+<link rel="icon" href="assets/Nexus-logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="33ds.css">
+<style>
+  :root{
+    --ink:#14100B;
+    --cream:#f3ecdc;
+    --cream-dim:#cabfa4;
+    --brass:#caa057;
+    --brass-dim:#8a7550;
+    --line:#2a241c;
+    --patina:#3f8471;
+  }
+
+  body{background:var(--ink);color:var(--cream);font-family:"IBM Plex Sans",sans-serif;}
+
+  .legal{max-width:820px;margin:0 auto;padding:96px 24px 120px;}
+
+  .legal__eyebrow{
+    display:flex;align-items:center;gap:10px;
+    font-family:"IBM Plex Mono",monospace;font-size:12px;letter-spacing:.08em;
+    text-transform:uppercase;color:var(--brass);margin-bottom:18px;
+  }
+  .legal__eyebrow .dot{width:6px;height:6px;border-radius:50%;background:var(--brass);}
+
+  .legal h1{
+    font-family:"Space Grotesk",sans-serif;font-weight:700;
+    font-size:clamp(28px,4vw,42px);line-height:1.15;margin:0 0 12px;
+  }
+
+  .legal__updated{
+    font-size:13.5px;color:var(--cream-dim);margin:0 0 40px;
+  }
+
+  .legal__intro{
+    font-size:16px;line-height:1.7;color:var(--cream-dim);
+    border-left:2px solid var(--brass-dim);padding-left:18px;margin-bottom:52px;
+  }
+
+  .legal nav.toc{
+    border:1px solid var(--line);border-radius:14px;padding:20px 22px;
+    margin-bottom:56px;background:rgba(202,160,87,.03);
+  }
+  .legal nav.toc h2{
+    font-family:"IBM Plex Mono",monospace;font-size:11.5px;letter-spacing:.08em;
+    text-transform:uppercase;color:var(--brass);margin:0 0 12px;font-weight:600;
+  }
+  .legal nav.toc ol{margin:0;padding-left:20px;columns:2;gap:24px;}
+  .legal nav.toc li{margin-bottom:8px;font-size:13.5px;}
+  .legal nav.toc a{color:var(--cream-dim);text-decoration:none;border-bottom:1px dashed transparent;}
+  .legal nav.toc a:hover{color:var(--brass);border-bottom-color:var(--brass-dim);}
+
+  .legal section{margin-bottom:44px;scroll-margin-top:28px;}
+  .legal section h2{
+    font-family:"Space Grotesk",sans-serif;font-weight:600;font-size:20px;
+    display:flex;align-items:baseline;gap:10px;margin:0 0 14px;
+  }
+  .legal section h2 .n{
+    font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--brass);opacity:.8;
+  }
+  .legal section p{font-size:14.5px;line-height:1.75;color:var(--cream-dim);margin:0 0 14px;}
+  .legal section p strong{color:var(--cream);font-weight:600;}
+  .legal section ul{margin:0 0 14px;padding-left:20px;}
+  .legal section li{font-size:14.5px;line-height:1.7;color:var(--cream-dim);margin-bottom:8px;}
+  .legal section li strong{color:var(--cream);}
+
+  .card-row{
+    display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+    gap:14px;margin:18px 0 8px;
+  }
+  .card{
+    border:1px solid var(--line);border-radius:12px;padding:16px 18px;
+    background:rgba(255,255,255,.015);
+  }
+  .card b{display:block;font-family:"Space Grotesk",sans-serif;font-size:14px;margin-bottom:6px;color:var(--cream);}
+  .card span{font-size:13px;color:var(--cream-dim);line-height:1.6;}
+  .card.yes{border-color:rgba(111,191,115,.3);}
+  .card.yes b{color:#6fbf73;}
+  .card.no{border-color:rgba(224,110,110,.25);}
+  .card.no b{color:#e08c8c;}
+
+  .legal table{width:100%;border-collapse:collapse;margin:16px 0 8px;font-size:13.5px;}
+  .legal th,.legal td{text-align:left;padding:10px 14px;border-bottom:1px solid var(--line);}
+  .legal thead th{
+    font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.05em;
+    text-transform:uppercase;color:var(--brass);font-weight:600;
+  }
+  .legal td{color:var(--cream-dim);}
+  .legal tbody tr:last-child td{border-bottom:none;}
+
+  .contact-box{
+    border:1px solid var(--brass-dim);border-radius:14px;padding:24px;
+    background:rgba(202,160,87,.05);margin-top:8px;
+  }
+  .contact-box h2{margin-top:0;}
+  .contact-box a.mail{
+    display:inline-flex;align-items:center;gap:8px;margin-top:8px;
+    color:var(--brass);text-decoration:none;font-weight:600;font-size:14px;
+    border-bottom:1px dashed var(--brass-dim);
+  }
+  .contact-box a.mail:hover{opacity:.85;}
+
+  .legal .back{
+    display:inline-flex;align-items:center;gap:8px;margin-bottom:36px;
+    font-size:13.5px;color:var(--cream-dim);text-decoration:none;
+  }
+  .legal .back:hover{color:var(--brass);}
+
+  @media (max-width:600px){
+    .legal nav.toc ol{columns:1;}
+  }
+</style>
+</head>
+<body>
+
+<main class="legal">
+  <a class="back" href="index.html">&larr; Volver a NexusMusic</a>
+
+  <div class="legal__eyebrow"><span class="dot"></span> Legal · NexusMusic</div>
+  <h1>Política de privacidad</h1>
+  <p class="legal__updated">Última actualización: septiembre de 2026 · Aplica a la app NexusMusic y a esta web.</p>
+
+  <p class="legal__intro">
+    NexusMusic está pensada para funcionar sin pedirte casi nada. No hace falta cuenta para escuchar,
+    no hay rastreadores de publicidad y las estadísticas que se recogen son anónimas. Este documento
+    explica, en lenguaje simple, qué datos entran en juego y para qué se usan.
+  </p>
+
+  <nav class="toc" aria-label="Contenido">
+    <h2>Contenido</h2>
+    <ol>
+      <li><a href="#resumen">Resumen rápido</a></li>
+      <li><a href="#datos">Qué datos se recogen</a></li>
+      <li><a href="#cuenta">Cuenta de Nexus Forge y login de YouTube Music</a></li>
+      <li><a href="#salas">Salas de "escuchar juntos"</a></li>
+      <li><a href="#descargas">Descargas y almacenamiento local</a></li>
+      <li><a href="#terceros">Servicios de terceros</a></li>
+      <li><a href="#importaciones">Importación desde otras plataformas</a></li>
+      <li><a href="#menores">Uso por menores de edad</a></li>
+      <li><a href="#derechos">Tus derechos y el control que tenés</a></li>
+      <li><a href="#cambios">Cambios en esta política</a></li>
+      <li><a href="#contacto">Contacto</a></li>
+    </ol>
+  </nav>
+
+  <section id="resumen">
+    <h2><span class="n">§01</span> Resumen rápido</h2>
+    <p>Si no querés leer todo el documento, esto es lo esencial:</p>
+    <div class="card-row">
+      <div class="card yes"><b>Sin cuenta obligatoria</b><span>Podés usar la app sin registrarte. La cuenta de Nexus Forge y el login de YouTube Music son opcionales.</span></div>
+      <div class="card yes"><b>Sin publicidad</b><span>No hay anuncios ni redes publicitarias, así que no compartimos datos con ese fin.</span></div>
+      <div class="card yes"><b>Estadísticas anónimas y apagables</b><span>Se pueden desactivar desde Ajustes en cualquier momento.</span></div>
+      <div class="card no"><b>Fotos de perfil en salas</b><span>Se comparten solo con la otra persona de la sala, no se suben a ningún servidor.</span></div>
+    </div>
+  </section>
+
+  <section id="datos">
+    <h2><span class="n">§02</span> Qué datos se recogen</h2>
+    <p>NexusMusic separa lo que pasa <strong>en tu teléfono</strong> de lo que se envía a un servidor:</p>
+    <ul>
+      <li><strong>Uso local (nunca sale de tu dispositivo):</strong> tu biblioteca, descargas, historial de reproducción, letras guardadas y preferencias de la app.</li>
+      <li><strong>Estadísticas anónimas (opcionales):</strong> conteos de uso general de funciones, sin identificarte, para saber qué partes de la app se usan más. Se apagan desde Ajustes → Privacidad.</li>
+      <li><strong>Datos de cuenta (solo si iniciás sesión):</strong> ver la sección siguiente.</li>
+      <li><strong>Datos técnicos mínimos:</strong> versión de la app y del sistema operativo, únicamente para poder mostrarte actualizaciones compatibles.</li>
+    </ul>
+    <p>No recogemos ubicación precisa, contactos, ni acceso a archivos fuera de lo necesario para las descargas.</p>
+  </section>
+
+  <section id="cuenta">
+    <h2><span class="n">§03</span> Cuenta de Nexus Forge y login de YouTube Music</h2>
+    <p>
+      Iniciar sesión es opcional y solo se activa si vos lo elegís desde la app:
+    </p>
+    <ul>
+      <li><strong>Con tu cuenta de Nexus Forge:</strong> se guarda tu biblioteca en la nube del ecosistema Nexus Forge, junto con comentarios que dejes en canciones y a los artistas que sigas. Esta información la administra Nexus Forge (Nexus Studios), propietario del proyecto.</li>
+      <li><strong>Con tu cuenta de YouTube Music:</strong> NexusMusic solo usa esa sesión para mostrar tus playlists, "me gusta" e historial existentes, tal como lo haría la app oficial. No accedemos a tu correo ni a datos de Google fuera de tu biblioteca musical.</li>
+    </ul>
+    <p>Podés cerrar sesión o borrar tu cuenta de Nexus Forge en cualquier momento desde la app o la web de Nexus Forge.</p>
+  </section>
+
+  <section id="salas">
+    <h2><span class="n">§04</span> Salas de "escuchar juntos"</h2>
+    <p>
+      Cuando creás o entrás a una sala, el código de sala y los eventos de reproducción (pausa, cambio de canción,
+      búsqueda) se transmiten en tiempo real entre los participantes para mantenerlos sincronizados.
+    </p>
+    <ul>
+      <li><strong>Foto de perfil de sala:</strong> se toma de tu teléfono, se recorta y se muestra solo a la otra persona conectada. No se guarda en ningún servidor y se borra al salir de la sala.</li>
+      <li><strong>Chat de la sala:</strong> los mensajes viven mientras la sala está activa y no se conservan como historial permanente.</li>
+      <li>Nadie fuera de la sala puede ver lo que se comparte dentro de ella.</li>
+    </ul>
+  </section>
+
+  <section id="descargas">
+    <h2><span class="n">§05</span> Descargas y almacenamiento local</h2>
+    <p>
+      Las canciones descargadas para escuchar sin conexión se guardan cifradas en el almacenamiento de tu propio
+      dispositivo. No se suben a ningún servidor de NexusMusic ni se comparten con terceros. Si desinstalás la
+      app o borrás sus datos, las descargas se eliminan junto con todo lo demás guardado localmente.
+    </p>
+  </section>
+
+  <section id="terceros">
+    <h2><span class="n">§06</span> Servicios de terceros</h2>
+    <p>NexusMusic depende de algunos servicios externos para funcionar. Así se relaciona con cada uno:</p>
+    <table>
+      <thead>
+        <tr><th>Servicio</th><th>Para qué se usa</th><th>Qué recibe</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>YouTube Music</td><td>Fuente del catálogo musical y, si iniciás sesión, tu biblioteca</td><td>Tus solicitudes de reproducción y, si te logueás, tu sesión</td></tr>
+        <tr><td>Proveedores de letras</td><td>Mostrar letras sincronizadas</td><td>Título y artista de la canción en reproducción</td></tr>
+        <tr><td>GitHub Releases</td><td>Distribuir el APK y el registro de cambios</td><td>Nada personal; es una descarga pública</td></tr>
+        <tr><td>Nexus Forge</td><td>Cuenta, nube, comentarios, Nexus+ / Nexus Coins</td><td>Solo si iniciás sesión con esa cuenta</td></tr>
+      </tbody>
+    </table>
+    <p>No vendemos ni compartimos tus datos con redes de publicidad, porque simplemente no las usamos.</p>
+  </section>
+
+  <section id="importaciones">
+    <h2><span class="n">§07</span> Importación desde otras plataformas</h2>
+    <p>
+      Si usás la importación desde Spotify (con inicio de sesión) o SoundCloud (por URL), esa conexión se usa
+      únicamente para leer la lista de canciones que querés traer a NexusMusic. No publicamos nada en esas
+      cuentas ni accedemos a datos que no sean tus playlists.
+    </p>
+  </section>
+
+  <section id="menores">
+    <h2><span class="n">§08</span> Uso por menores de edad</h2>
+    <p>
+      NexusMusic no pide edad ni datos de identificación para usarse sin cuenta. Las funciones que sí requieren
+      cuenta (comentarios, perfil social, salas) están pensadas para un uso responsable; si sos padre, madre o
+      tutor y creés que un menor a tu cargo usó estas funciones de forma inapropiada, podés escribirnos por el
+      contacto de abajo.
+    </p>
+  </section>
+
+  <section id="derechos">
+    <h2><span class="n">§09</span> Tus derechos y el control que tenés</h2>
+    <ul>
+      <li><strong>Apagar estadísticas:</strong> desde Ajustes → Privacidad, en cualquier momento.</li>
+      <li><strong>Borrar tu cuenta de Nexus Forge:</strong> elimina tu biblioteca en la nube, comentarios y datos asociados.</li>
+      <li><strong>Borrar datos locales:</strong> desinstalando la app o limpiando su almacenamiento desde los ajustes del sistema.</li>
+      <li><strong>Usar la app sin dejar rastro de cuenta:</strong> es el modo por defecto; nada te obliga a loguearte.</li>
+    </ul>
+  </section>
+
+  <section id="cambios">
+    <h2><span class="n">§10</span> Cambios en esta política</h2>
+    <p>
+      Si esta política cambia de forma relevante, se va a reflejar en la fecha de "última actualización" en la
+      parte de arriba y, cuando el cambio sea significativo, se va a avisar dentro de la app o en el registro de
+      cambios de la web.
+    </p>
+  </section>
+
+  <section id="contacto">
+    <div class="contact-box">
+      <h2 style="margin-bottom:6px;"><span class="n">§11</span> Contacto</h2>
+      <p style="margin-bottom:4px;">
+        ¿Dudas sobre esta política o sobre tus datos? Escribinos por Discord o a través de la web de Nexus Forge.
+      </p>
+      <a class="mail" href="https://nexusforgex.vercel.app" target="_blank" rel="noopener noreferrer">
+        Ir a Nexus Forge →
+      </a>
+    </div>
+  </section>
+</main>
+
+</body>
+</html>
