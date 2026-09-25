@@ -12,271 +12,456 @@
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="33ds.css">
 <style>
-  :root{
-    --ink:#14100B;
-    --cream:#f3ecdc;
-    --cream-dim:#cabfa4;
-    --brass:#caa057;
-    --brass-dim:#8a7550;
-    --line:#2a241c;
-    --patina:#3f8471;
-  }
+:root{
+  --ink:#14100B;
+  --panel:#1c1610;
+  --panel-2:#221a12;
+  --cream:#f3ecdc;
+  --cream-dim:#b9ad93;
+  --brass:#caa057;
+  --brass-soft:#e4c07f;
+  --brass-dim:#8a7550;
+  --line:#2c2419;
+  --patina:#4a9a83;
+}
 
-  body{background:var(--ink);color:var(--cream);font-family:"IBM Plex Sans",sans-serif;}
+*{box-sizing:border-box}
+body{background:var(--ink);color:var(--cream);font-family:"IBM Plex Sans",sans-serif;}
 
-  .legal{max-width:820px;margin:0 auto;padding:96px 24px 120px;}
+/* ---------- top bar ---------- */
+.legalbar{
+  position:sticky;top:0;z-index:40;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:16px clamp(20px,4vw,48px);
+  background:rgba(20,16,11,.86);backdrop-filter:blur(10px);
+  border-bottom:1px solid var(--line);
+}
+.legalbar__brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--cream);font-family:"Space Grotesk",sans-serif;font-weight:600;font-size:15px;}
+.legalbar__brand img{width:26px;height:26px;border-radius:6px;}
+.legalbar__back{
+  display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--cream-dim);
+  text-decoration:none;border:1px solid var(--line);padding:7px 14px;border-radius:999px;
+  transition:border-color .2s, color .2s;
+}
+.legalbar__back:hover{border-color:var(--brass-dim);color:var(--brass-soft);}
 
-  .legal__eyebrow{
-    display:flex;align-items:center;gap:10px;
-    font-family:"IBM Plex Mono",monospace;font-size:12px;letter-spacing:.08em;
-    text-transform:uppercase;color:var(--brass);margin-bottom:18px;
-  }
-  .legal__eyebrow .dot{width:6px;height:6px;border-radius:50%;background:var(--brass);}
+/* ---------- hero ---------- */
+.lhero{
+  position:relative;overflow:hidden;
+  padding:64px clamp(20px,5vw,64px) 56px;
+  border-bottom:1px solid var(--line);
+}
+.lhero::before{
+  content:"";position:absolute;inset:0;
+  background:
+    radial-gradient(560px 320px at 88% -10%, rgba(202,160,87,.14), transparent 70%),
+    radial-gradient(420px 300px at 100% 100%, rgba(74,154,131,.08), transparent 70%);
+  pointer-events:none;
+}
+.lhero__inner{position:relative;max-width:1180px;margin:0 auto;display:grid;grid-template-columns:1.3fr auto;gap:40px;align-items:center;}
+.lhero__eyebrow{
+  display:inline-flex;align-items:center;gap:8px;
+  font-family:"IBM Plex Mono",monospace;font-size:11.5px;letter-spacing:.06em;
+  color:var(--brass);margin-bottom:16px;
+}
+.lhero__eyebrow .dot{width:6px;height:6px;border-radius:50%;background:var(--brass);box-shadow:0 0 8px var(--brass);}
+.lhero h1{
+  font-family:"Space Grotesk",sans-serif;font-weight:700;
+  font-size:clamp(32px,5vw,50px);line-height:1.08;margin:0 0 16px;max-width:14ch;
+}
+.lhero p{font-size:16px;line-height:1.65;color:var(--cream-dim);max-width:52ch;margin:0 0 22px;}
+.lhero__meta{display:flex;flex-wrap:wrap;gap:10px;}
+.lhero__pill{
+  font-family:"IBM Plex Mono",monospace;font-size:11.5px;color:var(--cream-dim);
+  border:1px solid var(--line);padding:6px 12px;border-radius:999px;
+}
 
-  .legal h1{
-    font-family:"Space Grotesk",sans-serif;font-weight:700;
-    font-size:clamp(28px,4vw,42px);line-height:1.15;margin:0 0 12px;
-  }
+.dial{width:150px;height:150px;flex:none;}
+.dial circle.ring{fill:none;stroke:var(--line);stroke-width:1.4;}
+.dial circle.ring2{fill:none;stroke:var(--brass-dim);stroke-width:1;opacity:.6;}
+.dial .needle{stroke:var(--brass);stroke-width:2.6;stroke-linecap:round;}
+.dial .hub{fill:var(--brass);}
+.dial .tick{stroke:var(--line);stroke-width:1.2;}
 
-  .legal__updated{
-    font-size:13.5px;color:var(--cream-dim);margin:0 0 40px;
-  }
+/* ---------- layout ---------- */
+.lwrap{max-width:1180px;margin:0 auto;padding:52px clamp(20px,5vw,64px) 100px;display:grid;grid-template-columns:250px 1fr;gap:56px;align-items:start;}
 
-  .legal__intro{
-    font-size:16px;line-height:1.7;color:var(--cream-dim);
-    border-left:2px solid var(--brass-dim);padding-left:18px;margin-bottom:52px;
-  }
+.ltoc{position:sticky;top:80px;align-self:start;}
+.ltoc__label{
+  font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--brass-dim);margin:0 0 14px;
+}
+.ltoc ol{list-style:none;margin:0;padding:0;border-left:1px solid var(--line);}
+.ltoc li{position:relative;}
+.ltoc a{
+  display:block;padding:8px 0 8px 18px;font-size:13.5px;color:var(--cream-dim);
+  text-decoration:none;border-left:2px solid transparent;margin-left:-1px;
+  transition:color .18s, border-color .18s;
+}
+.ltoc a:hover{color:var(--cream);}
+.ltoc a.active{color:var(--brass-soft);border-left-color:var(--brass);}
+.ltoc__updated{margin-top:22px;padding-top:18px;border-top:1px solid var(--line);font-size:12px;color:var(--cream-dim);opacity:.75;}
 
-  .legal nav.toc{
-    border:1px solid var(--line);border-radius:14px;padding:20px 22px;
-    margin-bottom:56px;background:rgba(202,160,87,.03);
-  }
-  .legal nav.toc h2{
-    font-family:"IBM Plex Mono",monospace;font-size:11.5px;letter-spacing:.08em;
-    text-transform:uppercase;color:var(--brass);margin:0 0 12px;font-weight:600;
-  }
-  .legal nav.toc ol{margin:0;padding-left:20px;columns:2;gap:24px;}
-  .legal nav.toc li{margin-bottom:8px;font-size:13.5px;}
-  .legal nav.toc a{color:var(--cream-dim);text-decoration:none;border-bottom:1px dashed transparent;}
-  .legal nav.toc a:hover{color:var(--brass);border-bottom-color:var(--brass-dim);}
+.lmain{min-width:0;}
 
-  .legal section{margin-bottom:44px;scroll-margin-top:28px;}
-  .legal section h2{
-    font-family:"Space Grotesk",sans-serif;font-weight:600;font-size:20px;
-    display:flex;align-items:baseline;gap:10px;margin:0 0 14px;
-  }
-  .legal section h2 .n{
-    font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--brass);opacity:.8;
-  }
-  .legal section p{font-size:14.5px;line-height:1.75;color:var(--cream-dim);margin:0 0 14px;}
-  .legal section p strong{color:var(--cream);font-weight:600;}
-  .legal section ul{margin:0 0 14px;padding-left:20px;}
-  .legal section li{font-size:14.5px;line-height:1.7;color:var(--cream-dim);margin-bottom:8px;}
-  .legal section li strong{color:var(--cream);}
+.lintro{
+  font-size:15px;line-height:1.75;color:var(--cream-dim);
+  padding:20px 24px;border-radius:16px;background:var(--panel);
+  border:1px solid var(--line);margin-bottom:44px;
+}
+.lintro strong{color:var(--cream);}
 
-  .card-row{
-    display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-    gap:14px;margin:18px 0 8px;
-  }
-  .card{
-    border:1px solid var(--line);border-radius:12px;padding:16px 18px;
-    background:rgba(255,255,255,.015);
-  }
-  .card b{display:block;font-family:"Space Grotesk",sans-serif;font-size:14px;margin-bottom:6px;color:var(--cream);}
-  .card span{font-size:13px;color:var(--cream-dim);line-height:1.6;}
-  .card.yes{border-color:rgba(111,191,115,.3);}
-  .card.yes b{color:#6fbf73;}
-  .card.no{border-color:rgba(224,110,110,.25);}
-  .card.no b{color:#e08c8c;}
+/* ---------- summary cards ---------- */
+.card-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px;margin:22px 0 8px;}
+.card{
+  position:relative;border:1px solid var(--line);border-radius:16px;padding:18px 18px 16px;
+  background:linear-gradient(180deg, var(--panel), var(--panel-2));
+  overflow:hidden;
+}
+.card::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;}
+.card.on::before{background:var(--patina);}
+.card.info::before{background:var(--brass);}
+.card__icon{width:30px;height:30px;margin-bottom:12px;color:var(--brass);}
+.card.on .card__icon{color:var(--patina);}
+.card b{display:block;font-family:"Space Grotesk",sans-serif;font-size:14.5px;margin-bottom:6px;color:var(--cream);}
+.card span{font-size:12.8px;color:var(--cream-dim);line-height:1.55;}
 
-  .legal table{width:100%;border-collapse:collapse;margin:16px 0 8px;font-size:13.5px;}
-  .legal th,.legal td{text-align:left;padding:10px 14px;border-bottom:1px solid var(--line);}
-  .legal thead th{
-    font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.05em;
-    text-transform:uppercase;color:var(--brass);font-weight:600;
-  }
-  .legal td{color:var(--cream-dim);}
-  .legal tbody tr:last-child td{border-bottom:none;}
+/* ---------- sections ---------- */
+.lsection{margin-bottom:0;scroll-margin-top:96px;}
+.lsection + .lsection{border-top:1px solid var(--line);padding-top:40px;margin-top:40px;}
 
-  .contact-box{
-    border:1px solid var(--brass-dim);border-radius:14px;padding:24px;
-    background:rgba(202,160,87,.05);margin-top:8px;
-  }
-  .contact-box h2{margin-top:0;}
-  .contact-box a.mail{
-    display:inline-flex;align-items:center;gap:8px;margin-top:8px;
-    color:var(--brass);text-decoration:none;font-weight:600;font-size:14px;
-    border-bottom:1px dashed var(--brass-dim);
-  }
-  .contact-box a.mail:hover{opacity:.85;}
+.lsection__head{display:flex;align-items:flex-start;gap:14px;margin-bottom:16px;}
+.lsection__icon{
+  flex:none;width:40px;height:40px;border-radius:11px;
+  display:flex;align-items:center;justify-content:center;
+  background:rgba(202,160,87,.08);border:1px solid var(--line);color:var(--brass);
+}
+.lsection__icon svg{width:19px;height:19px;}
+.lsection h2{font-family:"Space Grotesk",sans-serif;font-weight:600;font-size:21px;margin:2px 0 0;color:var(--cream);}
 
-  .legal .back{
-    display:inline-flex;align-items:center;gap:8px;margin-bottom:36px;
-    font-size:13.5px;color:var(--cream-dim);text-decoration:none;
-  }
-  .legal .back:hover{color:var(--brass);}
+.lsection p{font-size:14.5px;line-height:1.8;color:var(--cream-dim);margin:0 0 14px;max-width:66ch;}
+.lsection p strong{color:var(--cream);font-weight:600;}
+.lsection ul{margin:0 0 6px;padding:0;list-style:none;max-width:66ch;}
+.lsection ul li{
+  position:relative;padding:0 0 12px 22px;font-size:14.5px;line-height:1.7;color:var(--cream-dim);
+}
+.lsection ul li::before{
+  content:"";position:absolute;left:0;top:8px;width:7px;height:7px;border-radius:2px;
+  background:var(--brass-dim);transform:rotate(45deg);
+}
+.lsection ul li strong{color:var(--cream);}
 
-  @media (max-width:600px){
-    .legal nav.toc ol{columns:1;}
-  }
+/* ---------- table ---------- */
+.ltable{overflow-x:auto;margin:18px 0 6px;border:1px solid var(--line);border-radius:14px;}
+.ltable table{width:100%;border-collapse:collapse;min-width:520px;font-size:13.5px;}
+.ltable th,.ltable td{text-align:left;padding:13px 16px;border-bottom:1px solid var(--line);}
+.ltable thead th{
+  font-family:"IBM Plex Mono",monospace;font-size:10.8px;letter-spacing:.05em;text-transform:uppercase;
+  color:var(--brass);font-weight:600;background:rgba(202,160,87,.05);
+}
+.ltable td{color:var(--cream-dim);}
+.ltable td:first-child{color:var(--cream);font-weight:500;}
+.ltable tbody tr:last-child td{border-bottom:none;}
+.ltable tbody tr:hover{background:rgba(202,160,87,.035);}
+
+/* ---------- contact ---------- */
+.lcontact{
+  margin-top:40px;border-radius:18px;padding:28px clamp(20px,4vw,34px);
+  background:radial-gradient(480px 220px at 100% 0%, rgba(202,160,87,.1), transparent 70%), var(--panel);
+  border:1px solid var(--brass-dim);
+  display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:20px;
+}
+.lcontact__text h2{margin:0 0 6px;font-family:"Space Grotesk",sans-serif;font-size:19px;}
+.lcontact__text p{margin:0;font-size:14px;color:var(--cream-dim);max-width:46ch;}
+.lcontact__cta{
+  flex:none;display:inline-flex;align-items:center;gap:8px;
+  background:var(--brass);color:#1a1207;font-weight:600;font-size:13.5px;
+  padding:12px 20px;border-radius:11px;text-decoration:none;white-space:nowrap;
+  transition:transform .15s, box-shadow .15s;
+}
+.lcontact__cta:hover{transform:translateY(-1px);box-shadow:0 10px 24px -12px rgba(202,160,87,.5);}
+
+/* ---------- footer ---------- */
+.lfoot{
+  border-top:1px solid var(--line);padding:26px clamp(20px,5vw,64px) 40px;
+  display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;justify-content:space-between;
+  font-size:12.5px;color:var(--cream-dim);opacity:.8;max-width:1180px;margin:0 auto;
+}
+.lfoot a{color:var(--cream-dim);text-decoration:none;}
+.lfoot a:hover{color:var(--brass-soft);}
+
+@media (max-width:860px){
+  .lwrap{grid-template-columns:1fr;}
+  .ltoc{position:static;order:2;border-top:1px solid var(--line);padding-top:26px;margin-top:6px;}
+  .ltoc ol{columns:2;column-gap:24px;border-left:none;}
+  .ltoc a{border-left:none;padding-left:0;}
+  .ltoc a.active{color:var(--brass-soft);}
+  .lhero__inner{grid-template-columns:1fr;}
+  .dial{display:none;}
+}
+@media (max-width:520px){
+  .ltoc ol{columns:1;}
+}
 </style>
 </head>
 <body>
 
-<main class="legal">
-  <a class="back" href="index.html">&larr; Volver a NexusMusic</a>
+<div class="legalbar">
+  <a class="legalbar__brand" href="/">
+    <img src="assets/Nexus-logo.png" alt="">
+    NexusMusic
+  </a>
+  <a class="legalbar__back" href="/">← Volver al inicio</a>
+</div>
 
-  <div class="legal__eyebrow"><span class="dot"></span> Legal · NexusMusic</div>
-  <h1>Política de privacidad</h1>
-  <p class="legal__updated">Última actualización: septiembre de 2026 · Aplica a la app NexusMusic y a esta web.</p>
+<header class="lhero">
+  <div class="lhero__inner">
+    <div>
+      <div class="lhero__eyebrow"><span class="dot"></span> Legal · NexusMusic</div>
+      <h1>Tu música, sin que nadie mire por encima del hombro</h1>
+      <p>No pedimos cuenta para escuchar, no hay rastreadores de publicidad y las estadísticas que se recogen son anónimas y apagables. Acá está todo, explicado en lenguaje simple.</p>
+      <div class="lhero__meta">
+        <span class="lhero__pill">Última actualización: septiembre de 2026</span>
+        <span class="lhero__pill">Aplica a la app y a esta web</span>
+      </div>
+    </div>
+    <svg class="dial" viewBox="0 0 160 160" aria-hidden="true">
+      <circle class="ring" cx="80" cy="80" r="70"/>
+      <circle class="ring2" cx="80" cy="80" r="54"/>
+      <g class="tick">
+        <line x1="80" y1="14" x2="80" y2="24"/>
+        <line x1="80" y1="146" x2="80" y2="136"/>
+        <line x1="14" y1="80" x2="24" y2="80"/>
+        <line x1="146" y1="80" x2="136" y2="80"/>
+      </g>
+      <line class="needle" x1="80" y1="80" x2="80" y2="34"/>
+      <circle class="hub" cx="80" cy="80" r="5"/>
+    </svg>
+  </div>
+</header>
 
-  <p class="legal__intro">
-    NexusMusic está pensada para funcionar sin pedirte casi nada. No hace falta cuenta para escuchar,
-    no hay rastreadores de publicidad y las estadísticas que se recogen son anónimas. Este documento
-    explica, en lenguaje simple, qué datos entran en juego y para qué se usan.
-  </p>
+<div class="lwrap">
 
-  <nav class="toc" aria-label="Contenido">
-    <h2>Contenido</h2>
-    <ol>
+  <nav class="ltoc" aria-label="Contenido">
+    <p class="ltoc__label">En esta página</p>
+    <ol id="toc-list">
       <li><a href="#resumen">Resumen rápido</a></li>
       <li><a href="#datos">Qué datos se recogen</a></li>
-      <li><a href="#cuenta">Cuenta de Nexus Forge y login de YouTube Music</a></li>
-      <li><a href="#salas">Salas de "escuchar juntos"</a></li>
-      <li><a href="#descargas">Descargas y almacenamiento local</a></li>
+      <li><a href="#cuenta">Cuenta y login de YTM</a></li>
+      <li><a href="#salas">Salas de escuchar juntos</a></li>
+      <li><a href="#descargas">Descargas locales</a></li>
       <li><a href="#terceros">Servicios de terceros</a></li>
-      <li><a href="#importaciones">Importación desde otras plataformas</a></li>
-      <li><a href="#menores">Uso por menores de edad</a></li>
-      <li><a href="#derechos">Tus derechos y el control que tenés</a></li>
-      <li><a href="#cambios">Cambios en esta política</a></li>
+      <li><a href="#importaciones">Importaciones</a></li>
+      <li><a href="#menores">Menores de edad</a></li>
+      <li><a href="#derechos">Tus derechos</a></li>
+      <li><a href="#cambios">Cambios futuros</a></li>
       <li><a href="#contacto">Contacto</a></li>
     </ol>
+    <p class="ltoc__updated">NexusMusic es un proyecto de Nexus Forge (Nexus Studios).</p>
   </nav>
 
-  <section id="resumen">
-    <h2><span class="n">§01</span> Resumen rápido</h2>
-    <p>Si no querés leer todo el documento, esto es lo esencial:</p>
-    <div class="card-row">
-      <div class="card yes"><b>Sin cuenta obligatoria</b><span>Podés usar la app sin registrarte. La cuenta de Nexus Forge y el login de YouTube Music son opcionales.</span></div>
-      <div class="card yes"><b>Sin publicidad</b><span>No hay anuncios ni redes publicitarias, así que no compartimos datos con ese fin.</span></div>
-      <div class="card yes"><b>Estadísticas anónimas y apagables</b><span>Se pueden desactivar desde Ajustes en cualquier momento.</span></div>
-      <div class="card no"><b>Fotos de perfil en salas</b><span>Se comparten solo con la otra persona de la sala, no se suben a ningún servidor.</span></div>
-    </div>
-  </section>
+  <main class="lmain">
 
-  <section id="datos">
-    <h2><span class="n">§02</span> Qué datos se recogen</h2>
-    <p>NexusMusic separa lo que pasa <strong>en tu teléfono</strong> de lo que se envía a un servidor:</p>
-    <ul>
-      <li><strong>Uso local (nunca sale de tu dispositivo):</strong> tu biblioteca, descargas, historial de reproducción, letras guardadas y preferencias de la app.</li>
-      <li><strong>Estadísticas anónimas (opcionales):</strong> conteos de uso general de funciones, sin identificarte, para saber qué partes de la app se usan más. Se apagan desde Ajustes → Privacidad.</li>
-      <li><strong>Datos de cuenta (solo si iniciás sesión):</strong> ver la sección siguiente.</li>
-      <li><strong>Datos técnicos mínimos:</strong> versión de la app y del sistema operativo, únicamente para poder mostrarte actualizaciones compatibles.</li>
-    </ul>
-    <p>No recogemos ubicación precisa, contactos, ni acceso a archivos fuera de lo necesario para las descargas.</p>
-  </section>
-
-  <section id="cuenta">
-    <h2><span class="n">§03</span> Cuenta de Nexus Forge y login de YouTube Music</h2>
-    <p>
-      Iniciar sesión es opcional y solo se activa si vos lo elegís desde la app:
+    <p class="lintro">
+      NexusMusic está pensada para funcionar <strong>sin pedirte casi nada</strong>. Esta política separa con
+      claridad lo que se queda en tu teléfono de lo que efectivamente sale hacia algún servidor, y por qué.
     </p>
-    <ul>
-      <li><strong>Con tu cuenta de Nexus Forge:</strong> se guarda tu biblioteca en la nube del ecosistema Nexus Forge, junto con comentarios que dejes en canciones y a los artistas que sigas. Esta información la administra Nexus Forge (Nexus Studios), propietario del proyecto.</li>
-      <li><strong>Con tu cuenta de YouTube Music:</strong> NexusMusic solo usa esa sesión para mostrar tus playlists, "me gusta" e historial existentes, tal como lo haría la app oficial. No accedemos a tu correo ni a datos de Google fuera de tu biblioteca musical.</li>
-    </ul>
-    <p>Podés cerrar sesión o borrar tu cuenta de Nexus Forge en cualquier momento desde la app o la web de Nexus Forge.</p>
-  </section>
 
-  <section id="salas">
-    <h2><span class="n">§04</span> Salas de "escuchar juntos"</h2>
-    <p>
-      Cuando creás o entrás a una sala, el código de sala y los eventos de reproducción (pausa, cambio de canción,
-      búsqueda) se transmiten en tiempo real entre los participantes para mantenerlos sincronizados.
-    </p>
-    <ul>
-      <li><strong>Foto de perfil de sala:</strong> se toma de tu teléfono, se recorta y se muestra solo a la otra persona conectada. No se guarda en ningún servidor y se borra al salir de la sala.</li>
-      <li><strong>Chat de la sala:</strong> los mensajes viven mientras la sala está activa y no se conservan como historial permanente.</li>
-      <li>Nadie fuera de la sala puede ver lo que se comparte dentro de ella.</li>
-    </ul>
-  </section>
+    <section class="lsection" id="resumen">
+      <div class="lsection__head">
+        <span class="lsection__icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l4 4 10-10"/></svg>
+        </span>
+        <h2>Resumen rápido</h2>
+      </div>
+      <p>Si no querés leer todo el documento, esto es lo esencial:</p>
+      <div class="card-row">
+        <div class="card on">
+          <span class="card__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.4"/><path d="M5 20c1.2-3.8 4-5.5 7-5.5s5.8 1.7 7 5.5" stroke-dasharray="2 2.2"/></svg></span>
+          <b>Sin cuenta obligatoria</b>
+          <span>La cuenta de Nexus Forge y el login de YouTube Music son opcionales.</span>
+        </div>
+        <div class="card on">
+          <span class="card__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10v4h4l5 4V6l-5 4H3z"/><line x1="17" y1="9" x2="21" y2="15"/><line x1="21" y1="9" x2="17" y2="15"/></svg></span>
+          <b>Sin publicidad</b>
+          <span>No hay anuncios ni redes publicitarias: no hay con quién compartir tus datos para eso.</span>
+        </div>
+        <div class="card on">
+          <span class="card__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19V9M10 19V5M16 19v-7M22 19H2"/></svg></span>
+          <b>Estadísticas anónimas y apagables</b>
+          <span>Se desactivan desde Ajustes cuando quieras, sin dejar de usar la app.</span>
+        </div>
+        <div class="card info">
+          <span class="card__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="3"/><circle cx="12" cy="12" r="3.2"/></svg></span>
+          <b>Fotos de perfil en salas</b>
+          <span>Se ven solo entre los dos de la sala; jamás se suben a un servidor.</span>
+        </div>
+      </div>
+    </section>
 
-  <section id="descargas">
-    <h2><span class="n">§05</span> Descargas y almacenamiento local</h2>
-    <p>
-      Las canciones descargadas para escuchar sin conexión se guardan cifradas en el almacenamiento de tu propio
-      dispositivo. No se suben a ningún servidor de NexusMusic ni se comparten con terceros. Si desinstalás la
-      app o borrás sus datos, las descargas se eliminan junto con todo lo demás guardado localmente.
-    </p>
-  </section>
+    <section class="lsection" id="datos">
+      <div class="lsection__head">
+        <span class="lsection__icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v6c0 1.7 3.6 3 8 3s8-1.3 8-3V5"/><path d="M4 11v6c0 1.7 3.6 3 8 3s8-1.3 8-3v-6"/></svg>
+        </span>
+        <h2>Qué datos se recogen</h2>
+      </div>
+      <p>NexusMusic separa lo que pasa <strong>en tu teléfono</strong> de lo que se envía a un servidor:</p>
+      <ul>
+        <li><strong>Uso local, nunca sale de tu dispositivo:</strong> tu biblioteca, descargas, historial de reproducción, letras guardadas y preferencias de la app.</li>
+        <li><strong>Estadísticas anónimas, opcionales:</strong> conteos de uso general de funciones, sin identificarte, para saber qué partes de la app se usan más. Se apagan desde Ajustes → Privacidad.</li>
+        <li><strong>Datos de cuenta, solo si iniciás sesión:</strong> ver la sección siguiente.</li>
+        <li><strong>Datos técnicos mínimos:</strong> versión de la app y del sistema operativo, únicamente para mostrarte actualizaciones compatibles.</li>
+      </ul>
+      <p>No recogemos ubicación precisa, contactos, ni acceso a archivos fuera de lo necesario para las descargas.</p>
+    </section>
 
-  <section id="terceros">
-    <h2><span class="n">§06</span> Servicios de terceros</h2>
-    <p>NexusMusic depende de algunos servicios externos para funcionar. Así se relaciona con cada uno:</p>
-    <table>
-      <thead>
-        <tr><th>Servicio</th><th>Para qué se usa</th><th>Qué recibe</th></tr>
-      </thead>
-      <tbody>
-        <tr><td>YouTube Music</td><td>Fuente del catálogo musical y, si iniciás sesión, tu biblioteca</td><td>Tus solicitudes de reproducción y, si te logueás, tu sesión</td></tr>
-        <tr><td>Proveedores de letras</td><td>Mostrar letras sincronizadas</td><td>Título y artista de la canción en reproducción</td></tr>
-        <tr><td>GitHub Releases</td><td>Distribuir el APK y el registro de cambios</td><td>Nada personal; es una descarga pública</td></tr>
-        <tr><td>Nexus Forge</td><td>Cuenta, nube, comentarios, Nexus+ / Nexus Coins</td><td>Solo si iniciás sesión con esa cuenta</td></tr>
-      </tbody>
-    </table>
-    <p>No vendemos ni compartimos tus datos con redes de publicidad, porque simplemente no las usamos.</p>
-  </section>
+    <section class="lsection" id="cuenta">
+      <div class="lsection__head">
+        <span class="lsection__icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.6"/><path d="M4.5 20c1.4-4.2 4.4-6 7.5-6s6.1 1.8 7.5 6"/></svg>
+        </span>
+        <h2>Cuenta de Nexus Forge y login de YouTube Music</h2>
+      </div>
+      <p>Iniciar sesión es opcional y solo se activa si vos lo elegís desde la app:</p>
+      <ul>
+        <li><strong>Con tu cuenta de Nexus Forge:</strong> se guarda tu biblioteca en la nube del ecosistema Nexus Forge, junto con comentarios que dejes en canciones y a los artistas que sigas. Lo administra Nexus Forge (Nexus Studios), propietario del proyecto.</li>
+        <li><strong>Con tu cuenta de YouTube Music:</strong> se usa solo para mostrar tus playlists, "me gusta" e historial existentes, tal como la app oficial. No accedemos a tu correo ni a datos de Google fuera de tu biblioteca musical.</li>
+      </ul>
+      <p>Podés cerrar sesión o borrar tu cuenta de Nexus Forge en cualquier momento desde la app o la web de Nexus Forge.</p>
+    </section>
 
-  <section id="importaciones">
-    <h2><span class="n">§07</span> Importación desde otras plataformas</h2>
-    <p>
-      Si usás la importación desde Spotify (con inicio de sesión) o SoundCloud (por URL), esa conexión se usa
-      únicamente para leer la lista de canciones que querés traer a NexusMusic. No publicamos nada en esas
-      cuentas ni accedemos a datos que no sean tus playlists.
-    </p>
-  </section>
+    <section class="lsection" id="salas">
+      <div class="lsection__head">
+        <span class="lsection__icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="9" r="3.2"/><circle cx="17" cy="9" r="3.2"/><path d="M3 19c.8-2.8 2.6-4 5-4s4.2 1.2 5 4M11 19c.8-2.8 2.6-4 5-4s4.2 1.2 5 4"/></svg>
+        </span>
+        <h2>Salas de "escuchar juntos"</h2>
+      </div>
+      <p>Al crear o entrar a una sala, el código y los eventos de reproducción (pausa, cambio de canción, búsqueda) se transmiten en tiempo real entre los participantes para mantenerlos sincronizados.</p>
+      <ul>
+        <li><strong>Foto de perfil de sala:</strong> se toma de tu teléfono, se recorta y se muestra solo a la otra persona conectada. No se guarda en ningún servidor y se borra al salir de la sala.</li>
+        <li><strong>Chat de la sala:</strong> los mensajes viven mientras la sala está activa, sin quedar como historial permanente.</li>
+        <li>Nadie fuera de la sala puede ver lo que se comparte dentro de ella.</li>
+      </ul>
+    </section>
 
-  <section id="menores">
-    <h2><span class="n">§08</span> Uso por menores de edad</h2>
-    <p>
-      NexusMusic no pide edad ni datos de identificación para usarse sin cuenta. Las funciones que sí requieren
-      cuenta (comentarios, perfil social, salas) están pensadas para un uso responsable; si sos padre, madre o
-      tutor y creés que un menor a tu cargo usó estas funciones de forma inapropiada, podés escribirnos por el
-      contacto de abajo.
-    </p>
-  </section>
+    <section class="lsection" id="descargas">
+      <div class="lsection__head">
+        <span class="lsection__icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0-4-4m4 4 4-4"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
+        </span>
+        <h2>Descargas y almacenamiento local</h2>
+      </div>
+      <p>Las canciones descargadas para escuchar sin conexión se guardan cifradas en el almacenamiento de tu propio dispositivo. No se suben a ningún servidor de NexusMusic ni se comparten con terceros. Si desinstalás la app o borrás sus datos, las descargas se eliminan junto con todo lo demás guardado localmente.</p>
+    </section>
 
-  <section id="derechos">
-    <h2><span class="n">§09</span> Tus derechos y el control que tenés</h2>
-    <ul>
-      <li><strong>Apagar estadísticas:</strong> desde Ajustes → Privacidad, en cualquier momento.</li>
-      <li><strong>Borrar tu cuenta de Nexus Forge:</strong> elimina tu biblioteca en la nube, comentarios y datos asociados.</li>
-      <li><strong>Borrar datos locales:</strong> desinstalando la app o limpiando su almacenamiento desde los ajustes del sistema.</li>
-      <li><strong>Usar la app sin dejar rastro de cuenta:</strong> es el modo por defecto; nada te obliga a loguearte.</li>
-    </ul>
-  </section>
+    <section class="lsection" id="terceros">
+      <div class="lsection__head">
+        <span class="lsection__icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.4 2.4 3.6 5.6 3.6 9s-1.2 6.6-3.6 9c-2.4-2.4-3.6-5.6-3.6-9S9.6 5.4 12 3z"/></svg>
+        </span>
+        <h2>Servicios de terceros</h2>
+      </div>
+      <p>NexusMusic depende de algunos servicios externos para funcionar. Así se relaciona con cada uno:</p>
+      <div class="ltable">
+        <table>
+          <thead>
+            <tr><th>Servicio</th><th>Para qué se usa</th><th>Qué recibe</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>YouTube Music</td><td>Catálogo musical y, si iniciás sesión, tu biblioteca</td><td>Tus solicitudes de reproducción y, si te logueás, tu sesión</td></tr>
+            <tr><td>Proveedores de letras</td><td>Mostrar letras sincronizadas</td><td>Título y artista de la canción en reproducción</td></tr>
+            <tr><td>Distribución del APK</td><td>Publicar cada versión nueva</td><td>Nada personal; es una descarga pública</td></tr>
+            <tr><td>Nexus Forge</td><td>Cuenta, nube, comentarios, Nexus+ / Nexus Coins</td><td>Solo si iniciás sesión con esa cuenta</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p style="margin-top:14px">No vendemos ni compartimos tus datos con redes de publicidad, porque simplemente no las usamos.</p>
+    </section>
 
-  <section id="cambios">
-    <h2><span class="n">§10</span> Cambios en esta política</h2>
-    <p>
-      Si esta política cambia de forma relevante, se va a reflejar en la fecha de "última actualización" en la
-      parte de arriba y, cuando el cambio sea significativo, se va a avisar dentro de la app o en el registro de
-      cambios de la web.
-    </p>
-  </section>
+    <section class="lsection" id="importaciones">
+      <div class="lsection__head">
+        <span class="lsection__icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11m0 0-3.5-3.5M12 15l3.5-3.5"/><path d="M5 19h14"/></svg>
+        </span>
+        <h2>Importación desde otras plataformas</h2>
+      </div>
+      <p>Si usás la importación desde Spotify (con inicio de sesión) o SoundCloud (por URL), esa conexión se usa únicamente para leer la lista de canciones que querés traer a NexusMusic. No publicamos nada en esas cuentas ni accedemos a datos que no sean tus playlists.</p>
+    </section>
 
-  <section id="contacto">
-    <div class="contact-box">
-      <h2 style="margin-bottom:6px;"><span class="n">§11</span> Contacto</h2>
-      <p style="margin-bottom:4px;">
-        ¿Dudas sobre esta política o sobre tus datos? Escribinos por Discord o a través de la web de Nexus Forge.
-      </p>
-      <a class="mail" href="https://nexusforgex.vercel.app" target="_blank" rel="noopener noreferrer">
-        Ir a Nexus Forge →
+    <section class="lsection" id="menores">
+      <div class="lsection__head">
+        <span class="lsection__icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 3 7.5v5C3 17.5 7 21 12 21s9-3.5 9-8.5v-5L12 3z"/></svg>
+        </span>
+        <h2>Uso por menores de edad</h2>
+      </div>
+      <p>NexusMusic no pide edad ni datos de identificación para usarse sin cuenta. Las funciones que sí requieren cuenta (comentarios, perfil social, salas) están pensadas para un uso responsable; si sos padre, madre o tutor y creés que un menor a tu cargo usó estas funciones de forma inapropiada, podés escribirnos por el contacto de abajo.</p>
+    </section>
+
+    <section class="lsection" id="derechos">
+      <div class="lsection__head">
+        <span class="lsection__icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg>
+        </span>
+        <h2>Tus derechos y el control que tenés</h2>
+      </div>
+      <ul>
+        <li><strong>Apagar estadísticas:</strong> desde Ajustes → Privacidad, en cualquier momento.</li>
+        <li><strong>Borrar tu cuenta de Nexus Forge:</strong> elimina tu biblioteca en la nube, comentarios y datos asociados.</li>
+        <li><strong>Borrar datos locales:</strong> desinstalando la app o limpiando su almacenamiento desde los ajustes del sistema.</li>
+        <li><strong>Usar la app sin dejar rastro de cuenta:</strong> es el modo por defecto; nada te obliga a loguearte.</li>
+      </ul>
+    </section>
+
+    <section class="lsection" id="cambios">
+      <div class="lsection__head">
+        <span class="lsection__icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-3-6.7"/><path d="M21 4v5h-5"/></svg>
+        </span>
+        <h2>Cambios en esta política</h2>
+      </div>
+      <p>Si esta política cambia de forma relevante, se va a reflejar en la fecha de "última actualización" de arriba y, cuando el cambio sea significativo, se va a avisar dentro de la app o en el registro de cambios de la web.</p>
+    </section>
+
+    <section id="contacto" class="lcontact">
+      <div class="lcontact__text">
+        <h2>¿Dudas sobre esta política?</h2>
+        <p>Escribinos por Discord o a través de la web de Nexus Forge y te respondemos.</p>
+      </div>
+      <a class="lcontact__cta" href="https://nexusforgex.vercel.app" target="_blank" rel="noopener noreferrer">
+        Ir a Nexus Forge
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M9 7h8v8"/></svg>
       </a>
-    </div>
-  </section>
-</main>
+    </section>
 
+  </main>
+</div>
+
+<footer class="lfoot">
+  <span>NexusMusic — un proyecto de <a href="https://nexusforgex.vercel.app" target="_blank" rel="noopener noreferrer">Nexus Forge</a></span>
+  <a href="/">Volver al inicio</a>
+</footer>
+
+<script>
+  (function(){
+    var links = Array.prototype.slice.call(document.querySelectorAll('#toc-list a'));
+    var sections = links.map(function(a){ return document.querySelector(a.getAttribute('href')); }).filter(Boolean);
+    if (!('IntersectionObserver' in window) || !sections.length) return;
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(entry){
+        var id = '#' + entry.target.id;
+        var link = links.find(function(a){ return a.getAttribute('href') === id; });
+        if (!link) return;
+        if (entry.isIntersecting) {
+          links.forEach(function(a){ a.classList.remove('active'); });
+          link.classList.add('active');
+        }
+      });
+    }, { rootMargin: '-20% 0px -70% 0px', threshold: 0 });
+    sections.forEach(function(s){ io.observe(s); });
+  })();
+</script>
 </body>
 </html>
