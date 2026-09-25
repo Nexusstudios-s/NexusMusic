@@ -331,6 +331,73 @@
     });
   }
 
+  /* ── Visor de capturas: clic en las fotos del teléfono para ampliarlas ── */
+  (function () {
+    var shots = document.querySelectorAll(".phone__screen img");
+    if (!shots.length) return;
+
+    var lightbox = document.createElement("div");
+    lightbox.className = "lightbox";
+    lightbox.setAttribute("role", "dialog");
+    lightbox.setAttribute("aria-modal", "true");
+    lightbox.setAttribute("aria-hidden", "true");
+    lightbox.innerHTML =
+      '<div class="lightbox__frame">' +
+        '<span class="lightbox__corner tl" aria-hidden="true"></span>' +
+        '<span class="lightbox__corner tr" aria-hidden="true"></span>' +
+        '<span class="lightbox__corner bl" aria-hidden="true"></span>' +
+        '<span class="lightbox__corner br" aria-hidden="true"></span>' +
+        '<button type="button" class="lightbox__close" aria-label="Cerrar">' +
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>' +
+        '</button>' +
+        '<div class="lightbox__screen"><img alt=""></div>' +
+        '<div class="lightbox__caption"></div>' +
+      '</div>';
+    document.body.appendChild(lightbox);
+
+    var frameImg = lightbox.querySelector(".lightbox__screen img");
+    var caption = lightbox.querySelector(".lightbox__caption");
+    var closeBtn = lightbox.querySelector(".lightbox__close");
+    var lastFocused = null;
+
+    function openLightbox(img) {
+      var card = img.closest(".phone-card");
+      var figcap = card ? card.querySelector("figcaption") : null;
+      frameImg.src = img.currentSrc || img.src;
+      frameImg.alt = img.alt || "";
+      caption.textContent = figcap ? figcap.textContent : "";
+      lastFocused = document.activeElement;
+      lightbox.classList.add("is-open");
+      lightbox.setAttribute("aria-hidden", "false");
+      document.body.style.overflow = "hidden";
+      closeBtn.focus();
+    }
+
+    function closeLightbox() {
+      lightbox.classList.remove("is-open");
+      lightbox.setAttribute("aria-hidden", "true");
+      document.body.style.overflow = "";
+      if (lastFocused && lastFocused.focus) lastFocused.focus();
+    }
+
+    Array.prototype.forEach.call(shots, function (img) {
+      img.setAttribute("tabindex", "0");
+      img.setAttribute("role", "button");
+      img.addEventListener("click", function () { openLightbox(img); });
+      img.addEventListener("keydown", function (e) {
+        if (e.key === "Enter" || e.key === " ") { e.preventDefault(); openLightbox(img); }
+      });
+    });
+
+    closeBtn.addEventListener("click", closeLightbox);
+    lightbox.addEventListener("click", function (e) {
+      if (e.target === lightbox) closeLightbox();
+    });
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape" && lightbox.classList.contains("is-open")) closeLightbox();
+    });
+  })();
+
         document.addEventListener('contextmenu', (e) => e.preventDefault());
         document.addEventListener('keydown', (e) => {
             if (e.key === 'F12' ||
