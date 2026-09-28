@@ -63,6 +63,40 @@
   .cert__logos img[alt="VirusTotal"]{background:transparent}
   .cert__link{display:inline-flex;align-items:center;gap:6px;margin-top:10px;font-size:13px;color:var(--brass,#caa057);text-decoration:none;border-bottom:1px dashed var(--brass-dim,#8a7550)}
   .cert__link:hover{opacity:.8}
+
+  /* ---------- tiendas / dónde encontrarnos ---------- */
+  .stores{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:18px;margin-top:24px}
+  .store-card{
+    position:relative;overflow:hidden;border:1px solid var(--line,#2a241c);border-radius:16px;
+    padding:20px 20px 18px;background:linear-gradient(180deg,var(--panel,#1b160f),var(--panel-2,#221b12));
+    text-decoration:none;color:inherit;display:flex;flex-direction:column;gap:12px;
+    transition:transform .18s ease,border-color .18s ease,box-shadow .18s ease;
+  }
+  .store-card--live{cursor:pointer}
+  .store-card--live:hover{transform:translateY(-3px);border-color:var(--brass-dim,#8c6a2c);box-shadow:0 14px 30px -18px rgba(214,160,63,.55)}
+  .store-card--soon{opacity:.72;cursor:default}
+  .store-card__top{display:flex;align-items:center;justify-content:space-between;gap:10px}
+  .store-card__icon{
+    width:42px;height:42px;border-radius:12px;flex:none;
+    display:flex;align-items:center;justify-content:center;
+    background:rgba(214,160,63,.08);border:1px solid var(--line,#2a241c);color:var(--brass,#d6a03f);
+    font-family:"Space Grotesk",sans-serif;font-weight:700;font-size:16px;
+  }
+  .store-card__status{
+    font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.05em;text-transform:uppercase;
+    padding:5px 10px;border-radius:999px;white-space:nowrap;
+  }
+  .store-card--live .store-card__status{background:rgba(63,132,113,.16);color:var(--patina,#3f8471);border:1px solid var(--patina-dim,#2a5c4e)}
+  .store-card--soon .store-card__status{background:rgba(243,236,220,.06);color:var(--cream-dim,#cabfa4);border:1px solid var(--line,#2a241c)}
+  .store-card__name{font-family:"Space Grotesk",sans-serif;font-weight:600;font-size:16.5px;margin:0}
+  .store-card__desc{font-size:13px;line-height:1.55;opacity:.8;margin:0}
+  .store-card__go{
+    display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:600;
+    color:var(--brass,#d6a03f);margin-top:auto;
+  }
+  .store-card--live:hover .store-card__go{gap:9px}
+  .store-card__go svg{transition:transform .18s ease}
+  .store-card--live:hover .store-card__go svg{transform:translate(2px,-2px)}
 </style>
 </head>
 <body>
@@ -685,6 +719,48 @@
           <summary data-i18n="faq.6.q">¿Qué diferencia hay entre Nexus+ y Nexus Coins?</summary>
           <div class="a"><p data-i18n="faq.6.a">El mismo destino, dos caminos: Nexus+ es una membresía que desbloquea la personalización avanzada de una vez, y Nexus Coins la desbloquea de a poco sin suscribirte. Ninguno de los dos quita anuncios, porque acá nunca los hubo.</p></div>
         </details>
+      </div>
+    </div>
+  </section>
+
+
+  <section>
+    <div class="wrap">
+      <div class="chapter reveal"><span class="chapter__n">§07</span><span class="chapter__label" data-i18n="stores.eyebrow">Dónde descargarla</span></div>
+      <h2 class="reveal" data-i18n="stores.title">También nos encuentras aquí</h2>
+      <p class="lead reveal" style="margin-top:10px" data-i18n="stores.body">Además del APK directo de esta web, NexusMusic ya está en catálogos externos. Vamos sumando más tiendas con el tiempo.</p>
+
+      <div class="stores reveal">
+        <a class="store-card store-card--live" href="https://apkpure.com/es/nexusmusic/com.nexusforge.music" target="_blank" rel="noopener noreferrer">
+          <div class="store-card__top">
+            <span class="store-card__icon">AP</span>
+            <span class="store-card__status" data-i18n="stores.status.live">Disponible</span>
+          </div>
+          <h3 class="store-card__name">APKPure</h3>
+          <p class="store-card__desc" data-i18n="stores.apkpure.desc">Encuentra NexusMusic ya publicado y listo para descargar, con historial de versiones.</p>
+          <span class="store-card__go">
+            <span data-i18n="stores.go">Ver en APKPure</span>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg>
+          </span>
+        </a>
+
+        <div class="store-card store-card--soon" aria-disabled="true">
+          <div class="store-card__top">
+            <span class="store-card__icon">UP</span>
+            <span class="store-card__status" data-i18n="stores.status.soon">Muy pronto</span>
+          </div>
+          <h3 class="store-card__name">Uptodown</h3>
+          <p class="store-card__desc" data-i18n="stores.uptodown.desc">Estamos preparando la publicación en Uptodown. Todavía no está disponible ahí.</p>
+        </div>
+
+        <div class="store-card store-card--soon" aria-disabled="true">
+          <div class="store-card__top">
+            <span class="store-card__icon">AT</span>
+            <span class="store-card__status" data-i18n="stores.status.soon">Muy pronto</span>
+          </div>
+          <h3 class="store-card__name">Aptoide</h3>
+          <p class="store-card__desc" data-i18n="stores.aptoide.desc">También llega a Aptoide en los próximos días. Por ahora, usa el APK de esta web o APKPure.</p>
+        </div>
       </div>
     </div>
   </section>
