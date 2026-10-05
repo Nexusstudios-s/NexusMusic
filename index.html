@@ -60,6 +60,15 @@
   .more-info__card h3{font-family:"Space Grotesk",sans-serif;font-size:15px;margin:0 0 8px}
   .more-info__card p{font-size:13.5px;line-height:1.55;opacity:.85;margin:0}
 
+  .account-notice{margin-top:24px;padding:18px 20px;border:1px solid var(--brass-dim,#8a7550);border-left:4px solid var(--brass,#caa057);border-radius:8px;background:linear-gradient(110deg,rgba(202,160,87,.13),var(--panel,#1b160f) 72%)}
+  .account-notice__label{display:block;margin-bottom:8px;font:600 10.5px/1.3 "IBM Plex Mono",monospace;letter-spacing:.05em;text-transform:uppercase;color:var(--brass,#caa057)}
+  .account-notice h2{font:600 17px/1.35 "Space Grotesk",sans-serif;margin:0 0 8px}
+  .account-notice p{font-size:13.5px;line-height:1.55;margin:0;color:var(--cream-dim,#cabfa4)}
+  .account-notice ol{display:grid;gap:7px;margin:12px 0;padding-left:21px;color:var(--cream,#f3ecdc);font-size:13.5px;line-height:1.5}
+  .account-notice li::marker{color:var(--brass,#caa057);font-family:"IBM Plex Mono",monospace;font-weight:600}
+  .account-notice__warning{font-weight:600;color:var(--cream,#f3ecdc)!important}
+  .account-notice .btn{margin-top:14px}
+
   .cert__logos img[alt="VirusTotal"]{background:transparent}
   .cert__link{display:inline-flex;align-items:center;gap:6px;margin-top:10px;font-size:13px;color:var(--brass,#caa057);text-decoration:none;border-bottom:1px dashed var(--brass-dim,#8a7550)}
   .cert__link:hover{opacity:.8}
@@ -104,13 +113,40 @@
 <div class="loader" id="site-loader" role="status" aria-live="polite" aria-label="Cargando NexusMusic">
   <div class="loader__orb" aria-hidden="true">
     <span class="loader__ring"></span>
+    <span class="loader__ring loader__ring--inner"></span>
     <img src="assets/Nexus-logo.png" alt="" width="72" height="72">
+    <span class="loader__waveform"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span>
   </div>
   <div class="loader__brand">NexusMusic <span class="eq" aria-hidden="true"><span></span><span></span><span></span><span></span></span></div>
   <div class="loader__status" id="loader-status">Afinando el receptor<span class="loader__dots" aria-hidden="true"><span></span><span></span><span></span></span></div>
   <div class="loader__track" aria-hidden="true"><span></span></div>
   <div class="loader__pct" id="loader-pct" aria-hidden="true">0%</div>
 </div>
+
+<aside class="site-rail" aria-label="Navegación principal">
+  <a class="site-rail__brand" href="#top">
+    <img src="assets/Nexus-logo.png" alt="">
+    <span>NexusMusic</span>
+    <small data-i18n="rail.caption">MUSIC / ANDROID</small>
+  </a>
+  <span class="site-rail__index" data-i18n="rail.index">RECORRIDO / 2026</span>
+  <nav class="site-rail__nav" aria-label="Secciones">
+    <a href="#top" aria-current="page"><span>00</span><b data-i18n="rail.home">Inicio</b></a>
+    <a href="#forge"><span>01</span><b data-i18n="rail.forge">Nexus Forge</b></a>
+    <a href="#features"><span>02</span><b data-i18n="rail.features">Funciones</b></a>
+    <a href="#plans"><span>03</span><b data-i18n="rail.plans">Nexus+</b></a>
+    <a href="#compare"><span>04</span><b data-i18n="rail.compare">Comparar</b></a>
+    <a href="#updates"><span>05</span><b data-i18n="rail.updates">Novedades</b></a>
+    <a href="#interface"><span>06</span><b data-i18n="rail.interface">Interfaz</b></a>
+    <a href="#faq"><span>07</span><b data-i18n="rail.faq">Preguntas</b></a>
+    <a href="#stores"><span>08</span><b data-i18n="rail.stores">Tiendas</b></a>
+  </nav>
+  <div class="site-rail__bottom">
+    <span class="site-rail__status"><i aria-hidden="true"></i><span data-i18n="rail.status">ANDROID · GRATIS</span></span>
+    <span class="site-rail__release"><span data-i18n="rail.release">VERSIÓN</span><b id="rail-version">v0.6.49</b></span>
+    <a class="site-rail__download" href="#descargar" data-i18n="nav.download">Descargar</a>
+  </div>
+</aside>
 
 
 <div class="ticker" aria-hidden="true">
@@ -164,10 +200,21 @@
       <div>
         <div class="hero__status">
           <span class="eq" aria-hidden="true"><span></span><span></span><span></span><span></span></span>
-          <span id="hero-version">v0.6.51</span> <span data-i18n="hero.eyebrow">ya disponible</span>
+          <span id="hero-version">v0.6.49</span> <span data-i18n="hero.eyebrow">ya disponible</span>
         </div>
         <h1 class="glitch" data-i18n="hero.title" data-text="Todo tu YouTube Music, sin nada que no pediste">Todo tu YouTube Music, sin nada que no pediste</h1>
         <p class="lead" data-i18n="hero.lead">Suena de verdad en segundo plano, se descarga para escuchar sin datos y se comparte en una sala con alguien más, en tiempo real. Sin anuncios.</p>
+
+        <aside class="account-notice" aria-labelledby="account-notice-title">
+          <span class="account-notice__label" data-i18n="account.notice.label">Importante para iniciar sesión</span>
+          <h2 id="account-notice-title" data-i18n="account.notice.title">Primero crea tu cuenta en Nexus Forge</h2>
+          <ol>
+            <li data-i18n="account.notice.step1">Entra en Nexus Forge y toca “Iniciar sesión con Google” usando tu cuenta.</li>
+            <li data-i18n="account.notice.step2">Después, inicia sesión en NexusMusic con esa misma cuenta.</li>
+          </ol>
+          <p class="account-notice__warning" data-i18n="account.notice.warning">Las cuentas falsas no funcionarán. Debes crear tu cuenta primero en Nexus Forge.</p>
+          <a class="btn btn--patina btn--sm" href="https://nexusforgex.vercel.app" target="_blank" rel="noopener noreferrer" data-i18n="account.notice.cta">Ir a Nexus Forge</a>
+        </aside>
 
         <div class="hero__cta">
           <a class="btn btn--pulse apk-dl" id="apk-link" href="#" aria-disabled="true">
@@ -175,7 +222,7 @@
           </a>
         </div>
 
-        <p class="hero__meta"><span id="apk-version">v0.6.51</span> <span data-i18n="hero.meta">· requiere Android 7.0 o superior, gratis y sin compras dentro de la app.</span></p>
+        <p class="hero__meta"><span id="apk-version">v0.6.49</span> <span data-i18n="hero.meta">· requiere Android 7.0 o superior, gratis y sin compras dentro de la app.</span></p>
 
         <div class="specs">
           <span class="spec-tag" data-i18n="chip.glass">Efecto cristal</span>
@@ -221,7 +268,7 @@
   </section>
 
 
-  <section class="ally reveal" aria-label="Nexus Forge">
+  <section class="ally reveal" id="forge" aria-label="Nexus Forge">
     <div class="wrap">
       <div class="ally__plate">
         <div>
@@ -257,7 +304,7 @@
   </section>
 
   
-  <section>
+  <section id="features">
     <div class="wrap">
       <div class="chapter reveal"><span class="chapter__n">§01</span><span class="chapter__label" data-i18n="what.eyebrow">Ficha técnica</span></div>
       <h2 class="reveal" data-i18n="what.title">Hecha para escucharse todos los días</h2>
@@ -310,7 +357,7 @@
           <div class="spec-row__code">PRIV</div>
           <div>
             <h3 data-i18n="feat.6.t">Privada por diseño</h3>
-            <p data-i18n="feat.6.d">Sin cuentas, sin correos y sin rastreadores. Las estadísticas son anónimas y se apagan desde la app cuando quieras.</p>
+            <p data-i18n="feat.6.d">Puedes escuchar sin cuenta de Nexus Forge y no hay rastreadores. Las estadísticas son anónimas y se apagan desde la app cuando quieras. Las funciones con inicio de sesión requieren una cuenta creada primero en Nexus Forge.</p>
           </div>
         </div>
       </div>
@@ -334,7 +381,7 @@
   </section>
 
  
-  <section class="plus-section">
+  <section class="plus-section" id="plans">
     <div class="wrap">
       <div class="chapter reveal"><span class="chapter__n">§02</span><span class="chapter__label" data-i18n="plus.eyebrow">Personalización</span></div>
       <h2 class="reveal" data-i18n="plus.title">Hazla más tuya</h2>
@@ -394,7 +441,7 @@
   </section>
 
  
-  <section>
+  <section id="compare">
     <div class="wrap">
       <div class="chapter reveal"><span class="chapter__n">§03</span><span class="chapter__label" data-i18n="cmp.eyebrow">Comparación</span></div>
       <h2 class="reveal" data-i18n="cmp.title">En qué se diferencia de lo que ya conocés</h2>
@@ -573,7 +620,7 @@
   </section>
 
 
-  <section>
+  <section id="updates">
     <div class="wrap">
       <div class="chapter reveal">
         <span class="chapter__n">§04</span>
@@ -629,7 +676,7 @@
   </section>
 
 
-  <section>
+  <section id="interface">
     <div class="wrap">
       <div class="chapter reveal"><span class="chapter__n">§05</span><span class="chapter__label" data-i18n="shot.eyebrow">Interfaz</span></div>
       <h2 class="reveal" data-i18n="shot.title">Se pinta con lo que estás escuchando</h2>
@@ -689,7 +736,7 @@
   </section>
 
 
-  <section>
+  <section id="faq">
     <div class="wrap">
       <div class="chapter reveal"><span class="chapter__n">§06</span><span class="chapter__label" data-i18n="faq.eyebrow">Preguntas</span></div>
       <h2 class="reveal" data-i18n="faq.title">Lo que más preguntan</h2>
@@ -724,7 +771,7 @@
   </section>
 
 
-  <section>
+  <section id="stores">
     <div class="wrap">
       <div class="chapter reveal"><span class="chapter__n">§07</span><span class="chapter__label" data-i18n="stores.eyebrow">Dónde descargarla</span></div>
       <h2 class="reveal" data-i18n="stores.title">También nos encuentras aquí</h2>
@@ -769,7 +816,7 @@
   <section class="end">
     <div class="wrap">
       <h2 data-i18n="end.title">Llévatela contigo</h2>
-      <p class="lead" data-i18n="end.body">Descarga el APK, instálalo y listo. No pide cuentas ni permisos que no use.</p>
+      <p class="lead" data-i18n="end.body">La reproducción básica no requiere cuenta. Las funciones con inicio de sesión requieren una cuenta de Nexus Forge.</p>
       <div class="hero__cta">
         <a class="btn btn--pulse apk-dl" href="#" aria-disabled="true" data-i18n="hero.cta">Descargar el APK</a>
       </div>
@@ -787,7 +834,7 @@
       <a href="politica" data-i18n="footer.privacy">Política de privacidad</a>
     </div>
     <small data-i18n="footer.disclaimer">NexusMusic es un cliente independiente, hecho por un aficionado a la música. No está afiliado ni respaldado por YouTube ni por Google LLC. «YouTube» y «YouTube Music» son marcas de Google LLC. «Spotify» es marca de Spotify AB. Los íconos usados en la comparación son genéricos y no representan esas marcas.</small>
-    <small><span id="footer-version">v0.6.51</span> — <span data-i18n="footer.rights">todos los derechos reservados.</span></small>
+    <small><span id="footer-version">v0.6.49</span> — <span data-i18n="footer.rights">todos los derechos reservados.</span></small>
   </div>
 </footer>
 
