@@ -15,7 +15,7 @@
     document.body.classList.add("is-loading");
     var loaderStartedAt = Date.now();
     var pageLoaded = document.readyState === "complete";
-    var minimumLoaderTime = 2000;
+    var minimumLoaderTime = 1100;
     var loaderHidden = false;
 
     var pctInterval = null;
@@ -92,11 +92,30 @@
       "nexus.badge": "Project owner",
       "nexus.role": "Nexus Studios, AI Suite line",
       "nexus.body": "NexusMusic is part of the Nexus Forge project showcase. They are the owners and developers, so the app stays free, ad-free and without memberships.",
+      "account.notice.label": "Important for signing in",
+      "account.notice.title": "Create your account on Nexus Forge first",
+      "account.notice.step1": "Go to Nexus Forge and tap ‘Sign in with Google’ using your account.",
+      "account.notice.step2": "Then sign in to NexusMusic with that same account.",
+      "account.notice.warning": "Fake accounts will not work. You must create your account on Nexus Forge first.",
+      "account.notice.cta": "Go to Nexus Forge",
       "nexus.stat.users": "in their community",
       "nexus.stat.uptime": "uptime",
       "nexus.stat.rating": "rating",
       "nexus.stat.support": "Discord support",
       "nexus.cta": "Discover Nexus Forge",
+      "rail.caption": "MUSIC / ANDROID",
+      "rail.index": "JOURNEY / 2026",
+      "rail.home": "Overview",
+      "rail.forge": "Nexus Forge",
+      "rail.features": "Features",
+      "rail.plans": "Nexus+",
+      "rail.compare": "Compare",
+      "rail.updates": "Updates",
+      "rail.interface": "Interface",
+      "rail.faq": "Questions",
+      "rail.stores": "Stores",
+      "rail.status": "ANDROID · FREE",
+      "rail.release": "VERSION",
       "nexus.note": "Thanks for the backing.",
       "what.eyebrow": "Spec sheet",
       "what.title": "Built to be used every single day",
@@ -112,7 +131,7 @@
       "feat.5.t": "Lyrics, downloadable",
       "feat.5.d": "Synced lyrics when available, with several providers and the option to save them for later.",
       "feat.6.t": "Private by design",
-      "feat.6.d": "No accounts, no emails and no trackers. Stats are anonymous and can be turned off in the app whenever you want.",
+      "feat.6.d": "You can listen without a Nexus Forge account, and there are no trackers. Stats are anonymous and can be turned off in the app whenever you want. Sign-in features require an account created on Nexus Forge first.",
       "feat.7.t": "Live radio and mood modes",
       "feat.7.d": "Live stations plus modes like Calm, Focus or Energy, for when you don't feel like building the playlist yourself.",
       "why.1.t": "Why does it exist?",
@@ -258,7 +277,7 @@
       "faq.6.q": "What's the difference between Nexus+ and Nexus Coins?",
       "faq.6.a": "Same destination, two paths: Nexus+ is a membership that unlocks advanced customization at once, and Nexus Coins unlocks it little by little without a subscription. Neither removes ads, because there never were any here.",
       "end.title": "Take it with you",
-      "end.body": "Download the APK, install it, and that's it. No accounts and no permissions it doesn't use.",
+      "end.body": "Basic playback does not require an account. Sign-in features require a Nexus Forge account.",
       "footer.repo": "Code on GitHub",
       "footer.nexus": "Nexus Forge",
       "footer.privacy": "Privacy policy",
@@ -296,11 +315,30 @@
       "nexus.badge": "Proprietário do projeto",
       "nexus.role": "Nexus Studios, linha AI Suite",
       "nexus.body": "O NexusMusic faz parte da vitrine de projetos da Nexus Forge. Eles são os donos e desenvolvedores, por isso o app continua grátis, sem anúncios e sem mensalidades.",
+      "account.notice.label": "Importante para fazer login",
+      "account.notice.title": "Crie primeiro sua conta na Nexus Forge",
+      "account.notice.step1": "Acesse a Nexus Forge e toque em ‘Fazer login com Google’ usando sua conta.",
+      "account.notice.step2": "Depois, faça login no NexusMusic com essa mesma conta.",
+      "account.notice.warning": "Contas falsas não funcionarão. Você precisa criar sua conta primeiro na Nexus Forge.",
+      "account.notice.cta": "Ir para a Nexus Forge",
       "nexus.stat.users": "na comunidade",
       "nexus.stat.uptime": "de disponibilidade",
       "nexus.stat.rating": "de avaliação",
       "nexus.stat.support": "suporte no Discord",
       "nexus.cta": "Conhecer a Nexus Forge",
+      "rail.caption": "MÚSICA / ANDROID",
+      "rail.index": "PERCURSO / 2026",
+      "rail.home": "Início",
+      "rail.forge": "Nexus Forge",
+      "rail.features": "Recursos",
+      "rail.plans": "Nexus+",
+      "rail.compare": "Comparar",
+      "rail.updates": "Novidades",
+      "rail.interface": "Interface",
+      "rail.faq": "Perguntas",
+      "rail.stores": "Lojas",
+      "rail.status": "ANDROID · GRÁTIS",
+      "rail.release": "VERSÃO",
       "nexus.note": "Obrigado pelo apoio.",
       "what.eyebrow": "Ficha técnica",
       "what.title": "Feita para usar todos os dias",
@@ -316,7 +354,7 @@
       "feat.5.t": "Letras, com download",
       "feat.5.d": "Letra sincronizada quando existe, com vários provedores e a opção de baixar para ver depois.",
       "feat.6.t": "Privada por princípio",
-      "feat.6.d": "Sem contas, sem e-mails e sem rastreadores. As estatísticas são anônimas e podem ser desligadas no app quando você quiser.",
+      "feat.6.d": "Você pode ouvir sem uma conta da Nexus Forge e não há rastreadores. As estatísticas são anônimas e podem ser desligadas no app quando quiser. Os recursos com login exigem uma conta criada primeiro na Nexus Forge.",
       "feat.7.t": "Rádio e modos de humor",
       "feat.7.d": "Emissoras ao vivo e modos como Calma, Concentração ou Energia, para quando você não quer montar a playlist sozinho.",
       "why.1.t": "Por que existe?",
@@ -462,7 +500,7 @@
       "faq.6.q": "Qual a diferença entre Nexus+ e Nexus Coins?",
       "faq.6.a": "Mesmo destino, dois caminhos: Nexus+ é uma assinatura que desbloqueia a personalização avançada de uma vez, e o Nexus Coins desbloqueia aos poucos sem assinatura. Nenhum dos dois tira anúncios, porque aqui nunca teve.",
       "end.title": "Leve com você",
-      "end.body": "Baixe o APK, instale e pronto. Não pede contas nem permissões que não usa.",
+      "end.body": "A reprodução básica não exige uma conta. Os recursos com login exigem uma conta da Nexus Forge.",
       "footer.repo": "Código no GitHub",
       "footer.nexus": "Nexus Forge",
       "footer.privacy": "Política de privacidade",
@@ -504,13 +542,33 @@
     b.addEventListener("click", function () { applyLang(b.getAttribute("data-lang")); });
   });
 
+  var railLinks = document.querySelectorAll(".site-rail__nav a");
+  if ("IntersectionObserver" in window && railLinks.length) {
+    var railObserver = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (!entry.isIntersecting) return;
+        Array.prototype.forEach.call(railLinks, function (link) {
+          var target = link.getAttribute("href");
+          var current = target === "#" + entry.target.id || (target === "#top" && entry.target.classList.contains("hero"));
+          if (current) link.setAttribute("aria-current", "page");
+          else link.removeAttribute("aria-current");
+        });
+      });
+    }, { rootMargin: "-18% 0px -72% 0px" });
+    Array.prototype.forEach.call(railLinks, function (link) {
+      var target = link.getAttribute("href");
+      var section = target === "#top" ? document.querySelector(".hero") : document.querySelector(target);
+      if (section) railObserver.observe(section);
+    });
+  }
+
   /* ── Versión, hash y APK reales desde version.json ──────────────── */
   fetch("version.json", { cache: "no-store" })
     .then(function (r) { return r.json(); })
     .then(function (v) {
       if (!v || !v.version) return;
       var label = "v" + v.version;
-      ["hero-version", "apk-version", "footer-version"].forEach(function (id) {
+      ["hero-version", "apk-version", "footer-version", "rail-version"].forEach(function (id) {
         var el = document.getElementById(id);
         if (el) el.textContent = label;
       });
