@@ -276,6 +276,73 @@
       "faq.5.a": "Every version is uploaded to VirusTotal before publishing; the link to the full report is in the interface section above, next to the SHA-256 hash so you can compare the file you downloaded.",
       "faq.6.q": "What's the difference between Nexus+ and Nexus Coins?",
       "faq.6.a": "Same destination, two paths: Nexus+ is a membership that unlocks advanced customization at once, and Nexus Coins unlocks it little by little without a subscription. Neither removes ads, because there never were any here.",
+      "faq.7.q": "What is NexusMusic Pro and what happens to the free version?",
+      "faq.7.a": "On September 27, 2027 the app will transition into two editions: NexusMusic Pro ($5 USD, an accessible one-time purchase) will retain all the features the beta has today — offline downloads, Listen Together rooms, master equalizer, full customization, and zero ads. The free version will remain available as a simpler, lightweight ad-free streaming player. Until then, the current beta is completely open and free.",
+      "rail.pro": "Nexus Pro",
+      "pro.eyebrow": "Planned evolution",
+      "pro.badge": "Coming Soon · September 27, 2027",
+      "pro.title": "NexusMusic Pro <span class=\"shimmer-text\">for just $5 USD</span>",
+      "pro.lead": "Enjoy the full Beta version today 100% free. On <strong>September 27, 2027</strong> we take the leap: <strong>NexusMusic Pro for just $5 USD (one-time accessible payment)</strong> will have everything this beta has today, while the free version will become a simpler, lighter alternative.",
+      "pro.cd.days": "Days",
+      "pro.cd.hours": "Hours",
+      "pro.cd.mins": "Minutes",
+      "pro.cd.secs": "Seconds",
+      "pro.card.beta.tag": "Present · Beta Phase",
+      "pro.card.beta.title": "Current Beta",
+      "pro.card.beta.desc": "Enjoy the full version with all features unlocked without paying anything.",
+      "pro.card.beta.period": "USD · 100% Free today",
+      "pro.f.all": "All premium features active",
+      "pro.f.offline": "Unlimited offline downloads",
+      "pro.f.rooms": "Real-time rooms with chat & avatar",
+      "pro.f.noads": "Zero commercial ads",
+      "pro.f.betaLimit": "Available until September 27, 2027",
+      "pro.card.beta.cta": "Download Free Beta Now",
+      "pro.card.pro.tag": "September 27, 2027",
+      "pro.card.pro.title": "NexusMusic Pro",
+      "pro.card.pro.desc": "Will retain all the power this beta has today, in a master edition.",
+      "pro.card.pro.period": "USD · One-time payment",
+      "pro.f.proAll": "Everything in current beta + improvements",
+      "pro.f.proOffline": "Offline downloads in max quality",
+      "pro.f.proRooms": "Unlimited Listen Together rooms with chat",
+      "pro.f.proEq": "10-band equalizer + tempo & pitch",
+      "pro.f.proCloud": "Nexus Forge cloud sync",
+      "pro.f.proTheme": "Deep customization & 0 ads",
+      "pro.card.pro.cta": "Join Waitlist / Notify Me",
+      "pro.card.free.tag": "September 27, 2027",
+      "pro.card.free.title": "Free Version",
+      "pro.card.free.desc": "From Sept. 27, 2027, the free version will become a simpler, lighter option.",
+      "pro.card.free.period": "USD · Always free",
+      "pro.f.freeStream": "Essential music streaming",
+      "pro.f.freeNoAds": "No commercial ads",
+      "pro.f.freeLight": "Ultra lightweight & agile design",
+      "pro.f.freeNoRooms": "No Listen Together shared rooms",
+      "pro.f.freeNoDown": "Downloads & advanced tuning Pro-exclusive",
+      "pro.card.free.cta": "Explore features",
+      "matrix.title": "What is included and what is NOT included in each edition?",
+      "matrix.lead": "Transparent breakdown: check exactly which features you enjoy in the Beta today, what the definitive Pro edition will have, and what stays in the lightweight Free version.",
+      "matrix.th.feature": "Feature / Capability",
+      "matrix.th.beta": "Current Beta (Today)",
+      "matrix.th.pro": "NexusMusic Pro ($5 USD)",
+      "matrix.th.free": "Free Version (Sept. 2027)",
+      "matrix.row.noads": "Zero commercial ads",
+      "matrix.row.bg": "Background playback",
+      "matrix.row.offline": "Offline downloads",
+      "matrix.row.rooms": "Real-time Listen Together rooms",
+      "matrix.row.chat": "Live chat & custom avatar in rooms",
+      "matrix.row.eq": "10-band equalizer + Pitch / Tempo",
+      "matrix.row.lyrics": "Synced lyrics with offline saving",
+      "matrix.row.cloud": "Nexus Forge cloud sync",
+      "matrix.row.theme": "Liquid Glass themes & VIP customization",
+      "matrix.row.price": "Price and model",
+      "matrix.p.beta": "Free today (Beta)",
+      "matrix.p.pro": "$5 USD (One-time payment)",
+      "matrix.p.free": "Always free",
+      "pro.time.s1.t": "Today (Open Beta Phase)",
+      "pro.time.s1.d": "Enjoy 100% of features at zero cost.",
+      "pro.time.s2.t": "September 27, 2027",
+      "pro.time.s2.d": "NexusMusic Pro launch ($5 USD) & transition to simplified Free version.",
+      "toast.title": "You're on the list!",
+      "toast.body": "We'll notify you on September 27, 2027 before the NexusMusic Pro launch.",
       "end.title": "Take it with you",
       "end.body": "Basic playback does not require an account. Sign-in features require a Nexus Forge account.",
       "footer.repo": "Code on GitHub",
@@ -499,6 +566,73 @@
       "faq.5.a": "Cada versão é enviada ao VirusTotal antes de publicar; o link para o relatório completo está na seção de interface, acima, junto ao hash SHA-256 para você comparar o arquivo que baixou.",
       "faq.6.q": "Qual a diferença entre Nexus+ e Nexus Coins?",
       "faq.6.a": "Mesmo destino, dois caminhos: Nexus+ é uma assinatura que desbloqueia a personalização avançada de uma vez, e o Nexus Coins desbloqueia aos poucos sem assinatura. Nenhum dos dois tira anúncios, porque aqui nunca teve.",
+      "faq.7.q": "O que é o NexusMusic Pro e o que vai acontecer com a versão grátis?",
+      "faq.7.a": "No dia 27 de setembro de 2027 o app se dividirá em duas versões: NexusMusic Pro (5 USD, pagamento único acessível) manterá todos os recursos que a versão beta tem hoje — downloads offline, salas Listen Together, equalizador mestre, personalização completa e zero anúncios. A versão gratuita continuará disponível como uma opção mais simples e leve para streaming sem anúncios. Até lá, a versão beta atual continua aberta e totalmente gratuita.",
+      "rail.pro": "Nexus Pro",
+      "pro.eyebrow": "Evolução prevista",
+      "pro.badge": "Em breve · 27 de Setembro de 2027",
+      "pro.title": "NexusMusic Pro <span class=\"shimmer-text\">por apenas 5 USD</span>",
+      "pro.lead": "Aproveite hoje a versão Beta com tudo liberado e 100% grátis. No dia <strong>27 de setembro de 2027</strong> daremos o salto: <strong>NexusMusic Pro por apenas 5 USD (pagamento único acessível)</strong> terá tudo o que esta versão beta atual inclui, enquanto a versão gratuita passará a ser uma opção mais simples e leve.",
+      "pro.cd.days": "Dias",
+      "pro.cd.hours": "Horas",
+      "pro.cd.mins": "Minutos",
+      "pro.cd.secs": "Segundos",
+      "pro.card.beta.tag": "Presente · Fase Beta",
+      "pro.card.beta.title": "Beta Atual",
+      "pro.card.beta.desc": "Aproveite a versão completa com todas as ferramentas liberadas sem pagar nada.",
+      "pro.card.beta.period": "USD · 100% Grátis hoje",
+      "pro.f.all": "Todos os recursos premium ativos",
+      "pro.f.offline": "Downloads offline ilimitados",
+      "pro.f.rooms": "Salas em tempo real com chat e avatar",
+      "pro.f.noads": "Sem anúncios comerciais",
+      "pro.f.betaLimit": "Disponível até 27 de setembro de 2027",
+      "pro.card.beta.cta": "Baixar Beta Grátis Agora",
+      "pro.card.pro.tag": "27 de Setembro de 2027",
+      "pro.card.pro.title": "NexusMusic Pro",
+      "pro.card.pro.desc": "Manterá todo o poder que esta versão beta tem hoje, em uma edição definitiva.",
+      "pro.card.pro.period": "USD · Pagamento único previsto",
+      "pro.f.proAll": "Tudo o que a versão beta atual tem + novidades",
+      "pro.f.proOffline": "Downloads offline na máxima qualidade",
+      "pro.f.proRooms": "Salas Listen Together ilimitadas com chat",
+      "pro.f.proEq": "Equalizador de 10 bandas + tempo e tom",
+      "pro.f.proCloud": "Sincronização na nuvem Nexus Forge",
+      "pro.f.proTheme": "Personalização extrema e 0 anúncios",
+      "pro.card.pro.cta": "Entrar na lista / Notificar-me",
+      "pro.card.free.tag": "27 de Setembro de 2027",
+      "pro.card.free.title": "Versão Free",
+      "pro.card.free.desc": "A partir de 27 de set. 2027, a versão gratuita passará a ser uma opção mais simples e leve.",
+      "pro.card.free.period": "USD · Sempre grátis",
+      "pro.f.freeStream": "Reprodutor de música essencial",
+      "pro.f.freeNoAds": "Sem anúncios comerciais",
+      "pro.f.freeLight": "Design ultra leve e ágil",
+      "pro.f.freeNoRooms": "Sem salas compartilhadas Listen Together",
+      "pro.f.freeNoDown": "Downloads e ajustes avanzados exclusivos do Pro",
+      "pro.card.free.cta": "Conhecer recursos",
+      "matrix.title": "O que inclui e o que NÃO inclui cada versão?",
+      "matrix.lead": "Transparência total: veja exatamente quais recursos você aproveita na Beta hoje, o que a versão Pro definitiva terá e o que ficará na versão Free simples.",
+      "matrix.th.feature": "Recurso / Função",
+      "matrix.th.beta": "Beta Atual (Hoje)",
+      "matrix.th.pro": "NexusMusic Pro (5 USD)",
+      "matrix.th.free": "Versão Free (Set. 2027)",
+      "matrix.row.noads": "Zero anúncios comerciais",
+      "matrix.row.bg": "Reprodução em segundo plano",
+      "matrix.row.offline": "Downloads offline",
+      "matrix.row.rooms": "Salas Listen Together em tempo real",
+      "matrix.row.chat": "Chat ao vivo e avatar próprio nas salas",
+      "matrix.row.eq": "Equalizador de 10 bandas + Tom / Tempo",
+      "matrix.row.lyrics": "Letras sincronizadas com salvamento offline",
+      "matrix.row.cloud": "Sincronização na nuvem Nexus Forge",
+      "matrix.row.theme": "Temas Liquid Glass e personalização VIP",
+      "matrix.row.price": "Preço e formato",
+      "matrix.p.beta": "Grátis hoje (Beta)",
+      "matrix.p.pro": "5 USD (Pagamento único)",
+      "matrix.p.free": "Sempre grátis",
+      "pro.time.s1.t": "Hoje (Fase Beta Aberta)",
+      "pro.time.s1.d": "Aproveite 100% dos recursos sem custo algum.",
+      "pro.time.s2.t": "27 de Setembro de 2027",
+      "pro.time.s2.d": "Lançamento do NexusMusic Pro (5 USD) e transição para versão Free simplificada.",
+      "toast.title": "Você está na lista!",
+      "toast.body": "Avisaremos você no dia 27 de setembro de 2027 antes do lançamento oficial.",
       "end.title": "Leve com você",
       "end.body": "A reprodução básica não exige uma conta. Os recursos com login exigem uma conta da Nexus Forge.",
       "footer.repo": "Código no GitHub",
@@ -665,6 +799,208 @@
     });
     document.addEventListener("keydown", function (e) {
       if (e.key === "Escape" && lightbox.classList.contains("is-open")) closeLightbox();
+    });
+  })();
+
+  /* ── Cuenta regresiva oficial al 27 de Septiembre de 2027 ───────── */
+  (function () {
+    var targetDate = new Date("2027-09-27T00:00:00Z").getTime();
+    var daysEl = document.getElementById("cd-days");
+    var hoursEl = document.getElementById("cd-hours");
+    var minsEl = document.getElementById("cd-mins");
+    var secsEl = document.getElementById("cd-secs");
+
+    if (!daysEl || !hoursEl || !minsEl || !secsEl) return;
+
+    function pad(n) { return n < 10 ? "0" + n : n; }
+
+    function updateCountdown() {
+      var now = Date.now();
+      var diff = targetDate - now;
+      if (diff <= 0) {
+        daysEl.textContent = "00";
+        hoursEl.textContent = "00";
+        minsEl.textContent = "00";
+        secsEl.textContent = "00";
+        return;
+      }
+      var d = Math.floor(diff / (1000 * 60 * 60 * 24));
+      var h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      var m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+      var s = Math.floor((diff % (1000 * 60)) / 1000);
+
+      daysEl.textContent = d;
+      hoursEl.textContent = pad(h);
+      minsEl.textContent = pad(m);
+      secsEl.textContent = pad(s);
+    }
+    updateCountdown();
+    setInterval(updateCountdown, 1000);
+  })();
+
+  /* ── Canvas de ondas de audio interactivo (Hi-Fi Ambient) ────────── */
+  (function () {
+    var canvas = document.getElementById("audio-canvas");
+    if (!canvas || !canvas.getContext) return;
+    var ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    var width, height;
+    function resize() {
+      width = canvas.width = window.innerWidth;
+      height = canvas.height = window.innerHeight;
+    }
+    window.addEventListener("resize", resize, { passive: true });
+    resize();
+
+    var mouse = { x: width / 2, y: height / 2 };
+    window.addEventListener("mousemove", function (e) {
+      mouse.x = e.clientX;
+      mouse.y = e.clientY;
+    }, { passive: true });
+
+    var step = 0;
+    var waves = [
+      { color: "rgba(214, 160, 63, 0.16)", frequency: 0.003, speed: 0.02, amplitude: 35, offset: 0 },
+      { color: "rgba(63, 132, 113, 0.12)", frequency: 0.004, speed: 0.015, amplitude: 45, offset: 2 },
+      { color: "rgba(243, 236, 220, 0.07)", frequency: 0.0025, speed: 0.018, amplitude: 25, offset: 4 }
+    ];
+
+    function draw() {
+      ctx.clearRect(0, 0, width, height);
+      step++;
+
+      var centerY = height * 0.75;
+      var targetY = centerY + (mouse.y - height / 2) * 0.08;
+
+      for (var i = 0; i < waves.length; i++) {
+        var w = waves[i];
+        ctx.beginPath();
+        ctx.moveTo(0, height);
+
+        for (var x = 0; x <= width; x += 15) {
+          var angle = (x * w.frequency) + (step * w.speed) + w.offset;
+          var y = targetY + Math.sin(angle) * w.amplitude + Math.cos(angle * 0.5) * (w.amplitude * 0.4);
+          ctx.lineTo(x, y);
+        }
+
+        ctx.lineTo(width, height);
+        ctx.closePath();
+        ctx.fillStyle = w.color;
+        ctx.fill();
+      }
+
+      requestAnimationFrame(draw);
+    }
+    requestAnimationFrame(draw);
+  })();
+
+  /* ── Spotlight de Cursor y 3D Tilt ────────────────────────────────── */
+  (function () {
+    var spotlights = document.querySelectorAll(".has-spotlight");
+    var tilts = document.querySelectorAll(".has-tilt");
+
+    if (window.matchMedia("(pointer: fine)").matches) {
+      Array.prototype.forEach.call(spotlights, function (el) {
+        el.addEventListener("mousemove", function (e) {
+          var rect = el.getBoundingClientRect();
+          var x = e.clientX - rect.left;
+          var y = e.clientY - rect.top;
+          el.style.setProperty("--spotlight-x", x + "px");
+          el.style.setProperty("--spotlight-y", y + "px");
+        });
+      });
+
+      Array.prototype.forEach.call(tilts, function (el) {
+        el.addEventListener("mousemove", function (e) {
+          var rect = el.getBoundingClientRect();
+          var x = (e.clientX - rect.left) / rect.width - 0.5;
+          var y = (e.clientY - rect.top) / rect.height - 0.5;
+          el.style.transform = "perspective(900px) rotateX(" + (-y * 9) + "deg) rotateY(" + (x * 9) + "deg) translateY(-4px)";
+        });
+        el.addEventListener("mouseleave", function () {
+          el.style.transform = "";
+        });
+      });
+    }
+  })();
+
+  /* ── Botón de Notificación de NexusMusic Pro & Notificación Real Nativa ──── */
+  (function () {
+    var btn = document.getElementById("btn-notify-pro");
+    var btnText = document.getElementById("btn-notify-text");
+    var toast = document.getElementById("nexus-toast");
+    if (!btn || !toast) return;
+
+    var toastTimer = null;
+    function showToast(title, body) {
+      var tTitle = toast.querySelector(".nexus-toast__text strong");
+      var tBody = toast.querySelector(".nexus-toast__text span");
+      if (tTitle && title) tTitle.textContent = title;
+      if (tBody && body) tBody.textContent = body;
+      toast.classList.add("is-active");
+      if (toastTimer) clearTimeout(toastTimer);
+      toastTimer = setTimeout(function () {
+        toast.classList.remove("is-active");
+      }, 5500);
+    }
+
+    // Verificar si ya se había suscrito previamente
+    if (localStorage.getItem("nexus_pro_notified") === "true") {
+      if (btnText) btnText.textContent = "✓ ¡Anotado para el 27 Sept. 2027!";
+      btn.classList.add("pro-card__btn--active");
+    }
+
+    btn.addEventListener("click", function () {
+      // 1. Si el navegador soporta Notifications API
+      if ("Notification" in window) {
+        if (Notification.permission === "granted") {
+          sendNativeNotification();
+        } else if (Notification.permission !== "denied") {
+          Notification.requestPermission().then(function (permission) {
+            if (permission === "granted") {
+              sendNativeNotification();
+            } else {
+              fallbackSubscribe("Permiso pendiente", "Te avisaremos también mediante Discord y Nexus Forge el 27 de Septiembre del 2027.");
+            }
+          }).catch(function () {
+            fallbackSubscribe("¡Anotado en la lista!", "Te avisaremos el 27 de Septiembre del 2027 vía Nexus Forge y Discord.");
+          });
+        } else {
+          // Si el usuario tenía las notificaciones bloqueadas en el navegador
+          showToast("Notificaciones bloqueadas en el navegador", "Activa los permisos en el candado del navegador o únete a Discord para no perderte el lanzamiento.");
+          setTimeout(function () { window.open("https://nexusforgex.xyz", "_blank"); }, 2000);
+        }
+      } else {
+        fallbackSubscribe("¡Anotado en la lista!", "Tu navegador no soporta notificaciones de sistema, pero te avisaremos en Nexus Forge.");
+      }
+    });
+
+    function sendNativeNotification() {
+      try {
+        new Notification("NexusMusic Pro — Lista de Espera Confirmada", {
+          body: "¡Quedaste suscrito! Te avisaremos el 27 de Septiembre del 2027 cuando se lance oficialmente por $5 USD.",
+          icon: "assets/Nexus-logo.png",
+          badge: "assets/Nexus-logo.png"
+        });
+      } catch (err) {}
+
+      localStorage.setItem("nexus_pro_notified", "true");
+      if (btnText) btnText.textContent = "✓ ¡Anotado para el 27 Sept. 2027!";
+      btn.classList.add("pro-card__btn--active");
+      showToast("¡Notificaciones reales activadas!", "El 27 de Septiembre del 2027 recibirás el aviso directo de NexusMusic Pro a $5 USD.");
+    }
+
+    function fallbackSubscribe(title, body) {
+      localStorage.setItem("nexus_pro_notified", "true");
+      if (btnText) btnText.textContent = "✓ ¡Anotado para el 27 Sept. 2027!";
+      btn.classList.add("pro-card__btn--active");
+      showToast(title, body);
+      setTimeout(function () { window.open("https://nexusforgex.xyz", "_blank"); }, 1600);
+    }
+
+    toast.addEventListener("click", function () {
+      toast.classList.remove("is-active");
     });
   })();
 
