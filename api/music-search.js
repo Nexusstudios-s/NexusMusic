@@ -1,34 +1,27 @@
+'use strict';
+// Public, read-only music catalog. No tokens or audio proxy.
+const ROOT = 'https://api.audius.co/v1/';
+const ID = /^[A-Za-z0-9_-]{1,80}$/;
 const cache = new Map();
-const decode = s => String(s || '').replace(/&(#x[0-9a-f]+|#\d+|amp|quot|apos|lt|gt);/gi, (m,k) => { const named={amp:'&',quot:'"',apos:"'",lt:'<',gt:'>'}; if(k in named)return named[k]; const n=k[1]?.toLowerCase()==='x'?parseInt(k.slice(2),16):Number(k.slice(1)); return n>=0&&n<=0x10ffff?String.fromCodePoint(n):m; });
-function duration(s) { const m=/^PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?$/.exec(s||''); if(!m)return ''; const h=Number(m[1]||0), min=Number(m[2]||0), sec=Number(m[3]||0); return h?`${h}:${String(min).padStart(2,'0')}:${String(sec).padStart(2,'0')}`:`${min}:${String(sec).padStart(2,'0')}`; }
-async function youtube(path, params, key) {
-  const url=new URL('https://www.googleapis.com/youtube/v3/'+path);
-  url.search=new URLSearchParams({...params,key});
-  const r=await fetch(url,{signal:AbortSignal.timeout(8000)});
-  const data=await r.json();
-  if(!r.ok){ const reason=data.error?.errors?.[0]?.reason; const e=new Error(['quotaExceeded','dailyLimitExceeded','rateLimitExceeded'].includes(reason)?'Se agotó la cuota de búsqueda de YouTube. Intenta más tarde.':r.status===403||r.status===400?'YouTube rechazó la solicitud. Revisa la API key y que YouTube Data API v3 esté habilitada.':'YouTube no está disponible temporalmente.'); e.status=reason==='quotaExceeded'||reason==='dailyLimitExceeded'||reason==='rateLimitExceeded'?429:502; throw e; }
-  return data;
+function https(value) { try { const u=new URL(value); return u.protocol==='https:' ? u.href : ''; } catch { return ''; } }
+function duration(n) { return Number.isFinite(n)&&n>=0 ? `${Math.floor(n/60)}:${String(Math.floor(n%60)).padStart(2,'0')}` : ''; }
+function normalize(t) {
+  if (!t || typeof t.id!=='string'||!ID.test(t.id)||typeof t.title!=='string'||!t.title.trim() || t.is_streamable!==true || t.is_stream_gated===true || t.is_unlisted===true || t.is_delete===true || t.is_available===false || t.is_scheduled_release===true) return null;
+  const path=typeof t.permalink==='string'&&/^\/[\w.-]+\/[\w./-]+$/.test(t.permalink)?t.permalink:'';
+  return {id:'au:'+t.id,provider:'audius',title:t.title.slice(0,200),artist:String(t.user?.name||t.user?.handle||'Audius').slice(0,160),thumbnail:https(t.artwork?.['480x480']||t.artwork?.['150x150']||t.artwork?.['1000x1000']),duration:duration(t.duration),url:'https://audius.co'+path};
 }
+async function json(url) {const r=await fetch(url,{headers:{Accept:'application/json'},signal:AbortSignal.timeout(9000)});if(!r.ok){const e=new Error('Servicio temporalmente no disponible');e.status=r.status;throw e;}return r.json();}
 module.exports=async function(req,res){
-  res.setHeader('Cache-Control','no-store');
-  if(req.method!=='GET'){res.setHeader('Allow','GET');return res.status(405).json({error:'Método no permitido.'});}
+  if(req.method!=='GET'){res.setHeader('Allow','GET');return res.status(405).json({error:'Método no permitido'});}
+  const v=typeof req.query.v==='string'?req.query.v:'';
+  if(v){if(!/^[\w-]{11}$/.test(v))return res.status(400).json({error:'ID no válido'});try {const u=new URL('https://www.youtube.com/oembed');u.searchParams.set('url','https://www.youtube.com/watch?v='+v);u.searchParams.set('format','json');const d=await json(u);return res.status(200).json({title:String(d.title||'').slice(0,200),artist:String(d.author_name||'').slice(0,160)});}catch{return res.status(404).json({error:'Metadatos no disponibles'});}}
   const q=typeof req.query.q==='string'?req.query.q.trim().replace(/\s+/g,' '):'';
   if(q.length<2||q.length>100)return res.status(400).json({error:'Escribe entre 2 y 100 caracteres.'});
-  const key=process.env.youtube_api_key||process.env.YOUTUBE_API_KEY;
-  if(!key)return res.status(503).json({error:'Falta configurar.'});
-  const region=/^[A-Z]{2}$/.test(process.env.YOUTUBE_REGION||'')?process.env.YOUTUBE_REGION:'CO';
-  const ck=region+':'+q.toLowerCase(); const hit=cache.get(ck);
-  if(hit&&hit.expires>Date.now())return res.status(200).json(hit.body);
+  const key=q.toLowerCase();const hit=cache.get(key);if(hit&&hit.expires>Date.now())return res.status(200).json(hit.payload);
   try {
-    const search=await youtube('search',{part:'snippet',q,type:'video',videoCategoryId:'10',videoEmbeddable:'true',videoSyndicated:'true',maxResults:'20',regionCode:region},key);
-    const ids=(search.items||[]).map(x=>x.id?.videoId).filter(x=>/^[A-Za-z0-9_-]{11}$/.test(x||''));
-    const details=ids.length?await youtube('videos',{part:'snippet,contentDetails,status',id:ids.join(',')},key):{items:[]};
-    const byId=new Map((details.items||[]).map(v=>[v.id,v]));
-    const items=ids.map(id=>byId.get(id)).filter(v=>v&&v.status?.embeddable&&v.snippet?.liveBroadcastContent==='none').map(v=>({id:v.id,title:decode(v.snippet.title),artist:decode(v.snippet.channelTitle),thumbnail:v.snippet.thumbnails?.high?.url||v.snippet.thumbnails?.medium?.url||'',duration:duration(v.contentDetails?.duration)}));
-    const body={items,provider:'YouTube'};
-    if(cache.size>=200)cache.delete(cache.keys().next().value);
-    cache.set(ck,{body,expires:Date.now()+600000});
-    res.setHeader('Cache-Control','public, max-age=0, s-maxage=600');
-    return res.status(200).json(body);
-  }catch(e){return res.status(e.status||502).json({error:e.status?e.message:'No se pudo conectar con YouTube. Intenta nuevamente.'});}
+    const u=new URL('tracks/search',ROOT);u.searchParams.set('query',q);u.searchParams.set('app_name','NexusMusic');u.searchParams.set('limit','36');
+    const data=await json(u);if(!Array.isArray(data.data))throw new Error('Formato inesperado');
+    const seen=new Set();const items=data.data.map(normalize).filter(t=>t&&!seen.has(t.id)&&seen.add(t.id)).slice(0,24);
+    const payload={items,provider:'audius'};if(cache.size>=120)cache.delete(cache.keys().next().value);cache.set(key,{expires:Date.now()+120000,payload});res.setHeader('Cache-Control','public, s-maxage=60, stale-while-revalidate=120');return res.status(200).json(payload);
+  } catch(e){return res.status(e.status===429?429:502).json({error:e.status===429?'Audius limitó temporalmente las búsquedas. Intenta más tarde.':'No pudimos conectar con Audius. Intenta más tarde o pega un enlace musical compatible.'});}
 };
