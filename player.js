@@ -930,6 +930,13 @@
     status.classList.toggle("is-error", Boolean(isError));
   }
 
+  function setRoomLiveMode(inRoom) {
+    if (!roomView) return;
+    roomView.classList.toggle("is-in-room", inRoom);
+    roomView.querySelector(".rooms-hero").hidden = inRoom;
+    roomView.querySelector(".rooms-lobby").hidden = inRoom;
+  }
+
   function roomApiError(data, fallback) {
     if (data && typeof data.detail === "string") return data.detail;
     if (data && typeof data.error === "string") return data.error;
@@ -1243,6 +1250,7 @@
       });
       roomVisibility = message.visibility === "public" ? "public" : "private";
       byId("room-live").hidden = false;
+      setRoomLiveMode(true);
       byId("room-live-code").textContent = message.code || "";
       byId("room-live-title").textContent = message.title || "Sala de escucha";
       byId("room-live-visibility").textContent = roomVisibility === "public" ? "SALA PÚBLICA" : "SALA PRIVADA";
@@ -1442,7 +1450,7 @@
         roomStatus("Conexión interrumpida. Reintentando…");
         roomReconnectTimer = window.setTimeout(function () { connectToRoom(code, true); }, Math.min(10000, 1000 * roomRetryCount));
       } else if (roomConnectionWanted) {
-        roomConnectionWanted = false;
+        leaveRoom(false);
         roomStatus("No se pudo mantener la conexión. Comprueba el servidor e inténtalo de nuevo.", true);
       }
     });
@@ -1465,6 +1473,7 @@
       socket.close(1000, "left room");
     }
     if (byId("room-live")) byId("room-live").hidden = true;
+    setRoomLiveMode(false);
     if (byId("room-members-list")) byId("room-members-list").replaceChildren();
     if (byId("room-chat-messages")) byId("room-chat-messages").replaceChildren();
     if (showMessage) roomStatus("Saliste de la sala.");
@@ -1945,13 +1954,14 @@
     var valid=prefs.dynamic&&!prefs.dataSaver&&url&&/^https:\/\//i.test(url);
     ambient.style.backgroundImage=valid?'url('+JSON.stringify(url)+')':'';
     if(!valid){themeImageKey='';themeRequest++;return;}
-    if(coverColorCache.has(url)){body.style.setProperty('--user-accent',coverColorCache.get(url));return;}
-    if(themeImageKey===url)return;
-    themeImageKey=url;
+    var cacheKey=url+'|'+color;
+    if(coverColorCache.has(cacheKey)){themeImageKey=cacheKey;themeRequest++;body.style.setProperty('--user-accent',coverColorCache.get(cacheKey));return;}
+    if(themeImageKey===cacheKey)return;
+    themeImageKey=cacheKey;
     var generation=++themeRequest,img=new Image();
     img.crossOrigin='anonymous';
     img.onload=function(){
-      if(generation!==themeRequest||!prefs.dynamic||prefs.dataSaver||currentTrack?.thumbnail!==url)return;
+      if(generation!==themeRequest||!prefs.dynamic||prefs.dataSaver||(palettes[prefs.color]||palettes.aurora)!==color||currentTrack?.thumbnail!==url)return;
       try{
         var canvas=document.createElement('canvas');canvas.width=canvas.height=24;
         var ctx=canvas.getContext('2d',{willReadFrequently:true});ctx.drawImage(img,0,0,24,24);
@@ -1962,9 +1972,12 @@
           var w=1+(hi-lo)/80;r+=data[i]*w;g+=data[i+1]*w;b+=data[i+2]*w;n+=w;
         }
         if(n){
-          var tint='rgb('+[r,g,b].map(function(x){return Math.round(x/n*.57+255*.43);}).join(',')+')';
+          var tint='rgb('+[r,g,b].map(function(x,index){
+            var base=parseInt(color.slice(1+index*2,3+index*2),16);
+            return Math.round(base*.88+(x/n)*.12);
+          }).join(',')+')';
           if(coverColorCache.size>80)coverColorCache.clear();
-          coverColorCache.set(url,tint);body.style.setProperty('--user-accent',tint);
+          coverColorCache.set(cacheKey,tint);body.style.setProperty('--user-accent',tint);
         }
       }catch(_){/* The cover background still works if CORS prevents reading pixels. */}
     };
