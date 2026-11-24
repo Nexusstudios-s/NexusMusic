@@ -3,16 +3,16 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>NexusMusic — cliente de YouTube Music para Android</title>
-<meta name="description" content="NexusMusic: cliente de YouTube Music para Android con segundo plano real, descargas sin conexión, salas para escuchar juntos y sin anuncios. Con el respaldo de Nexus Forge.">
+<title>NexusMusic — música en la web y Android</title>
+<meta name="description" content="Busca y escucha canciones desde NexusMusic en la web o instala la app Android para reproducción en segundo plano, descargas sin conexión y salas.">
 <meta name="theme-color" content="#14100B">
 
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://nexusmusicx.vercel.app/">
 <meta property="og:site_name" content="NexusMusic">
 <meta property="og:locale" content="es_ES">
-<meta property="og:title" content="NexusMusic — cliente de YouTube Music para Android">
-<meta property="og:description" content="Segundo plano real, descargas sin conexión, salas para escuchar juntos y sin anuncios. Gratis, respaldada por Nexus Forge.">
+<meta property="og:title" content="NexusMusic — música en la web y Android">
+<meta property="og:description" content="Busca música y escúchala en el navegador; descarga la app para escuchar sin conexión, en segundo plano y en salas.">
 <meta property="og:image" content="https://nexusmusicx.vercel.app/assets/Nexus-banner.png">
 <meta property="og:image:secure_url" content="https://nexusmusicx.vercel.app/assets/Nexus-banner.png">
 <meta property="og:image:width" content="1080">
@@ -28,6 +28,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="33ds.css">
 <link rel="stylesheet" href="scc.css">
+<link rel="stylesheet" href="web-player.css">
 </head>
 <body>
 <div class="audio-canvas-wrap" aria-hidden="true">
@@ -55,14 +56,15 @@
   <nav class="site-rail__nav" aria-label="Secciones">
     <a href="#top" aria-current="page"><span>00</span><b data-i18n="rail.home">Inicio</b></a>
     <a href="#forge"><span>01</span><b data-i18n="rail.forge">Nexus Forge</b></a>
-    <a href="#features"><span>02</span><b data-i18n="rail.features">Funciones</b></a>
-    <a href="#nexus-pro"><span>03</span><b data-i18n="rail.pro">Nexus Pro</b></a>
-    <a href="#plans"><span>04</span><b data-i18n="rail.plans">Nexus+</b></a>
-    <a href="#compare"><span>05</span><b data-i18n="rail.compare">Comparar</b></a>
-    <a href="#updates"><span>06</span><b data-i18n="rail.updates">Novedades</b></a>
-    <a href="#interface"><span>07</span><b data-i18n="rail.interface">Interfaz</b></a>
-    <a href="#faq"><span>08</span><b data-i18n="rail.faq">Preguntas</b></a>
-    <a href="#stores"><span>09</span><b data-i18n="rail.stores">Tiendas</b></a>
+    <a href="#listen"><span>02</span><b>Escuchar música</b></a>
+    <a href="#features"><span>03</span><b data-i18n="rail.features">Funciones</b></a>
+    <a href="#nexus-pro"><span>04</span><b data-i18n="rail.pro">Nexus Pro</b></a>
+    <a href="#plans"><span>05</span><b data-i18n="rail.plans">Nexus+</b></a>
+    <a href="#compare"><span>06</span><b data-i18n="rail.compare">Comparar</b></a>
+    <a href="#updates"><span>07</span><b data-i18n="rail.updates">Novedades</b></a>
+    <a href="#interface"><span>08</span><b data-i18n="rail.interface">Interfaz</b></a>
+    <a href="#faq"><span>09</span><b data-i18n="rail.faq">Preguntas</b></a>
+    <a href="#stores"><span>10</span><b data-i18n="rail.stores">Tiendas</b></a>
   </nav>
   <div class="site-rail__bottom">
     <span class="site-rail__status"><i aria-hidden="true"></i><span data-i18n="rail.status">ANDROID · GRATIS</span></span>
@@ -206,6 +208,24 @@
           </div>
         </div>
       </div>
+    </div>
+  </section>
+  <section id="listen">
+    <div class="wrap">
+      <div class="chapter reveal"><span class="chapter__n">WEB</span><span class="chapter__label">NexusMusic en tu navegador</span></div>
+      <h2 class="reveal">Escucha música aquí</h2>
+      <p class="lead reveal" style="margin-top:10px">Busca y escucha canciones, guarda tu biblioteca, marca favoritos y crea playlists desde el navegador. Tu música se queda en este dispositivo. Para escuchar sin conexión o en segundo plano, conserva la app NexusMusic.</p>
+      <div class="web-player-frame reveal">
+        <iframe
+          src="listen.html?web=1"
+          title="Reproductor web de NexusMusic"
+          loading="lazy"
+          allow="autoplay; encrypted-media; picture-in-picture"
+          referrerpolicy="strict-origin-when-cross-origin">
+        </iframe>
+      </div>
+      <a class="btn btn--patina btn--sm reveal" href="listen.html?web=1" target="_blank" rel="noopener noreferrer" style="margin-top:16px">Abrir reproductor completo</a>
+      <p class="web-player-note reveal">La búsqueda web muestra resultados de YouTube Music y la reproducción utiliza el reproductor oficial de YouTube. Algunas canciones pueden no estar disponibles para insertar.</p>
     </div>
   </section>
   <section id="features">
