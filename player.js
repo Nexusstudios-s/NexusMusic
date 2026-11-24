@@ -17,6 +17,151 @@
   var input = document.getElementById("track-input");
   if (!input) return;
 
+  var settingsDialog = document.getElementById("settings-dialog");
+  var appViews = document.querySelector(".web-app__views");
+  var sidebarNavigation = document.querySelector(".app-sidebar nav");
+  if (settingsDialog && appViews && sidebarNavigation) {
+    var settingsShortcut = document.getElementById("settings-open");
+    if (settingsShortcut) settingsShortcut.remove();
+    var settingsView = document.createElement("section");
+    settingsView.className = "web-view settings-page";
+    settingsView.id = "settings-view";
+    settingsView.hidden = true;
+    settingsView.setAttribute("aria-labelledby", "settings-page-title");
+    settingsView.innerHTML = '<header class="settings-hero"><div><p class="web-player__eyebrow">NEXUS / PERSONALIZACIÓN</p><h1 id="settings-page-title">Ajustes</h1><p>Tu espacio, tu sonido. Personaliza la experiencia y la reproducción.</p></div><div class="settings-hero__badge" aria-hidden="true"><span>NM</span><small>WEB PLAYER</small></div></header><div class="settings-dashboard" id="settings-dashboard"></div>';
+    var settingsContent = document.createElement("div");
+    settingsContent.className = "settings-content";
+    var settingsClose = settingsDialog.querySelector('[data-close="settings-dialog"]');
+    if (settingsClose) settingsClose.remove();
+    while (settingsDialog.firstChild) settingsContent.appendChild(settingsDialog.firstChild);
+    settingsDialog.remove();
+    settingsView.querySelector("#settings-dashboard").appendChild(settingsContent);
+    appViews.appendChild(settingsView);
+
+    var settingsNavigationButton = document.createElement("button");
+    settingsNavigationButton.type = "button";
+    settingsNavigationButton.className = "web-app__nav";
+    settingsNavigationButton.dataset.view = "settings";
+    settingsNavigationButton.setAttribute("aria-label", "Ajustes");
+    settingsNavigationButton.innerHTML = '<svg aria-hidden="true" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle><path d="m19.4 15 .1.1 1.4 1.1-1.4 2.4-1.7-.7a8 8 0 0 1-1.7 1l-.3 1.8h-2.8l-.3-1.8a8 8 0 0 1-1.7-1l-1.7.7-1.4-2.4 1.4-1.1a7 7 0 0 1 0-2l-1.4-1.1 1.4-2.4 1.7.7a8 8 0 0 1 1.7-1l.3-1.8h2.8l.3 1.8a8 8 0 0 1 1.7 1l1.7-.7 1.4 2.4-1.4 1.1a7 7 0 0 1 0 2Z"></path></svg><span>Ajustes</span>';
+    sidebarNavigation.appendChild(settingsNavigationButton);
+  }
+
+  var videoView;
+  var videoSearchForm;
+  if (appViews && sidebarNavigation) {
+    videoView = document.createElement("section");
+    videoView.className = "web-view videos-page";
+    videoView.id = "videos-view";
+    videoView.hidden = true;
+    videoView.setAttribute("aria-labelledby", "videos-page-title");
+    videoView.innerHTML = '<header class="video-hero"><div><p class="web-player__eyebrow">NEXUS / VIDEO</p><h1 id="videos-page-title">Videos para ver.</h1><p>Busca canciones en video, canales y creadores de YouTube. Abre un resultado y míralo aquí mismo.</p><form class="video-search-form" id="video-search-form" role="search"><label class="sr-only" for="video-search-input">Buscar videos y canales</label><input id="video-search-input" type="search" maxlength="100" placeholder="Busca un video o canal…" autocomplete="off" required><button class="primary" id="video-search-submit" type="submit">Buscar videos</button></form><p id="video-provider-status" role="status"></p></div><div class="video-hero__art" aria-hidden="true"><span>▶</span><small>WATCH / DISCOVER</small></div></header><div class="video-discovery"><span class="web-player__eyebrow">IDEAS PARA EMPEZAR</span><div class="video-query-chips"><button type="button" data-video-query="Tiny Desk Concert">Tiny Desk</button><button type="button" data-video-query="KEXP live session">KEXP Sessions</button><button type="button" data-video-query="Vevo live performances">Vevo</button><button type="button" data-video-query="music video">Videos musicales</button></div></div><section class="web-section video-results-section" aria-labelledby="video-results-title"><div class="web-section__head"><div><p class="web-player__eyebrow" id="video-results-eyebrow">YOUTUBE / VIDEOS</p><h2 id="video-results-title">Encuentra algo para ver</h2></div><a class="web-player__text-button" id="video-search-external" href="https://www.youtube.com/" target="_blank" rel="noopener noreferrer">Abrir YouTube ↗</a></div><div class="web-player__results video-results" id="video-results" aria-live="polite"></div></section>';
+    videoSearchForm = videoView.querySelector("#video-search-form");
+    appViews.appendChild(videoView);
+
+    var videoNavigationButton = document.createElement("button");
+    videoNavigationButton.type = "button";
+    videoNavigationButton.className = "web-app__nav";
+    videoNavigationButton.dataset.view = "videos";
+    videoNavigationButton.setAttribute("aria-label", "Videos");
+    videoNavigationButton.innerHTML = '<svg aria-hidden="true" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" viewBox="0 0 24 24"><rect x="3" y="5" width="13" height="14" rx="2"></rect><path d="m16 10 5-3v10l-5-3z"></path></svg><span>Videos</span>';
+    var settingsNavigationButton = sidebarNavigation.querySelector('[data-view="settings"]');
+    sidebarNavigation.insertBefore(videoNavigationButton, settingsNavigationButton || null);
+  }
+
+  var brand = document.querySelector(".app-sidebar .brand");
+  if (brand) {
+    var betaBadge = document.createElement("span");
+    betaBadge.className = "beta-badge";
+    betaBadge.textContent = "BETA";
+    betaBadge.setAttribute("aria-label", "Versión beta");
+    brand.appendChild(betaBadge);
+  }
+  document.title = "NexusMusic Beta — Escuchar";
+  var breadcrumbBrand = document.querySelector(".crumb > span");
+  if (breadcrumbBrand) breadcrumbBrand.textContent = "NexusMusic Beta";
+
+  var homeView = document.getElementById("home-view");
+  if (homeView) {
+    var mobileAppPromo = document.createElement("section");
+    mobileAppPromo.className = "mobile-app-promo";
+    mobileAppPromo.innerHTML = '<div class="mobile-app-promo__icon" aria-hidden="true">N</div><div class="mobile-app-promo__copy"><p class="web-player__eyebrow">NEXUSMUSIC PARA ANDROID</p><h2>Va mejor en la app móvil.</h2><p>Lleva tu música contigo: reproducción en segundo plano, descargas y una experiencia hecha para tu teléfono.</p></div><a class="primary web-now-playing__download" id="mobile-app-download" href="https://github.com/santhiagocaro05-debug/Nexus-Update/releases/download/v0.6.61/NexusMusic.apk">Instalar app <span aria-hidden="true">↗</span></a>';
+    var homeFeature = homeView.querySelector(".app-feature");
+    homeView.insertBefore(mobileAppPromo, homeFeature ? homeFeature.nextSibling : homeView.firstChild);
+
+    var dashboardStats = document.createElement("section");
+    dashboardStats.className = "home-dashboard-stats";
+    dashboardStats.setAttribute("aria-label", "Resumen de tu música");
+    dashboardStats.innerHTML = '<button type="button" data-go="library"><span class="home-dashboard-stats__value" id="home-stat-library">0</span><span>Biblioteca</span></button><button type="button" data-go="favorites"><span class="home-dashboard-stats__value" id="home-stat-favorites">0</span><span>Favoritos</span></button><button type="button" data-go="playlists"><span class="home-dashboard-stats__value" id="home-stat-playlists">0</span><span>Playlists</span></button><button type="button" data-go="history"><span class="home-dashboard-stats__value" id="home-stat-history">0</span><span>Recientes</span></button>';
+    homeView.insertBefore(dashboardStats, homeView.firstChild.nextSibling);
+  }
+
+  [
+    ["library-view", "library-list", "library", "Canciones guardadas", "Sigue descubriendo música y guarda lo que quieras escuchar después."],
+    ["favorites-view", "favorites-list", "favorites", "Favoritos", "Tus canciones favoritas, reunidas en un solo lugar."],
+    ["playlists-view", "playlist-grid", "playlists", "Playlists creadas", "Organiza tu música en listas para cada momento."],
+    ["history-view", "history-list", "history", "Escuchas recientes", "Tu actividad se guarda únicamente en este navegador."],
+    ["queue-view", "track-queue", "queue", "En la cola", "Ordena lo que quieres escuchar a continuación."]
+  ].forEach(function (item) {
+    var view = document.getElementById(item[0]);
+    var content = document.getElementById(item[1]);
+    if (!view || !content) return;
+    view.classList.add("collection-page", "collection-page--" + item[2]);
+    var summary = document.createElement("div");
+    summary.className = "collection-summary";
+    summary.innerHTML = '<div><p class="web-player__eyebrow">TU ESPACIO PERSONAL</p><p class="collection-summary__description"></p></div><div class="collection-summary__metric"><strong class="collection-summary__count" data-collection-count="' + item[2] + '">0</strong><span></span></div>';
+    summary.querySelector(".collection-summary__description").textContent = item[4];
+    summary.querySelector(".collection-summary__metric span").textContent = item[3];
+    view.insertBefore(summary, content);
+  });
+
+  var settingsDashboard = document.getElementById("settings-dashboard");
+  if (settingsDashboard) {
+    var webExperienceGroup = document.createElement("section");
+    webExperienceGroup.className = "settings-group";
+    webExperienceGroup.innerHTML = '<h3>Experiencia web</h3>';
+    [
+      ["dataSaver", "Ahorro de datos", "No carga portadas remotas ni fondos dinámicos."],
+      ["persistentQueue", "Recordar cola", "Conserva tu cola en este navegador."],
+      ["stopAfterCurrent", "Detener al terminar", "No inicia otra pista al finalizar la actual."]
+    ].forEach(function (setting) {
+      var label = document.createElement("label");
+      label.className = "setting-row";
+      var copy = document.createElement("span");
+      var title = document.createElement("strong");
+      var description = document.createElement("small");
+      var control = document.createElement("input");
+      title.textContent = setting[1];
+      description.textContent = setting[2];
+      control.type = "checkbox";
+      control.id = "pref-" + setting[0];
+      control.setAttribute("role", "switch");
+      copy.append(title, description);
+      label.append(copy, control);
+      webExperienceGroup.appendChild(label);
+    });
+    settingsDashboard.querySelector(".settings-content").insertBefore(
+      webExperienceGroup,
+      settingsDashboard.querySelector(".about-nexus")
+    );
+
+    var volumeGroup = document.createElement("section");
+    volumeGroup.className = "settings-group";
+    volumeGroup.innerHTML = '<h3>Audio</h3><label class="setting-row setting-row--volume" for="pref-volume"><span><strong>Volumen predeterminado</strong><small>Se guarda en este navegador y se sincroniza con el reproductor.</small></span><span class="setting-volume-control"><input type="range" id="pref-volume" min="0" max="100" step="1" aria-label="Volumen predeterminado"><output id="pref-volume-value" for="pref-volume">70%</output></span></label>';
+    settingsDashboard.querySelector(".settings-content").insertBefore(
+      volumeGroup,
+      settingsDashboard.querySelector(".about-nexus")
+    );
+
+    var exportGroup = document.createElement("section");
+    exportGroup.className = "settings-group settings-export";
+    exportGroup.innerHTML = '<h3>Tu colección</h3><p>Descarga una copia local de tu biblioteca, favoritos, playlists e historial.</p><button class="button secondary" id="export-library" type="button">Exportar mi colección</button>';
+    settingsDashboard.querySelector(".settings-content").insertBefore(
+      exportGroup,
+      settingsDashboard.querySelector(".about-nexus")
+    );
+  }
+
   var form = document.getElementById("track-form");
   var results = document.getElementById("search-results");
   var status = document.getElementById("player-status");
@@ -50,7 +195,9 @@
     favorites: document.getElementById("favorites-view"),
     playlists: document.getElementById("playlists-view"),
     history: document.getElementById("history-view"),
-    queue: document.getElementById("queue-view")
+    queue: document.getElementById("queue-view"),
+    videos: document.getElementById("videos-view"),
+    settings: document.getElementById("settings-view")
   };
   var viewTitles = {
     home: "Inicio",
@@ -59,7 +206,9 @@
     favorites: "Favoritos",
     playlists: "Playlists",
     history: "Historial",
-    queue: "Cola"
+    queue: "Cola",
+    videos: "Videos",
+    settings: "Ajustes"
   };
   var storageKeys = {
     queue: "nexusmusic.web.queue.v1",
@@ -70,8 +219,10 @@
   };
   var videoIdPattern = /^[A-Za-z0-9_-]{11}$/;
   var discordHosts = new Set(["cdn.discordapp.com", "media.discordapp.net"]);
+  var prefDefaults={color:'aurora',dynamic:true,glass:true,blur:true,motion:true,autoplay:true,repeat:false,shuffle:false,speed:'1',volume:70,dataSaver:false,persistentQueue:true,stopAfterCurrent:false};
+  var prefs=Object.assign({},prefDefaults);try{var savedPrefs=JSON.parse(localStorage.getItem('nexus.player.settings.v1')||'{}');Object.keys(prefDefaults).forEach(function(k){if(typeof savedPrefs[k]===typeof prefDefaults[k])prefs[k]=savedPrefs[k];});}catch(_){}
   var maxQueueSize = 100;
-  var queue = readStoredList(storageKeys.queue, maxQueueSize);
+  var queue = prefs.persistentQueue ? readStoredList(storageKeys.queue, maxQueueSize) : [];
   var recent = readStoredList(storageKeys.recent, 50);
   var library = readStoredList(storageKeys.library, 500);
   var favorites = readStoredList(storageKeys.favorites, 500);
@@ -79,6 +230,7 @@
   var searchToken = 0;
   var searchController = null;
   var lastSearchTracks = [];
+  var lastVideoTracks = [];
   var player = null;
   var playerReady = false;
   var currentTrackId = "";
@@ -88,8 +240,6 @@
   var isSeeking = false;
   var params = new URLSearchParams(location.search);
   var incomingId = params.get("v") || "";
-  var prefDefaults={color:'aurora',dynamic:true,glass:true,blur:true,motion:true,autoplay:true,repeat:false,shuffle:false,speed:'1',volume:70};
-  var prefs=Object.assign({},prefDefaults);try{var savedPrefs=JSON.parse(localStorage.getItem('nexus.player.settings.v1')||'{}');Object.keys(prefDefaults).forEach(function(k){if(typeof savedPrefs[k]===typeof prefDefaults[k])prefs[k]=savedPrefs[k];});}catch(_){}
   var relatedBusy=false, playbackGeneration=0, endHandled=false, playContext=[];
   var currentTrack = null, mode = "idle", playbackFailed = false, pendingYouTube = null;
   var audio = new Audio(); audio.preload = "metadata";
@@ -102,7 +252,7 @@
   function isTrack(track) {
     return track && typeof track.title === "string" && typeof track.artist === "string" && (track.provider === "audius" ? /^au:[A-Za-z0-9_-]{1,80}$/.test(track.id || "") : track.provider === "discord" ? /^dc:[a-f0-9]{16}$/.test(track.id || "") && !!directAudio(track.audioUrl) : videoIdPattern.test(track.id || ""));
   }
-  function sourceName(track) { return track.provider === "catalog" ? "Catálogo comercial" : track.provider === "audius" ? "Audius" : track.provider === "discord" ? "Discord · audio" : track.provider === "youtube" ? "YouTube Music" : "YouTube"; }
+  function sourceName(track) { return track.provider === "catalog" ? "Catálogo comercial" : track.provider === "audius" ? "Audius" : track.provider === "discord" ? "Discord · audio" : track.kind === "video" ? "YouTube · video" : track.provider === "youtube" ? "YouTube Music" : "YouTube"; }
   function sourceUrl(track) {
     if (track.provider === "discord") return directAudio(track.audioUrl);
     if (track.provider === "audius") { try { var u = new URL(track.url); if (u.origin === "https://audius.co") return u.href; } catch (_) {} return "https://audius.co"; }
@@ -210,6 +360,7 @@
   }
 
   function saveList(key, value, limit) {
+    if (key === storageKeys.queue && !prefs.persistentQueue) return true;
     if (persist(key, value.slice(0, limit))) return true;
     return false;
   }
@@ -226,9 +377,9 @@
     image.alt = "";
     image.loading = "lazy";
     image.referrerPolicy = "no-referrer";
-    image.src = track.thumbnail && /^https:\/\//i.test(track.thumbnail)
+    image.src = !prefs.dataSaver && track.thumbnail && /^https:\/\//i.test(track.thumbnail)
       ? track.thumbnail
-      : (track.provider ? "assets/Nexus-logo.png" : "https://i.ytimg.com/vi/" + encodeURIComponent(track.id) + "/hqdefault.jpg");
+      : (prefs.dataSaver || track.provider ? "assets/Nexus-logo.png" : "https://i.ytimg.com/vi/" + encodeURIComponent(track.id) + "/hqdefault.jpg");
     image.onerror = function () {
       image.onerror = null;
       image.src = "assets/studio-mark.svg";
@@ -243,7 +394,7 @@
     artistLabel.textContent = track.artist;
     document.getElementById("panel-track").textContent = track.title;
     document.getElementById("panel-artist").textContent = track.artist;
-    if (track.thumbnail && /^https:\/\//i.test(track.thumbnail)) {
+    if (!prefs.dataSaver && track.thumbnail && /^https:\/\//i.test(track.thumbnail)) {
       artwork.src = track.thumbnail;
       artwork.hidden = false;
       artworkPlaceholder.hidden = true;
@@ -263,6 +414,7 @@
     renderTracks(document.getElementById("home-library-results"), library.slice(0, 8), { compact: true });
     renderPlaylistCards(document.getElementById("home-playlists"), playlists.slice(0, 4), true);
     renderTracks(results, lastSearchTracks, {});
+    renderTracks(byId("video-results"), lastVideoTracks, { videos: true });
     renderSongList(document.getElementById("library-list"), library, "library");
     renderSongList(document.getElementById("favorites-list"), favorites, "favorites");
     renderSongList(document.getElementById("history-list"), recent, "history");
@@ -270,6 +422,25 @@
     renderQueue();
     renderActivePlaylist();
     updateShortcuts();
+    updateDashboardStats();
+  }
+
+  function updateDashboardStats() {
+    var counts = {
+      library: library.length,
+      favorites: favorites.length,
+      playlists: playlists.length,
+      history: recent.length,
+      queue: queue.length
+    };
+    Object.keys(counts).forEach(function (key) {
+      var homeCount = byId("home-stat-" + key);
+      if (homeCount) homeCount.textContent = String(counts[key]);
+      var collectionCount = document.querySelector('[data-collection-count="' + key + '"]');
+      if (collectionCount) collectionCount.textContent = String(counts[key]);
+    });
+    var libraryCount = byId("library-count");
+    if (libraryCount) libraryCount.textContent = counts.library + (counts.library === 1 ? " canción" : " canciones");
   }
 
   function addToQueue(track, silent) {
@@ -377,6 +548,8 @@
         ? "Cuando escuches música aparecerá aquí."
         : options.error
           ? "No se pudieron cargar resultados. Revisa la conexión o vuelve a intentarlo."
+        : options.videos
+          ? "Busca un título, un canal o un creador para encontrar videos de YouTube."
         : "Todavía no hay canciones. Busca algo y guárdalo en tu colección.";
       container.appendChild(empty);
       return;
@@ -386,6 +559,7 @@
       if(isCatalog(track)){renderCatalogCard(container,track);return;}
       var card = document.createElement("article");
       card.className = "web-song";
+      if (options.videos || track.kind === "video") card.classList.add("video-result-card");
       if (options.compact) card.classList.add("web-song--compact");
       var image = document.createElement("div");
       image.className = "web-song__art";
@@ -403,10 +577,20 @@
       var play = document.createElement("button");
       play.type = "button";
       play.className = "primary";
-      play.textContent = "▶ Escuchar";
+      play.textContent = track.kind === "video" ? "▶ Ver video" : "▶ Escuchar";
+      play.setAttribute("aria-label", (track.kind === "video" ? "Ver " : "Escuchar ") + track.title);
       play.addEventListener("click", function () { playContext=tracks.filter(isTrack);playTrack(track); });
       var actionBar = document.createElement("div");
       actionBar.className = "web-song__quick-actions";
+      if (track.kind === "video") {
+        var openVideo = document.createElement("a");
+        openVideo.className = "web-song__video-link";
+        openVideo.href = sourceUrl(track);
+        openVideo.target = "_blank";
+        openVideo.rel = "noopener noreferrer";
+        openVideo.textContent = "Abrir en YouTube ↗";
+        actionBar.appendChild(openVideo);
+      }
       actionBar.append(
         createIconButton("＋", "Guardar en biblioteca", function () { addToLibrary(track); }),
         createIconButton(favorites.some(function (item) { return item.id === track.id; }) ? "♥" : "♡",
@@ -616,6 +800,10 @@
       ? queue.length + (queue.length === 1 ? " canción en la cola" : " canciones en la cola")
       : "Cola vacía";
     sidebarQueueCount.textContent = String(queue.length);
+    var queueHomeCount = byId("home-stat-queue");
+    if (queueHomeCount) queueHomeCount.textContent = String(queue.length);
+    var queueSummary = document.querySelector('[data-collection-count="queue"]');
+    if (queueSummary) queueSummary.textContent = String(queue.length);
   }
 
   function renderQueue() {
@@ -669,7 +857,7 @@
   function nextCandidate(list){var candidates=list.filter(function(t){return isTrack(t)&&t.id!==currentTrackId;});return candidates.length?(prefs.shuffle?candidates[Math.floor(Math.random()*candidates.length)]:candidates[0]):null;}
   function playContinuous(t){if(queue.length>=maxQueueSize&&!queue.some(function(x){return x.id===t.id;})){queue.shift();saveList(storageKeys.queue,queue,maxQueueSize);}playTrack(t);}
   async function findRelated(){if(relatedBusy||!currentTrack)return;relatedBusy=true;var generation=playbackGeneration,base=currentTrack;setStatus('Buscando la siguiente canción…');try{var u=new URL('/api/music-search',location.origin);u.searchParams.set('q',(base.artist||base.title).slice(0,100));u.searchParams.set('source',base.provider==='audius'?'audius':'all');var r=await fetch(u,{signal:AbortSignal.timeout(25000)});if(!r.ok)throw Error();var data=await r.json();if(generation!==playbackGeneration||!prefs.autoplay)return;var played=new Set(recent.map(function(t){return t.id;}));var next=nextCandidate((data.items||[]).filter(function(t){return !played.has(t.id)&&!queue.some(function(x){return x.id===t.id;});}));if(next)playContinuous(next);else setStatus('No encontramos más canciones disponibles. Busca otra canción para continuar.');}catch(_){if(generation===playbackGeneration)setStatus('No se pudo cargar la siguiente canción. Intenta buscar de nuevo.',true);}finally{if(generation===playbackGeneration)relatedBusy=false;}}
-  function changeTrack(offset, ended) {if(!currentTrack)return;var i=queue.findIndex(function(t){return t.id===currentTrackId;});if(ended){if(endHandled)return;endHandled=true;if(prefs.repeat){prepareTrack(currentTrack,true);return;}}if(offset<0){if(queue[i-1])playTrack(queue[i-1]);else if(clock().time>0)seekTo(0);return;}var target=nextCandidate(queue.slice(i+1))||contextNext();if(target&&target.id!==currentTrackId){playContinuous(target);return;}if(prefs.autoplay)void findRelated();else if(ended)setStatus('Terminó la cola de reproducción.');}
+  function changeTrack(offset, ended) {if(!currentTrack)return;var i=queue.findIndex(function(t){return t.id===currentTrackId;});if(ended){if(endHandled)return;endHandled=true;if(prefs.repeat){prepareTrack(currentTrack,true);return;}if(prefs.stopAfterCurrent){if(mode==='audio')audio.pause();else if(playerReady&&player)player.pauseVideo();syncButton(false);setStatus('La reproducción se detuvo al terminar la canción.');return;}}if(offset<0){if(queue[i-1])playTrack(queue[i-1]);else if(clock().time>0)seekTo(0);return;}var target=nextCandidate(queue.slice(i+1))||contextNext();if(target&&target.id!==currentTrackId){playContinuous(target);return;}if(prefs.autoplay)void findRelated();else if(ended)setStatus('Terminó la cola de reproducción.');}
 
   function setView(viewName) {
     if (!views[viewName]) return;
@@ -688,22 +876,32 @@
   }
 
   var alternativeExcludedId = "";
-  function runSearch(query) {
+  function runSearch(query, target) {
+    var isVideoSearch = target === "videos";
+    var targetResults = isVideoSearch ? byId("video-results") : results;
+    var targetTitle = isVideoSearch ? byId("video-results-title") : resultsTitle;
+    var targetEyebrow = isVideoSearch ? byId("video-results-eyebrow") : resultsEyebrow;
+    var providerLabel = byId(isVideoSearch ? "video-provider-status" : "search-provider-status");
+    var submitButton = isVideoSearch ? byId("video-search-submit") : document.querySelector(".web-player__search-submit");
     var excluded = alternativeExcludedId; alternativeExcludedId = "";
-    var providerLabel=byId("search-provider-status"); providerLabel.textContent="";
+    if (providerLabel) providerLabel.textContent = "";
     var raw = query.trim();
     var shared = /^https:\/\//i.test(raw) ? parseShared(raw) : null;
-    if(shared){ if(searchController)searchController.abort(); searchToken++; document.querySelector(".web-player__search-submit").disabled=false; lastSearchTracks=[shared];resultsTitle.textContent="Enlace compartido";resultsEyebrow.textContent=sourceName(shared);renderTracks(results,lastSearchTracks,{});playTrack(shared);return; }
+    if(shared){ if(searchController)searchController.abort(); searchToken++; submitButton.disabled=false;if(isVideoSearch){shared.provider="youtube";shared.kind="video";lastVideoTracks=[shared];}else{lastSearchTracks=[shared];}targetTitle.textContent="Enlace compartido";targetEyebrow.textContent=sourceName(shared);renderTracks(targetResults,[shared],{videos:isVideoSearch});playTrack(shared);return; }
     var cleanQuery = raw.replace(/\s+/g, " ");
-    byId("search-external").hidden=cleanQuery.length<2||cleanQuery.length>100;
-    byId("external-youtube").href="https://www.youtube.com/results?search_query="+encodeURIComponent(cleanQuery);
+    if (isVideoSearch) {
+      byId("video-search-external").href="https://www.youtube.com/results?search_query="+encodeURIComponent(cleanQuery);
+    } else {
+      byId("search-external").hidden=cleanQuery.length<2||cleanQuery.length>100;
+      byId("external-youtube").href="https://www.youtube.com/results?search_query="+encodeURIComponent(cleanQuery);
+    }
     if (cleanQuery.length < 2 || cleanQuery.length > 100) {
       if (searchController) {
         searchController.abort();
         searchController = null;
         searchToken += 1;
       }
-      document.querySelector(".web-player__search-submit").disabled = false;
+      submitButton.disabled = false;
       setStatus(cleanQuery.length < 2
         ? "Escribe al menos 2 caracteres para buscar."
         : "La búsqueda puede tener hasta 100 caracteres.", true);
@@ -715,19 +913,19 @@
     var controller = new AbortController();
     searchController = controller;
     var searchTimeout = window.setTimeout(function () { controller.abort(); }, 25_000);
-    resultsTitle.textContent = "Buscando “" + cleanQuery + "”…";
-    resultsEyebrow.textContent = "BUSCANDO";
+    targetTitle.textContent = "Buscando “" + cleanQuery + "”…";
+    targetEyebrow.textContent = "BUSCANDO";
     setStatus("");
-    document.querySelector(".web-player__search-submit").disabled = true;
-    results.replaceChildren();
+    submitButton.disabled = true;
+    targetResults.replaceChildren();
     var loading = document.createElement("p");
     loading.className = "web-player__empty";
-    loading.textContent = "Buscando canciones…";
-    results.appendChild(loading);
+    loading.textContent = isVideoSearch ? "Buscando videos y canales…" : "Buscando canciones…";
+    targetResults.appendChild(loading);
 
     var endpoint = new URL("/api/music-search", location.origin);
     endpoint.searchParams.set("q", cleanQuery);
-    endpoint.searchParams.set("source",byId("search-source").value);
+    endpoint.searchParams.set("source",isVideoSearch ? "videos" : byId("search-source").value);
     fetch(endpoint, { headers: { Accept: "application/json" }, cache: "no-store", signal: controller.signal })
       .then(function (response) {
         return response.text().then(function (body) {
@@ -750,25 +948,28 @@
         var tracks=data.tracks;
         var failed=Object.keys(data.providers).filter(function(k){return data.providers[k]!=="ok";});
         var names={youtube:"YouTube Music",videos:"YouTube Music (videos)",audius:"Audius",catalog:"Apple"};
-        providerLabel.textContent=failed.length?"Temporalmente sin respuesta: "+failed.map(function(k){return names[k]||k;}).join(", "):"";
-        resultsTitle.textContent = "Resultados para “" + cleanQuery + "”";
-        resultsEyebrow.textContent = "RESULTADOS";
+        if (providerLabel) providerLabel.textContent=failed.length?"Temporalmente sin respuesta: "+failed.map(function(k){return names[k]||k;}).join(", "):"";
+        targetTitle.textContent = "Resultados para “" + cleanQuery + "”";
+        targetEyebrow.textContent = "RESULTADOS";
         if (!tracks.length) {
-          lastSearchTracks = [];
-          renderTracks(results, [], {});
-          setStatus("No encontramos canciones con esa búsqueda. Prueba otro término.", false);
+          if (isVideoSearch) lastVideoTracks = [];
+          else lastSearchTracks = [];
+          renderTracks(targetResults, [], { videos: isVideoSearch });
+          setStatus(isVideoSearch ? "No encontramos videos. Prueba con el nombre del canal, creador o video." : "No encontramos canciones con esa búsqueda. Prueba otro término.", false);
           return;
         }
-        lastSearchTracks = tracks;
-        renderTracks(results, tracks, {});
-        setStatus(tracks.length+" resultados · "+tracks.filter(function(t){return t.provider==="youtube";}).length+" de YouTube Music (según permisos de reproducción) · "+tracks.filter(function(t){return t.provider==="audius";}).length+" de Audius · "+tracks.filter(isCatalog).length+" externos.");
+        if (isVideoSearch) lastVideoTracks = tracks;
+        else lastSearchTracks = tracks;
+        renderTracks(targetResults, tracks, { videos: isVideoSearch });
+        setStatus(isVideoSearch ? tracks.length + " videos encontrados · algunas reproducciones pueden depender de las restricciones del canal." : tracks.length+" resultados · "+tracks.filter(function(t){return t.provider==="youtube";}).length+" de YouTube Music (según permisos de reproducción) · "+tracks.filter(function(t){return t.provider==="audius";}).length+" de Audius · "+tracks.filter(isCatalog).length+" externos.");
       })
       .catch(function (error) {
         if (requestId !== searchToken) return;
-        resultsTitle.textContent = "La búsqueda no está disponible";
-        resultsEyebrow.textContent = "AVISO";
-        lastSearchTracks = [];
-        renderTracks(results, [], { error: true });
+        targetTitle.textContent = "La búsqueda no está disponible";
+        targetEyebrow.textContent = "AVISO";
+        if (isVideoSearch) lastVideoTracks = [];
+        else lastSearchTracks = [];
+        renderTracks(targetResults, [], { error: true, videos: isVideoSearch });
         var message = error.name === "AbortError"
           ? "La búsqueda tardó demasiado. Comprueba tu conexión e inténtalo otra vez."
           : error instanceof TypeError || /networkerror|failed to fetch/i.test(error.message || "")
@@ -776,12 +977,13 @@
             : typeof error.message === "string" && error.message !== "[object Object]"
               ? error.message
               : getApiErrorMessage(null);
+        if(providerLabel)providerLabel.textContent=message;
         setStatus(message, true);
       })
       .finally(function () {
         window.clearTimeout(searchTimeout);
         if (requestId === searchToken) {
-          document.querySelector(".web-player__search-submit").disabled = false;
+          submitButton.disabled = false;
           searchController = null;
         }
       });
@@ -817,6 +1019,22 @@
     event.preventDefault();
     setView("search");
     runSearch(input.value);
+  });
+  if (videoSearchForm) {
+    videoSearchForm.addEventListener("submit", function (event) {
+      event.preventDefault();
+      var videoInput = byId("video-search-input");
+      setView("videos");
+      runSearch(videoInput.value, "videos");
+    });
+  }
+  document.querySelectorAll("[data-video-query]").forEach(function (button) {
+    button.addEventListener("click", function () {
+      var videoInput = byId("video-search-input");
+      videoInput.value = button.dataset.videoQuery || "";
+      setView("videos");
+      runSearch(videoInput.value, "videos");
+    });
   });
   document.querySelectorAll("[data-query]").forEach(function (button) {
     button.addEventListener("click", function () {
@@ -897,6 +1115,39 @@
     var apple=document.createElement('a');apple.className='catalog-link';apple.textContent='Abrir en Apple Music ↗';apple.href=safeApple(track.url);apple.target='_blank';apple.rel='noopener noreferrer';
     var note=document.createElement('small');note.textContent='Si encuentras un video compatible, pega su enlace aquí.';actions.append(yt,apple,note);card.append(art,title,artist,tag,actions);container.append(card);
   }
+  function setPlaybackPanelVisible(visible){
+    document.body.classList.toggle('player-panel-hidden',!visible);
+    panelHideButton.hidden=!visible;
+    panelShowButton.hidden=visible;
+    panelHideButton.setAttribute('aria-expanded',String(visible));
+    panelShowButton.setAttribute('aria-expanded',String(visible));
+  }
+  var playbackPanel=document.querySelector('.now-panel');
+  var panelActions=document.querySelector('.np-head-actions');
+  var appTop=document.querySelector('.app-top');
+  var panelHideButton=document.createElement('button');
+  panelHideButton.type='button';
+  panelHideButton.className='glass-icon playback-panel-toggle playback-panel-toggle--hide';
+  panelHideButton.textContent='×';
+  panelHideButton.title='Ocultar panel En reproducción';
+  panelHideButton.setAttribute('aria-label','Ocultar panel En reproducción');
+  panelHideButton.setAttribute('aria-controls','now-panel');
+  var panelShowButton=document.createElement('button');
+  panelShowButton.type='button';
+  panelShowButton.className='glass-icon playback-panel-toggle playback-panel-toggle--show';
+  panelShowButton.textContent='♫ En reproducción';
+  panelShowButton.title='Mostrar panel En reproducción';
+  panelShowButton.setAttribute('aria-label','Mostrar panel En reproducción');
+  panelShowButton.setAttribute('aria-controls','now-panel');
+  panelShowButton.hidden=true;
+  if(playbackPanel&&panelActions&&appTop){
+    playbackPanel.id='now-panel';
+    panelActions.insertBefore(panelHideButton,byId('expand-player'));
+    appTop.insertBefore(panelShowButton,byId('settings-open'));
+    panelHideButton.addEventListener('click',function(){setPlaybackPanelVisible(false);});
+    panelShowButton.addEventListener('click',function(){setPlaybackPanelVisible(true);});
+    setPlaybackPanelVisible(true);
+  }
   function setExpanded(value){document.body.classList.toggle('player-expanded',value);byId('expand-player').setAttribute('aria-expanded',String(value));byId('expand-player').setAttribute('aria-label',value?'Reducir reproductor':'Ampliar reproductor');byId('expand-player').textContent=value?'⤡':'⤢';if(value&&!lyricsEnabled){lyricsEnabled=true;updateLyricsVisibility();requestLyrics();}}
   function updateShortcuts(){var track=currentTrack;['np-save','np-like','np-playlist','np-share'].forEach(function(id){byId(id).disabled=!track;});var saved=!!track&&library.some(function(t){return t.id===track.id;});var liked=!!track&&favorites.some(function(t){return t.id===track.id;});byId('np-save').classList.toggle('is-saved',saved);byId('np-save').textContent=saved?'✓ Guardada':'＋ Guardar';byId('np-like').setAttribute('aria-pressed',String(liked));byId('np-like').textContent=liked?'♥ Me gusta':'♡ Me gusta';}
   byId("panel-cover").addEventListener("error",function(){if(!this.src.endsWith("/assets/studio-mark.svg"))this.src="assets/studio-mark.svg";});
@@ -928,17 +1179,100 @@
   // Appearance and player preferences share the original playback state.
   var palettes={aurora:'#b9caff',violet:'#c7a8ff',rose:'#ffc0d7',ocean:'#9ddcf9',emerald:'#a4e4c8',mono:'#d2d5df'};
   var coverColorCache=new Map(), themeImageKey='', themeRequest=0;
-  function updateTheme(){var body=document.body;var color=palettes[prefs.color]||palettes.aurora;body.style.setProperty('--user-accent',color);body.dataset.theme=prefs.color;body.classList.toggle('no-glass',!prefs.glass);body.classList.toggle('no-blur',!prefs.blur);body.classList.toggle('no-motion',!prefs.motion);body.classList.toggle('dynamic-theme',prefs.dynamic);var ambient=byId('cover-ambient');var url=currentTrack&&currentTrack.thumbnail;var valid=prefs.dynamic&&url&&/^https:\/\//i.test(url);ambient.style.backgroundImage=valid?'url('+JSON.stringify(url)+')':'';if(!valid){themeImageKey='';themeRequest++;return;}if(coverColorCache.has(url)){body.style.setProperty('--user-accent',coverColorCache.get(url));return;}if(themeImageKey===url)return;themeImageKey=url;var generation=++themeRequest;var img=new Image();img.crossOrigin='anonymous';img.onload=function(){if(generation!==themeRequest||!prefs.dynamic||currentTrack?.thumbnail!==url)return;try{var canvas=document.createElement('canvas');canvas.width=canvas.height=24;var ctx=canvas.getContext('2d',{willReadFrequently:true});ctx.drawImage(img,0,0,24,24);var data=ctx.getImageData(0,0,24,24).data;var r=0,g=0,b=0,n=0;for(var i=0;i<data.length;i+=4){var hi=Math.max(data[i],data[i+1],data[i+2]),lo=Math.min(data[i],data[i+1],data[i+2]);if(data[i+3]<200||hi<40||lo>225)continue;var w=1+(hi-lo)/80;r+=data[i]*w;g+=data[i+1]*w;b+=data[i+2]*w;n+=w;}if(n){var tint='rgb('+[r,g,b].map(function(x){return Math.round(x/n*.57+255*.43);}).join(',')+')';if(coverColorCache.size>80)coverColorCache.clear();coverColorCache.set(url,tint);body.style.setProperty('--user-accent',tint);}}catch(_){/* The cover background still works if CORS prevents reading pixels. */}};img.src=url;}
-  function savePrefs(){try{localStorage.setItem('nexus.player.settings.v1',JSON.stringify(prefs));}catch(_){}updateTheme();renderQueue();}
-  function paintPrefs(){Object.keys(prefDefaults).forEach(function(k){var el=byId('pref-'+k);if(el){if(el.type==='checkbox')el.checked=!!prefs[k];else el.value=prefs[k];}});byId('volume-control').value=Math.max(0,Math.min(100,prefs.volume));}
+  function updateTheme(){
+    var body=document.body,color=palettes[prefs.color]||palettes.aurora;
+    body.style.setProperty('--user-accent',color);body.dataset.theme=prefs.color;
+    body.classList.toggle('no-glass',!prefs.glass);body.classList.toggle('no-blur',!prefs.blur);
+    body.classList.toggle('no-motion',!prefs.motion);body.classList.toggle('dynamic-theme',prefs.dynamic&&!prefs.dataSaver);
+    var ambient=byId('cover-ambient'),url=currentTrack&&currentTrack.thumbnail;
+    var valid=prefs.dynamic&&!prefs.dataSaver&&url&&/^https:\/\//i.test(url);
+    ambient.style.backgroundImage=valid?'url('+JSON.stringify(url)+')':'';
+    if(!valid){themeImageKey='';themeRequest++;return;}
+    if(coverColorCache.has(url)){body.style.setProperty('--user-accent',coverColorCache.get(url));return;}
+    if(themeImageKey===url)return;
+    themeImageKey=url;
+    var generation=++themeRequest,img=new Image();
+    img.crossOrigin='anonymous';
+    img.onload=function(){
+      if(generation!==themeRequest||!prefs.dynamic||prefs.dataSaver||currentTrack?.thumbnail!==url)return;
+      try{
+        var canvas=document.createElement('canvas');canvas.width=canvas.height=24;
+        var ctx=canvas.getContext('2d',{willReadFrequently:true});ctx.drawImage(img,0,0,24,24);
+        var data=ctx.getImageData(0,0,24,24).data,r=0,g=0,b=0,n=0;
+        for(var i=0;i<data.length;i+=4){
+          var hi=Math.max(data[i],data[i+1],data[i+2]),lo=Math.min(data[i],data[i+1],data[i+2]);
+          if(data[i+3]<200||hi<40||lo>225)continue;
+          var w=1+(hi-lo)/80;r+=data[i]*w;g+=data[i+1]*w;b+=data[i+2]*w;n+=w;
+        }
+        if(n){
+          var tint='rgb('+[r,g,b].map(function(x){return Math.round(x/n*.57+255*.43);}).join(',')+')';
+          if(coverColorCache.size>80)coverColorCache.clear();
+          coverColorCache.set(url,tint);body.style.setProperty('--user-accent',tint);
+        }
+      }catch(_){/* The cover background still works if CORS prevents reading pixels. */}
+    };
+    img.src=url;
+  }
+  function savePrefs(){
+    var saved=true;
+    try{localStorage.setItem('nexus.player.settings.v1',JSON.stringify(prefs));}
+    catch(error){saved=false;console.error('No se pudieron guardar los ajustes web.',error);setStatus('No se pudieron guardar los ajustes en este navegador.',true);}
+    updateTheme();renderQueue();
+    return saved;
+  }
+  function paintPrefs(){
+    Object.keys(prefDefaults).forEach(function(k){var el=byId('pref-'+k);if(el){if(el.type==='checkbox')el.checked=!!prefs[k];else el.value=prefs[k];}});
+    var volume=Math.max(0,Math.min(100,Number(prefs.volume)||0));
+    byId('volume-control').value=volume;
+    byId('pref-volume-value').value=volume+'%';
+    byId('pref-volume-value').textContent=volume+'%';
+  }
   function applySpeed(){audio.playbackRate=Number(prefs.speed)||1;if(playerReady&&player)try{player.setPlaybackRate(Number(prefs.speed)||1);}catch(_){}}
   if(!palettes[prefs.color])prefs.color='aurora';if(!['0.75','1','1.25','1.5','2'].includes(prefs.speed))prefs.speed='1';
   paintPrefs();updateTheme();
-  Object.keys(prefDefaults).forEach(function(k){var el=byId('pref-'+k);if(!el)return;el.addEventListener('change',function(){prefs[k]=el.type==='checkbox'?el.checked:el.value;savePrefs();applySpeed();});});
-  byId('volume-control').addEventListener('change',function(){prefs.volume=Number(this.value);savePrefs();});
-  byId('settings-open').addEventListener('click',function(){byId('settings-dialog').showModal();});
-  byId('settings-discord').addEventListener('click',function(){byId('settings-dialog').close();byId('discord-settings').click();});
-  byId('pref-reset').addEventListener('click',function(){prefs=Object.assign({},prefDefaults);paintPrefs();savePrefs();applySpeed();audio.volume=prefs.volume/100;if(playerReady&&player)try{player.setVolume(prefs.volume);}catch(_){}byId('settings-status').textContent='Ajustes restablecidos.';});
+  Object.keys(prefDefaults).forEach(function(k){
+    var el=byId('pref-'+k);if(!el)return;
+    el.addEventListener('change',function(){
+      prefs[k]=el.type==='checkbox'?el.checked:el.value;
+      if(k==='volume'){
+        prefs.volume=Math.max(0,Math.min(100,Number(el.value)||0));
+        el.value=String(prefs.volume);
+        byId('volume-control').value=prefs.volume;
+        byId('pref-volume-value').value=prefs.volume+'%';
+        byId('pref-volume-value').textContent=prefs.volume+'%';
+        audio.volume=prefs.volume/100;
+        if(playerReady&&player)player.setVolume(prefs.volume);
+      }
+      if(k==='persistentQueue'){
+        try{
+          if(prefs.persistentQueue)persist(storageKeys.queue,queue);
+          else localStorage.removeItem(storageKeys.queue);
+        }catch(error){console.error('No se pudo actualizar la cola guardada.',error);setStatus('No se pudo actualizar la cola guardada.',true);}
+      }
+      savePrefs();applySpeed();
+      if(k==='dataSaver'){if(currentTrack)setCurrentTrack(currentTrack);refreshViews();}
+      if(k==='persistentQueue')updateDashboardStats();
+    });
+  });
+  byId('pref-volume').addEventListener('input',function(){
+    var volume=Math.max(0,Math.min(100,Number(this.value)||0));
+    byId('pref-volume-value').value=volume+'%';
+    byId('pref-volume-value').textContent=volume+'%';
+    audio.volume=volume/100;
+    if(playerReady&&player)player.setVolume(volume);
+    byId('volume-control').value=volume;
+  });
+  byId('volume-control').addEventListener('change',function(){prefs.volume=Number(this.value);paintPrefs();savePrefs();});
+  byId('settings-discord').addEventListener('click',function(){byId('discord-settings').click();});
+  byId('pref-reset').addEventListener('click',function(){prefs=Object.assign({},prefDefaults);paintPrefs();var saved=savePrefs();applySpeed();audio.volume=prefs.volume/100;if(playerReady&&player)try{player.setVolume(prefs.volume);}catch(_){}if(prefs.persistentQueue)persist(storageKeys.queue,queue);refreshViews();byId('settings-status').textContent=saved?'Ajustes restablecidos.':'Ajustes restablecidos, pero el navegador no pudo guardarlos.';});
+  byId('export-library').addEventListener('click',function(){
+    var backup={format:'nexusmusic-web-library',version:1,exportedAt:new Date().toISOString(),library:library,favorites:favorites,playlists:playlists,history:recent,queue:queue};
+    var blob=new Blob([JSON.stringify(backup,null,2)],{type:'application/json'});
+    var url=URL.createObjectURL(blob),link=document.createElement('a');
+    link.href=url;link.download='nexusmusic-beta-coleccion.json';link.click();
+    window.setTimeout(function(){URL.revokeObjectURL(url);},1000);
+    setStatus('Copia de tu colección descargada.');
+  });
   byId('copy-donation').addEventListener('click',async function(){try{await navigator.clipboard.writeText('3018951690');byId('settings-status').textContent='Número copiado.';}catch(_){byId('settings-status').textContent='Número de donación: 3018951690';}});
 
   refreshViews();
