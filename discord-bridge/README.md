@@ -1,0 +1,2 @@
+# NexusMusic Discord Bridge
+Este asistente es opcional y se ejecuta localmente, no en Vercel. Con Discord de escritorio abierto y Node.js 18+, ejecuta `npm install` y `npm start` en esta carpeta. Copia el código mostrado, abre https://nexusmusicx.vercel.app/listen?web=1 y en Discord → Conectar presencia pega el código. Permite acceso local si el navegador lo solicita. No introduzcas tokens de usuario o bot. Ctrl+C cierra el asistente. Consulta el README principal para más detalles.
