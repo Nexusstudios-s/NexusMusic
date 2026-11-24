@@ -14,8 +14,8 @@ module.exports=async function(req,res){
   if(req.method!=='GET'){res.setHeader('Allow','GET');return res.status(405).json({error:'Método no permitido.'});}
   const q=typeof req.query.q==='string'?req.query.q.trim().replace(/\s+/g,' '):'';
   if(q.length<2||q.length>100)return res.status(400).json({error:'Escribe entre 2 y 100 caracteres.'});
-  const key=process.env.YOUTUBE_API_KEY;
-  if(!key)return res.status(503).json({error:'Falta configurar YOUTUBE_API_KEY en Vercel.'});
+  const key=process.env.youtube_api_key||process.env.YOUTUBE_API_KEY;
+  if(!key)return res.status(503).json({error:'Falta configurar.'});
   const region=/^[A-Z]{2}$/.test(process.env.YOUTUBE_REGION||'')?process.env.YOUTUBE_REGION:'CO';
   const ck=region+':'+q.toLowerCase(); const hit=cache.get(ck);
   if(hit&&hit.expires>Date.now())return res.status(200).json(hit.body);
