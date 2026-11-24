@@ -192,7 +192,7 @@
       : "https://i.ytimg.com/vi/" + encodeURIComponent(track.id) + "/hqdefault.jpg";
     image.onerror = function () {
       image.onerror = null;
-      image.src = "assets/studio-mark.svg";
+      image.src = "assets/Nexus-logo.png";
     };
     return image;
   }

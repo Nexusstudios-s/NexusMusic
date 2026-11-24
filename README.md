@@ -4,7 +4,7 @@ Sitio estático + función serverless para Vercel, sin frameworks ni compilació
 
 ## Publicar
 1. Extrae este ZIP. Coloca todos los archivos y `api/` en la raíz del proyecto Vercel. Puedes reemplazar el frontend anterior; no necesitas `33ds.css`, `33dr.js`, `scc.css`, `web-player.css` ni `p.css`.
-2. Fusiona tu carpeta `assets/` original con la incluida (no borres `studio-mark.svg`). Conserva también `avatar.png` en la raíz si lo tienes. Las capturas y el avatar no fueron enviados; sin ellos se muestran recuadros de reserva claramente identificados.
+2. Fusiona tu carpeta `assets/` original con la incluida (no borres `Nexus-logo.png`). Conserva también `avatar.png` en la raíz si lo tienes. Las capturas y el avatar no fueron enviados; sin ellos se muestran recuadros de reserva claramente identificados.
 3. En Vercel selecciona Framework Preset: Other; sin comando de build ni output directory personalizado.
 4. Configura `YOUTUBE_API_KEY` (YouTube Data API v3) en Environment Variables; opcionalmente `YOUTUBE_REGION=CO`. Si ya existía la variable, no necesitas crearla otra vez. Nunca incluyas la clave en el frontend. Restringe la clave a la API indicada.
 5. Redeploy. Verifica `/api/music-search?q=rock`, luego `/listen?web=1`. La portada incluye enlaces al reproductor y a la versión APK publicada en `version.json`.
