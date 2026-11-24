@@ -11,7 +11,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="33ds.css">
-  <link rel="stylesheet" href="web-player.css">
+  <link rel="stylesheet" href="web-player.css?v=20261124-library">
 </head>
 <body class="player-page web-player">
   <main class="player-page__wrap">
@@ -85,7 +85,7 @@
           <section id="search-view" class="web-view" hidden>
             <p class="web-player__eyebrow">DESCUBRE ALGO NUEVO</p>
             <h1>Buscar música</h1>
-            <p class="web-player__intro">Busca por canción o artista y escucha desde el reproductor oficial de YouTube.</p>
+            <p class="web-player__intro">Busca por canción o artista y escucha desde el reproductor oficial de NexusMusic.</p>
             <form class="web-player__form" id="track-form" role="search">
               <label class="sr-only" for="track-input">Buscar música</label>
               <span class="web-player__search-icon" aria-hidden="true">⌕</span>
@@ -179,6 +179,6 @@
         encodeURIComponent(fallback.href) + ";end";
     })();
   </script>
-  <script src="web-player.js?v=20261124-api"></script>
+  <script src="web-player.js?v=20261124-api-root"></script>
 </body>
 </html>

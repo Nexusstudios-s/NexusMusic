@@ -130,6 +130,33 @@
     status.classList.toggle("is-error", Boolean(isError));
   }
 
+  function getApiErrorMessage(error, statusCode) {
+    if (typeof error === "string" && error.trim()) return error.trim();
+    if (error && typeof error === "object") {
+      if (typeof error.message === "string" && error.message.trim()) return error.message.trim();
+      if (typeof error.error_description === "string" && error.error_description.trim()) return error.error_description.trim();
+      if (typeof error.detail === "string" && error.detail.trim()) return error.detail.trim();
+      if (typeof error.error === "string" && error.error.trim()) return error.error.trim();
+      if (error.error && typeof error.error === "object") {
+        var nestedMessage = getApiErrorMessage(error.error);
+        if (nestedMessage !== "No se pudo completar la búsqueda. Inténtalo de nuevo.") return nestedMessage;
+      }
+      if (Array.isArray(error.errors)) {
+        var messages = error.errors.map(function (item) {
+          if (typeof item === "string") return item;
+          return item && typeof item.message === "string" ? item.message : "";
+        }).filter(Boolean);
+        if (messages.length) return messages.join(" ");
+      }
+    }
+    if (statusCode === 401 || statusCode === 403) {
+      return "El servicio de música rechazó la búsqueda. Revisa la configuración de la API.";
+    }
+    if (statusCode === 429) return "Hay demasiadas búsquedas por ahora. Espera un momento e inténtalo otra vez.";
+    if (statusCode >= 500) return "El servidor de búsqueda tuvo un problema. Inténtalo de nuevo en unos minutos.";
+    return "No se pudo completar la búsqueda. Inténtalo de nuevo.";
+  }
+
   function saveList(key, value, limit) {
     if (persist(key, value.slice(0, limit))) return true;
     return false;
@@ -667,7 +694,7 @@
             }
             throw new Error("El servidor de búsqueda respondió con un formato inesperado. Inténtalo más tarde.");
           }
-          if (!response.ok) throw new Error(payload.error || "No se pudo completar la búsqueda.");
+          if (!response.ok) throw new Error(getApiErrorMessage(payload && payload.error, response.status));
           if (!payload || !Array.isArray(payload.items)) throw new Error("El servidor devolvió una respuesta de búsqueda incompleta.");
           return payload.items.filter(function (track) {
             return track && videoIdPattern.test(track.id || "") &&
@@ -703,9 +730,14 @@
         resultsEyebrow.textContent = "AVISO";
         lastSearchTracks = [];
         renderTracks(results, [], { error: true });
-        setStatus(error.name === "AbortError"
+        var message = error.name === "AbortError"
           ? "La búsqueda tardó demasiado. Comprueba tu conexión e inténtalo otra vez."
-          : error.message || "La búsqueda no está disponible. Inténtalo otra vez.", true);
+          : error instanceof TypeError || /networkerror|failed to fetch/i.test(error.message || "")
+            ? "No pudimos conectar con el servicio de búsqueda. Comprueba tu conexión e inténtalo otra vez."
+            : typeof error.message === "string" && error.message !== "[object Object]"
+              ? error.message
+              : getApiErrorMessage(null);
+        setStatus(message, true);
       })
       .finally(function () {
         window.clearTimeout(searchTimeout);
@@ -752,7 +784,7 @@
         },
         onStateChange: onPlayerStateChange,
         onError: function () {
-          setStatus("YouTube no permite reproducir esta canción aquí. Prueba otra o ábrela en YouTube Music.", true);
+          setStatus("YouTube no permite reproducir esta canción aquí. Prueba otra o ábrela en NexusMusic.", true);
           playButton.textContent = "▶";
           playButton.setAttribute("aria-label", "Reproducir");
         }
