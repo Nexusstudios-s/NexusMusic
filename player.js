@@ -99,7 +99,7 @@
   function isTrack(track) {
     return track && typeof track.title === "string" && typeof track.artist === "string" && (track.provider === "audius" ? /^au:[A-Za-z0-9_-]{1,80}$/.test(track.id || "") : track.provider === "discord" ? /^dc:[a-f0-9]{16}$/.test(track.id || "") && !!directAudio(track.audioUrl) : videoIdPattern.test(track.id || ""));
   }
-  function sourceName(track) { return track.provider === "audius" ? "Audius" : track.provider === "discord" ? "Discord · audio" : "YouTube"; }
+  function sourceName(track) { return track.provider === "catalog" ? "Catálogo comercial" : track.provider === "audius" ? "Audius" : track.provider === "discord" ? "Discord · audio" : "YouTube"; }
   function sourceUrl(track) {
     if (track.provider === "discord") return directAudio(track.audioUrl);
     if (track.provider === "audius") { try { var u = new URL(track.url); if (u.origin === "https://audius.co") return u.href; } catch (_) {} return "https://audius.co"; }
@@ -228,7 +228,7 @@
       : (track.provider ? "assets/Nexus-logo.png" : "https://i.ytimg.com/vi/" + encodeURIComponent(track.id) + "/hqdefault.jpg");
     image.onerror = function () {
       image.onerror = null;
-      image.src = "assets/Nexus-logo.png";
+      image.src = "assets/studio-mark.svg";
     };
     return image;
   }
@@ -250,6 +250,8 @@
       artworkPlaceholder.hidden = false;
     }
     renderQueue();
+    updateShortcuts();
+    if(lyricsEnabled) requestLyrics();
   }
 
   function refreshViews() {
@@ -263,6 +265,7 @@
     renderPlaylistCards(document.getElementById("playlist-grid"), playlists, false);
     renderQueue();
     renderActivePlaylist();
+    updateShortcuts();
   }
 
   function addToQueue(track, silent) {
@@ -376,6 +379,7 @@
     }
 
     tracks.forEach(function (track) {
+      if(isCatalog(track)){renderCatalogCard(container,track);return;}
       var card = document.createElement("article");
       card.className = "web-song";
       if (options.compact) card.classList.add("web-song--compact");
@@ -404,30 +408,12 @@
         createIconButton(favorites.some(function (item) { return item.id === track.id; }) ? "♥" : "♡",
           favorites.some(function (item) { return item.id === track.id; }) ? "Quitar de favoritos" : "Añadir a favoritos",
           function () { toggleFavorite(track); }),
-        createIconButton("≡", "Añadir a la cola", function () { addToQueue(track, false); })
+        createIconButton("≡", "Añadir a la cola", function () { addToQueue(track, false); }),
+        createIconButton("☷", "Añadir a playlist", function () { openQuickPlaylist(track); })
       );
-      if (playlists.length && !options.compact) {
-        var select = document.createElement("select");
-        select.className = "web-song__playlist-select";
-        select.setAttribute("aria-label", "Añadir " + track.title + " a una playlist");
-        var placeholderOption = document.createElement("option");
-        placeholderOption.value = "";
-        placeholderOption.textContent = "＋ Lista";
-        select.appendChild(placeholderOption);
-        playlists.forEach(function (playlist) {
-          var option = document.createElement("option");
-          option.value = playlist.id;
-          option.textContent = playlist.name;
-          select.appendChild(option);
-        });
-        select.addEventListener("change", function () {
-          if (select.value) addToPlaylist(select.value, track);
-          select.value = "";
-        });
-        actionBar.appendChild(select);
-      }
       actions.append(play, actionBar);
       card.append(image, title, artist, actions);
+      card.classList.toggle("is-current", track.id===currentTrackId);
       container.appendChild(card);
     });
   }
@@ -693,6 +679,7 @@
     });
     document.getElementById("view-breadcrumb").textContent = viewTitles[viewName];
     if (viewName === "playlists") renderActivePlaylist();
+    if(document.body.classList.contains("player-expanded")) setExpanded(false);
     document.querySelector(".web-app__views").scrollTop = 0;
   }
 
@@ -701,6 +688,8 @@
     var shared = /^https:\/\//i.test(raw) ? parseShared(raw) : null;
     if(shared){ if(searchController)searchController.abort(); searchToken++; document.querySelector(".web-player__search-submit").disabled=false; lastSearchTracks=[shared];resultsTitle.textContent="Enlace compartido";resultsEyebrow.textContent=sourceName(shared);renderTracks(results,lastSearchTracks,{});playTrack(shared);return; }
     var cleanQuery = raw.replace(/\s+/g, " ");
+    byId("search-external").hidden=cleanQuery.length<2||cleanQuery.length>100;
+    byId("external-youtube").href="https://www.youtube.com/results?search_query="+encodeURIComponent(cleanQuery);
     if (cleanQuery.length < 2 || cleanQuery.length > 100) {
       if (searchController) {
         searchController.abort();
@@ -745,7 +734,7 @@
           }
           if (!response.ok) throw new Error(getApiErrorMessage(payload && payload.error, response.status));
           if (!payload || !Array.isArray(payload.items)) throw new Error("El servidor devolvió una respuesta de búsqueda incompleta.");
-          return payload.items.filter(isTrack);
+          return payload.items.filter(function(t){return isTrack(t)||isCatalog(t);});
         });
       })
       .then(function (tracks) {
@@ -760,7 +749,7 @@
         }
         lastSearchTracks = tracks;
         renderTracks(results, tracks, {});
-        setStatus(tracks.length+" canciones disponibles en Audius.");
+        setStatus(tracks.filter(isTrack).length+" reproducibles aquí · "+tracks.filter(isCatalog).length+" en catálogo comercial.");
       })
       .catch(function (error) {
         if (requestId !== searchToken) return;
@@ -879,12 +868,57 @@
   progress.addEventListener("change",function(){var duration=mode==="audio"?audio.duration:mode==="youtube"&&playerReady&&player&&!playbackFailed?player.getDuration():0;if(Number.isFinite(duration)&&duration>0){var t=Number(progress.value)/1000*duration;if(mode==="audio")audio.currentTime=t;else player.seekTo(t,true);}isSeeking=false;});
   window.setInterval(function(){if(isSeeking||playbackFailed)return;var duration,current;if(mode==="audio"){duration=audio.duration;current=audio.currentTime;}else if(mode==="youtube"&&playerReady&&player&&placeholder.hidden){duration=player.getDuration();current=player.getCurrentTime();}if(Number.isFinite(duration)&&duration>0&&Number.isFinite(current)){progress.value=String(Math.round(current/duration*1000));currentTimeLabel.textContent=formatTime(current);durationLabel.textContent=formatTime(duration);}},500);
   document.getElementById("volume-control").addEventListener("input",function(){audio.volume=Number(this.value)/100;if(playerReady&&player)player.setVolume(Number(this.value));});
+
+  // Atmosphere controls use the same playback and collection state, never a second player.
+  function byId(id){return document.getElementById(id);}
+  function isCatalog(t){return t&&t.provider==='catalog'&&/^cat:\d+$/.test(t.id||'')&&typeof t.title==='string'&&typeof t.artist==='string'&&safeApple(t.url);}
+  function safeApple(url){try{var u=new URL(url);return u.protocol==='https:'&&['music.apple.com','itunes.apple.com'].includes(u.hostname)&&!u.username&&!u.password?u.href:'';}catch(_){return '';}}
+  function renderCatalogCard(container,track){
+    var card=document.createElement('article');card.className='web-song catalog-card';
+    var art=document.createElement('div');art.className='web-song__art catalog-art';art.append(createArtwork(track));
+    var title=document.createElement('div');title.className='web-song__title';title.textContent=track.title;
+    var artist=document.createElement('div');artist.className='web-song__artist';artist.textContent=track.artist+(track.duration?' · '+track.duration:'');
+    var tag=document.createElement('span');tag.className='catalog-tag';tag.textContent='CATÁLOGO · REPRODUCCIÓN EXTERNA';
+    var actions=document.createElement('div');actions.className='catalog-actions';
+    var yt=document.createElement('a');yt.className='primary';yt.textContent='Buscar en YouTube ↗';yt.href='https://www.youtube.com/results?search_query='+encodeURIComponent(track.title+' '+track.artist+' official audio');yt.target='_blank';yt.rel='noopener noreferrer';
+    var apple=document.createElement('a');apple.className='catalog-link';apple.textContent='Abrir en Apple Music ↗';apple.href=safeApple(track.url);apple.target='_blank';apple.rel='noopener noreferrer';
+    var note=document.createElement('small');note.textContent='Si encuentras un video compatible, pega su enlace aquí.';actions.append(yt,apple,note);card.append(art,title,artist,tag,actions);container.append(card);
+  }
+  function setExpanded(value){document.body.classList.toggle('player-expanded',value);byId('expand-player').setAttribute('aria-expanded',String(value));byId('expand-player').setAttribute('aria-label',value?'Reducir reproductor':'Ampliar reproductor');byId('expand-player').textContent=value?'⤡':'⤢';if(value&&!lyricsEnabled){lyricsEnabled=true;updateLyricsVisibility();requestLyrics();}}
+  function updateShortcuts(){var track=currentTrack;['np-save','np-like','np-playlist','np-share'].forEach(function(id){byId(id).disabled=!track;});var saved=!!track&&library.some(function(t){return t.id===track.id;});var liked=!!track&&favorites.some(function(t){return t.id===track.id;});byId('np-save').classList.toggle('is-saved',saved);byId('np-save').textContent=saved?'✓ Guardada':'＋ Guardar';byId('np-like').setAttribute('aria-pressed',String(liked));byId('np-like').textContent=liked?'♥ Me gusta':'♡ Me gusta';}
+  byId("panel-cover").addEventListener("error",function(){if(!this.src.endsWith("/assets/studio-mark.svg"))this.src="assets/studio-mark.svg";});
+  var quickTrack=null;
+  function openQuickPlaylist(track){quickTrack=track;byId('quick-track-name').textContent=track.title+' · '+track.artist;var select=byId('quick-playlist-select');select.replaceChildren(new Option('Elige una playlist',''));playlists.forEach(function(p){select.add(new Option(p.name,p.id));});byId('quick-new-name').value='';byId('quick-playlist-status').textContent='';byId('playlist-dialog').showModal();}
+  byId('np-save').addEventListener('click',function(){if(currentTrack)addToLibrary(currentTrack);});
+  byId('np-like').addEventListener('click',function(){if(currentTrack)toggleFavorite(currentTrack);});
+  byId('np-playlist').addEventListener('click',function(){if(currentTrack)openQuickPlaylist(currentTrack);});
+  byId('quick-add-existing').addEventListener('click',function(){var id=byId('quick-playlist-select').value;if(!id||!quickTrack){byId('quick-playlist-status').textContent='Elige una playlist.';return;}addToPlaylist(id,quickTrack);byId('quick-playlist-status').textContent=status.textContent;});
+  byId('quick-playlist-form').addEventListener('submit',function(e){e.preventDefault();var name=byId('quick-new-name').value.trim();if(!name||!quickTrack)return;var existing=playlists.find(function(p){return p.name.toLowerCase()===name.toLowerCase();});if(existing){addToPlaylist(existing.id,quickTrack);byId('quick-playlist-status').textContent=status.textContent;return;}if(playlists.length>=100){byId('quick-playlist-status').textContent='Límite de playlists alcanzado.';return;}var p={id:crypto.randomUUID?crypto.randomUUID():String(Date.now()),name:name,tracks:[quickTrack],createdAt:Date.now()};playlists.unshift(p);if(!persist(storageKeys.playlists,playlists)){playlists.shift();byId('quick-playlist-status').textContent=status.textContent;return;}refreshViews();byId('quick-playlist-status').textContent='Playlist creada y canción guardada.';byId('quick-new-name').value='';byId('quick-playlist-select').add(new Option(p.name,p.id));});
+  function shareUrl(t){var u=new URL('https://nexusmusicx.vercel.app/listen');u.searchParams.set('web','1');if(t.provider==='audius')u.searchParams.set('audius',t.id.slice(3));else if(t.provider==='discord')u.searchParams.set('audio',t.audioUrl);else u.searchParams.set('v',t.id);u.searchParams.set('title',t.title);u.searchParams.set('artist',t.artist);return u.href;}
+  byId('np-share').addEventListener('click',async function(){if(!currentTrack)return;var url=shareUrl(currentTrack);try{if(navigator.share)await navigator.share({title:currentTrack.title,url:url});else{await navigator.clipboard.writeText(url);setStatus('Enlace copiado.');}}catch(e){if(e.name!=='AbortError')setStatus('No se pudo compartir. Abre la fuente original.',true);}});
+  [byId('expand-player'),byId('expand-bottom'),byId('expand-mobile')].forEach(function(b){b.addEventListener('click',function(){setExpanded(!document.body.classList.contains('player-expanded'));});});
+  document.querySelector('.web-now-playing__track').addEventListener('dblclick',function(){setExpanded(!document.body.classList.contains('player-expanded'));});
+  document.querySelectorAll('[data-close]').forEach(function(b){b.addEventListener('click',function(){byId(b.dataset.close).close();});});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape'&&!document.querySelector('dialog[open]'))setExpanded(false);});
+  // Lyrics: exact recording match, line timestamps, real player clock, no artificial timing.
+  var lyricsEnabled=false,lyricsKey='',lyricsController=null,lyricRows=[],activeLine=-1,lyricsPending=false;
+  function clock(){try{if(mode==='audio')return {time:audio.currentTime,duration:audio.duration};if(mode==='youtube'&&playerReady&&player)return {time:player.getCurrentTime(),duration:player.getDuration()};}catch(_){}return {time:0,duration:0};}
+  function durationSeconds(text){var parts=String(text||'').split(':');return parts.length===2?Number(parts[0])*60+Number(parts[1]):0;}
+  function updateLyricsVisibility(){byId('lyrics-toggle').setAttribute('aria-expanded',String(lyricsEnabled));byId('lyrics-lines').hidden=!lyricsEnabled;byId('lyrics-credit').hidden=!lyricsEnabled||!lyricRows.length;if(!lyricsEnabled)byId('lyrics-status').textContent='Letra oculta. Pulsa ♪ para mostrarla.';}
+  function parseLrc(lrc){var rows=[],offset=0,m=String(lrc||'').match(/\[offset:([+-]?\d+)\]/i);if(m)offset=Number(m[1])/1000;String(lrc||'').split(/\r?\n/).forEach(function(line){var tags=Array.from(line.matchAll(/\[(\d{1,3}):(\d{2})(?:[.:](\d{1,3}))?\]/g));var text=line.replace(/\[[^\]]*\]/g,'').trim();if(!text)return;tags.forEach(function(t){rows.push({time:Math.max(0,Number(t[1])*60+Number(t[2])+Number('0.'+(t[3]||'0'))+offset),text:text});});});return rows.sort(function(a,b){return a.time-b.time;});}
+  function seekTo(t){var c=clock();if(!Number.isFinite(c.duration)||c.duration<=0||playbackFailed)return;if(mode==='audio')audio.currentTime=Math.min(t,c.duration);else if(mode==='youtube'&&playerReady)player.seekTo(Math.min(t,c.duration),true);}
+  function requestLyrics(){if(!lyricsEnabled)return;var track=currentTrack;var lines=byId('lyrics-lines'),label=byId('lyrics-status');if(!track){label.textContent='Elige una canción para ver su letra.';return;}var duration=clock().duration;if(!Number.isFinite(duration)||duration<=0)duration=durationSeconds(track.duration);if(!Number.isFinite(duration)||duration<1)duration=0;var key=[track.id,track.title,track.artist,Math.round(duration)].join('|');if(key===lyricsKey)return;lyricsKey=key;if(lyricsController)lyricsController.abort();lyricsController=new AbortController();var signal=lyricsController.signal;lyricRows=[];activeLine=-1;lines.replaceChildren();byId('lyrics-credit').hidden=true;lyricsPending=true;label.textContent='Buscando la letra de esta grabación…';var u=new URL('/api/lyrics',location.origin);u.searchParams.set('title',track.title);u.searchParams.set('artist',track.artist);if(duration>0)u.searchParams.set('duration',String(Math.round(duration)));fetch(u,{signal:signal}).then(async function(r){if(!r.ok&&r.status!==404)throw Error('No disponible');return r.json();}).then(function(d){if(signal.aborted||lyricsKey!==key)return;lyricsPending=false;if(d.instrumental){label.textContent='Esta pista es instrumental.';return;}lyricRows=parseLrc(d.syncedLyrics);if(lyricRows.length){label.textContent='Sincronizada por líneas · pulsa una línea para saltar.';lyricRows.forEach(function(row){var b=document.createElement('button');b.type='button';b.textContent=row.text;b.addEventListener('click',function(){seekTo(row.time);});lines.append(b);});}else if(d.plainLyrics){label.textContent='Letra disponible sin tiempos sincronizados.';var text=document.createElement('div');text.className='lyric-line';text.textContent=d.plainLyrics;lines.append(text);}else{label.textContent='No hay una letra verificada para esta versión.';return;}byId('lyrics-credit').hidden=!lyricsEnabled;lines.hidden=!lyricsEnabled;}).catch(function(e){if(signal.aborted)return;lyricsPending=false;label.textContent='No se pudo consultar la letra. Oculta y vuelve a abrir para reintentar.';});}
+  byId('lyrics-toggle').addEventListener('click',function(){lyricsEnabled=!lyricsEnabled;updateLyricsVisibility();if(lyricsEnabled){lyricsKey='';requestLyrics();}});
+  setInterval(function(){if(!lyricsEnabled)return;if(currentTrack)requestLyrics();if(!lyricRows.length||playbackFailed)return;var time=clock().time;if(!Number.isFinite(time))return;var index=-1;for(var i=0;i<lyricRows.length;i++){if(lyricRows[i].time>time+.08)break;index=i;}if(index===activeLine)return;var list=byId('lyrics-lines');if(activeLine>=0&&list.children[activeLine])list.children[activeLine].classList.remove('active');activeLine=index;if(index>=0&&list.children[index]){var line=list.children[index];line.classList.add('active');list.scrollTo({top:Math.max(0,line.offsetTop-list.offsetTop-list.clientHeight*.3),behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'});}},250);
+  window.NexusPlayback={snapshot:function(){if(!currentTrack||!document.body.classList.contains('is-playing')||playbackFailed)return null;var c=clock();return {title:currentTrack.title,artist:currentTrack.artist,position:Number.isFinite(c.time)?c.time:0,duration:Number.isFinite(c.duration)?c.duration:0,url:currentTrack.provider==='discord'?'https://nexusmusicx.vercel.app/listen?web=1':shareUrl(currentTrack)};}};
+
   refreshViews();
   setView("home");
   var initialQuery=params.get("q"); if(initialQuery && initialQuery.trim().length>=2 && initialQuery.length<=100){input.value=initialQuery;setView("search");runSearch(initialQuery);}
 
   var sharedRaw=params.get("audio")||params.get("url")||params.get("v")||params.get("videoId")||"";
   incomingTrack=parseShared(sharedRaw,(params.get("title")||"").slice(0,160),(params.get("artist")||"").slice(0,120));
+  var incomingAudius=params.get("audius");if(!incomingTrack&&/^[A-Za-z0-9_-]{1,80}$/.test(incomingAudius||"")){incomingTrack={id:"au:"+incomingAudius,provider:"audius",title:(params.get("title")||"Canción de Audius").slice(0,160),artist:(params.get("artist")||"Audius").slice(0,120),url:"https://audius.co",thumbnail:"",duration:""};}
   if(incomingTrack){setView("search");prepareTrack(incomingTrack,false);incomingButton.hidden=false;incomingButton.textContent="▶ Reproducir canción compartida";setStatus("Enlace recibido. Pulsa reproducir para empezar.");enrichYouTube(incomingTrack);}else if(queue.length){prepareTrack(queue[0],false);}
 
   var versionUrl = new URL("version.json", document.baseURI);
