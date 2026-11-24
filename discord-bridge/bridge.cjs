@@ -11,7 +11,7 @@ function connect(){if(closing||connecting||ready)return;connecting=true;const cl
  client.login({clientId:APP_ID}).catch(lost);
 }
 function safeUrl(value){try{const u=new URL(value);return u.origin===SITE&&u.pathname==='/listen'&&u.href.length<=512&&!u.searchParams.has('audio')&&!u.searchParams.has('url')?u.href:VISIT;}catch{return VISIT;}}
-function safeCover(value){try{const u=new URL(value);return u.protocol==='https:'&&!u.username&&!u.password&&!u.port&&/^(i\.ytimg\.com|yt3\.ggpht\.com|lh[0-9]+\.googleusercontent\.com|is[0-9]+-ssl\.mzstatic\.com)$/.test(u.hostname)&&u.href.length<=512?u.href:'';}catch{return '';}}
+function safeCover(value){try{const u=new URL(value);const host=u.hostname.toLowerCase();const trustedHost=/^(i\.ytimg\.com|yt3\.ggpht\.com|lh[0-9]+\.googleusercontent\.com|is[0-9]+-ssl\.mzstatic\.com)$/.test(host)||host==='audius.co'||host.endsWith('.audius.co');return u.protocol==='https:'&&!u.username&&!u.password&&!u.port&&trustedHost&&u.href.length<=512?u.href:'';}catch{return '';}}
 async function clear(tab){if(tab&&owner!==tab)return;if(active&&ready&&rpc)await rpc.clearActivity();active=false;owner='';lastKey='';}
 async function apply(d){if(!ready||!rpc)return [503,{error:'Discord de escritorio no está conectado'}];if(typeof d.tab!=='string'||!/^[\w-]{8,100}$/.test(d.tab))return [400,{error:'Sesión inválida'}];if(d.clear===true){await clear(d.tab);return [200,{ok:true}];}
  if(typeof d.title!=='string'||typeof d.artist!=='string'||!d.title.trim())return [400,{error:'Datos de canción inválidos'}];
