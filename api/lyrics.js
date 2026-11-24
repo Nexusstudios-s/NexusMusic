@@ -1,0 +1,9 @@
+'use strict';
+const normalize=s=>String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^\p{L}\p{N}]+/gu,' ').trim();
+module.exports=async(req,res)=>{
+ if(req.method!=='GET'){res.setHeader('Allow','GET');return res.status(405).json({error:'Método no permitido'});}
+ const title=typeof req.query.title==='string'?req.query.title.trim():'';const artist=typeof req.query.artist==='string'?req.query.artist.trim():'';const duration=Number(req.query.duration)||0;
+ if(!title||!artist||title.length>200||artist.length>160||duration<0||duration>36000)return res.status(400).json({error:'Metadatos inválidos'});
+ const u=new URL('https://lrclib.net/api/search');u.searchParams.set('track_name',title);u.searchParams.set('artist_name',artist.replace(/\s*-\s*Topic$/i,''));
+ try{const r=await fetch(u,{headers:{Accept:'application/json','User-Agent':'NexusMusic Web/3 (https://nexusmusicx.vercel.app)'},signal:AbortSignal.timeout(9000)});if(!r.ok)throw Error('LRCLIB');const data=await r.json();const rows=Array.isArray(data)?data.filter(t=>normalize(t.trackName)===normalize(title)&&normalize(t.artistName)===normalize(artist.replace(/\s*-\s*Topic$/i,''))):[];const exact=duration>0?rows.filter(t=>Number.isFinite(t.duration)&&Math.abs(t.duration-duration)<=2).sort((a,b)=>Math.abs(a.duration-duration)-Math.abs(b.duration-duration)):[];const item=exact.find(t=>t.syncedLyrics)||exact[0]||(duration===0?rows[0]:null);if(!item)return res.status(404).json({});res.setHeader('Cache-Control','public, s-maxage=120');return res.status(200).json({instrumental:!!item.instrumental,plainLyrics:typeof item.plainLyrics==='string'?item.plainLyrics:'',syncedLyrics:duration>0&&exact.includes(item)&&typeof item.syncedLyrics==='string'?item.syncedLyrics:''});}catch{return res.status(502).json({error:'Letras temporalmente no disponibles'});}
+};
