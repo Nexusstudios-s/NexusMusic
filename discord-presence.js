@@ -1,1 +1,22 @@
-(()=>{'use strict';const $=id=>document.getElementById(id);const dialog=$('discord-dialog');if(!dialog)return;let code='',busy=false,timer=null;const endpoint='http://127.0.0.1:17845/presence';const message=t=>{$('discord-status').textContent=t;};async function send(payload){const r=await fetch(endpoint,{method:'POST',headers:{'Content-Type':'application/json','X-Nexus-Code':code},body:JSON.stringify(payload),signal:AbortSignal.timeout(3500)});if(!r.ok){const d=await r.json().catch(()=>({}));throw Error(d.error||'No se pudo conectar');}return r.json();}async function update(){if(!code||busy)return;busy=true;try{const snap=window.NexusPlayback?.snapshot();await send(snap||{clear:true});message(snap?'Presencia activa · '+snap.title:'Conectado · esperando reproducción');}catch(e){message('Sin conexión con el asistente local. '+e.message);}finally{busy=false;}}$('discord-settings').onclick=()=>dialog.showModal();$('discord-connect').onclick=async()=>{const value=$('discord-code').value.trim();if(!/^[a-f0-9]{36}$/i.test(value)){message('Introduce el código del asistente local.');return;}code=value;$('discord-code').value='';clearInterval(timer);await update();timer=setInterval(update,12000);};$('discord-disconnect').onclick=async()=>{clearInterval(timer);try{if(code)await send({clear:true});}catch{}code='';message('Desconectado');};window.addEventListener('pagehide',()=>{if(code)fetch(endpoint,{method:'POST',headers:{'Content-Type':'application/json','X-Nexus-Code':code},body:'{"clear":true}',keepalive:true}).catch(()=>{});});})();
+(()=>{
+'use strict';
+const $=id=>document.getElementById(id),dialog=$('discord-dialog');if(!dialog)return;
+const KEY='nexus.discord.enabled.v2', endpoint='http://127.0.0.1:17845/presence';
+const tab=globalThis.crypto?.randomUUID?.()||Math.random().toString(36).slice(2)+Date.now();
+let enabled=false,busy=false,timer=null,epoch=0,lastState='off';
+try{enabled=localStorage.getItem(KEY)==='1';}catch{}
+function paint(state,message){lastState=state;$('discord-settings').dataset.state=state;$('discord-settings').setAttribute('aria-label','Discord: '+message);$('discord-status').textContent=message;$('discord-connect').disabled=enabled;$('discord-disconnect').disabled=!enabled;$('discord-connect').textContent=enabled?'Activación guardada':'Activar presencia';}
+function remember(value){enabled=value;try{localStorage.setItem(KEY,value?'1':'0');}catch{}}
+async function send(payload,keepalive=false){const r=await fetch(endpoint,{method:'POST',headers:{'Content-Type':'application/json','X-Nexus-Client':'web-v2'},body:JSON.stringify({...payload,tab}),signal:keepalive?undefined:AbortSignal.timeout(4500),keepalive,targetAddressSpace:'loopback',credentials:'omit',cache:'no-store'});let data=await r.json().catch(()=>({}));if(!r.ok||!data.ok)throw Error(data.error||'Asistente incompatible o no disponible');return data;}
+async function update(){if(!enabled||busy)return;const generation=epoch;busy=true;try{const snap=window.NexusPlayback?.snapshot();await send(snap||{clear:true});if(enabled&&generation===epoch)paint('on',snap?'Conectado · '+snap.title:'Conectado · esperando música');}catch(e){if(enabled&&generation===epoch)paint('waiting','Esperando asistente local. Abre Discord y el asistente actualizado; permite acceso local si se solicita.');}finally{busy=false;if(generation!==epoch){if(enabled)void update();else void send({clear:true}).catch(()=>{});}}}
+function start(){clearInterval(timer);paint('waiting','Buscando el asistente local…');void update();timer=setInterval(update,10000);}
+function stop(){epoch++;clearInterval(timer);paint('off','Desactivado · no se comparte tu actividad');void send({clear:true}).catch(()=>{});}
+$('discord-settings').onclick=()=>{dialog.showModal();if(enabled)void update();};
+$('discord-connect').onclick=()=>{epoch++;remember(true);start();};
+$('discord-disconnect').onclick=()=>{remember(false);stop();};
+window.addEventListener('storage',e=>{if(e.key!==KEY)return;epoch++;enabled=e.newValue==='1';if(enabled)start();else stop();});
+window.addEventListener('online',()=>{if(enabled)void update();});
+window.addEventListener('pageshow',()=>{if(enabled)start();});
+window.addEventListener('pagehide',()=>{clearInterval(timer);if(enabled&&lastState==='on')void send({clear:true},true).catch(()=>{});});
+if(enabled)start();else paint('off','Desactivado · activa una sola vez');
+})();
