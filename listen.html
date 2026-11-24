@@ -1,184 +1,47 @@
-<!doctype html>
-<html lang="es">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#0b1421">
-  <meta name="description" content="Busca música, crea tu biblioteca y playlists, y escucha desde el navegador con NexusMusic Web.">
-  <title>Escuchar música — NexusMusic</title>
-  <link rel="icon" href="assets/Nexus-logo.png">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="33ds.css">
-  <link rel="stylesheet" href="web-player.css?v=20261124-library">
-</head>
-<body class="player-page web-player">
-  <main class="player-page__wrap">
-    <div class="web-app">
-      <aside class="web-app__rail" aria-label="Navegación principal">
-        <a class="web-app__side-brand" href="./" aria-label="NexusMusic inicio">
-          <img src="assets/Nexus-logo.png" alt="">
-          <span>Nexus<span>Music</span></span>
-        </a>
-        <p class="web-app__nav-label">MENÚ</p>
-        <nav class="web-app__nav-list" aria-label="Secciones">
-          <button class="web-app__nav is-active" type="button" data-view="home" aria-current="page"><span aria-hidden="true">⌂</span>Inicio</button>
-          <button class="web-app__nav" type="button" data-view="search"><span aria-hidden="true">⌕</span>Buscar</button>
-          <button class="web-app__nav" type="button" data-view="library"><span aria-hidden="true">▤</span>Biblioteca</button>
-          <button class="web-app__nav" type="button" data-view="favorites"><span aria-hidden="true">♡</span>Favoritos</button>
-          <button class="web-app__nav" type="button" data-view="playlists"><span aria-hidden="true">▧</span>Playlists</button>
-          <button class="web-app__nav" type="button" data-view="history"><span aria-hidden="true">◷</span>Historial</button>
-          <button class="web-app__nav" type="button" data-view="queue"><span aria-hidden="true">≡</span>Cola <span class="web-app__nav-count" id="sidebar-queue-count">0</span></button>
-        </nav>
-        <div class="web-app__rail-footer">
-          <span class="web-app__online-dot"></span>
-          <span>Tu música, en este dispositivo</span>
-        </div>
-      </aside>
-
-      <section class="web-app__content" aria-label="Reproductor web NexusMusic">
-        <header class="web-app__topbar">
-          <div class="web-app__breadcrumbs"><span>NEXUSMUSIC</span><span aria-hidden="true">/</span><strong id="view-breadcrumb">Inicio</strong></div>
-          <div class="web-app__top-actions">
-            <span class="web-app__local-badge"><span aria-hidden="true">●</span> Biblioteca local</span>
-            <a class="web-player__link" id="download-app" href="https://nexusmusicx.vercel.app/">Descargar app</a>
-          </div>
-        </header>
-        <p class="web-player__status web-app__status" id="player-status" role="status" aria-live="polite"></p>
-
-        <div class="web-app__views">
-          <section id="home-view" class="web-view">
-            <div class="web-home-hero">
-              <div class="web-home-hero__copy">
-                <p class="web-player__eyebrow">TU ESPACIO · TU MÚSICA</p>
-                <h1>La música que te mueve.</h1>
-                <p>Encuentra canciones, arma tu biblioteca y vuelve a lo que te gusta.</p>
-                <button class="primary" type="button" data-go="search">⌕ <span>Explorar música</span></button>
-              </div>
-              <div class="web-home-hero__art" aria-hidden="true"><span>♫</span><i></i><b></b></div>
-              <div class="web-home-hero__glow" aria-hidden="true"></div>
-            </div>
-                <section class="web-section" aria-labelledby="home-moods-title">
-                  <div class="web-section__head"><div><p class="web-player__eyebrow">ELIGE EL AMBIENTE</p><h2 id="home-moods-title">¿Qué se te antoja escuchar?</h2></div></div>
-                  <div class="web-mood-grid">
-                    <button type="button" data-query="lofi chill beats"><span>☁</span><strong>Modo relax</strong><small>Lo-fi y calma</small></button>
-                    <button type="button" data-query="top pop hits"><span>✦</span><strong>Lo más nuevo</strong><small>Pop para hoy</small></button>
-                    <button type="button" data-query="rock classics"><span>◉</span><strong>Guitarras</strong><small>Rock esencial</small></button>
-                    <button type="button" data-query="latin hits"><span>♫</span><strong>Ritmo latino</strong><small>Sube el volumen</small></button>
-                  </div>
-                </section>
-            <section class="web-section" aria-labelledby="home-recent-title">
-              <div class="web-section__head"><div><p class="web-player__eyebrow">SIGUE DESDE AQUÍ</p><h2 id="home-recent-title">Escuchado recientemente</h2></div><button class="web-player__text-button" type="button" data-go="history">Ver historial <span aria-hidden="true">→</span></button></div>
-              <div class="web-player__results web-player__results--compact" id="home-recent-results"></div>
-            </section>
-            <section class="web-section" aria-labelledby="home-library-title">
-              <div class="web-section__head"><div><p class="web-player__eyebrow">TU COLECCIÓN</p><h2 id="home-library-title">En tu biblioteca</h2></div><button class="web-player__text-button" type="button" data-go="library">Ver biblioteca <span aria-hidden="true">→</span></button></div>
-              <div class="web-player__results web-player__results--compact" id="home-library-results"></div>
-            </section>
-            <section class="web-section" aria-labelledby="home-playlists-title">
-              <div class="web-section__head"><div><p class="web-player__eyebrow">HECHAS POR TI</p><h2 id="home-playlists-title">Tus playlists</h2></div><button class="web-player__text-button" type="button" data-go="playlists">Ver playlists <span aria-hidden="true">→</span></button></div>
-              <div class="web-playlist-grid" id="home-playlists"></div>
-            </section>
-          </section>
-
-          <section id="search-view" class="web-view" hidden>
-            <p class="web-player__eyebrow">DESCUBRE ALGO NUEVO</p>
-            <h1>Buscar música</h1>
-            <p class="web-player__intro">Busca por canción o artista y escucha desde el reproductor oficial de NexusMusic.</p>
-            <form class="web-player__form" id="track-form" role="search">
-              <label class="sr-only" for="track-input">Buscar música</label>
-              <span class="web-player__search-icon" aria-hidden="true">⌕</span>
-              <input id="track-input" type="search" maxlength="100" autocomplete="off" placeholder="¿Qué quieres escuchar?" aria-label="Buscar canciones y artistas">
-              <button class="web-player__search-submit" type="submit" aria-label="Buscar">Buscar</button>
-            </form>
-            <div class="web-player__chips" aria-label="Búsquedas sugeridas">
-              <button type="button" data-query="lofi music">Lo-fi</button><button type="button" data-query="pop hits">Pop</button><button type="button" data-query="rock classics">Rock</button><button type="button" data-query="latin hits">Latino</button>
-            </div>
-            <div class="web-player__actions"><button class="primary" id="play-incoming" type="button" hidden>▶ Reproducir canción de Discord</button></div>
-            <section class="web-section" aria-labelledby="results-title">
-              <div class="web-section__head"><div><p class="web-player__eyebrow" id="results-eyebrow">RECOMENDACIONES</p><h2 id="results-title">Empieza con una búsqueda</h2></div></div>
-              <div class="web-player__results" id="search-results" aria-live="polite"></div>
-            </section>
-          </section>
-
-          <section id="library-view" class="web-view" hidden>
-            <p class="web-player__eyebrow">TU COLECCIÓN PERSONAL</p><h1>Biblioteca</h1>
-            <p class="web-player__intro">Tus canciones guardadas en este navegador. Crea una colección propia y vuelve a escucharla cuando quieras.</p>
-            <div class="web-section__head web-library-toolbar"><h2 id="library-count">0 canciones</h2><button class="primary" type="button" data-go="search">＋ Añadir música</button></div>
-            <div class="web-song-list" id="library-list"></div>
-          </section>
-
-          <section id="favorites-view" class="web-view" hidden>
-            <p class="web-player__eyebrow">TUS IMPRESCINDIBLES</p><h1>Favoritos</h1>
-            <p class="web-player__intro">Las canciones que marcaste con un corazón.</p>
-            <div class="web-song-list" id="favorites-list"></div>
-          </section>
-
-          <section id="playlists-view" class="web-view" hidden>
-            <p class="web-player__eyebrow">ORDENA TU SONIDO</p><h1>Playlists</h1>
-            <p class="web-player__intro">Crea listas para cada momento. Tus playlists se guardan en este dispositivo.</p>
-            <form class="web-create-playlist" id="playlist-form"><label class="sr-only" for="playlist-name">Nombre de playlist</label><input id="playlist-name" maxlength="40" placeholder="Nombre de la nueva playlist" required><button class="primary" type="submit">＋ Crear playlist</button></form>
-            <div class="web-playlist-grid" id="playlist-grid"></div>
-            <section class="web-playlist-detail" id="playlist-detail" hidden>
-              <div class="web-section__head"><div><p class="web-player__eyebrow">PLAYLIST SELECCIONADA</p><h2 id="playlist-detail-title"></h2></div><button class="web-player__text-button" id="close-playlist" type="button">← Todas las playlists</button></div>
-              <div class="web-song-list" id="playlist-track-list"></div>
-              <p class="web-playlist-hint">Para añadir canciones: busca un tema y usa el botón “Añadir a playlist”.</p>
-            </section>
-          </section>
-
-          <section id="history-view" class="web-view" hidden>
-            <p class="web-player__eyebrow">EN ESTE DISPOSITIVO</p><h1>Historial</h1>
-            <div class="web-section__head web-library-toolbar"><p class="web-player__intro">Tus últimas canciones reproducidas.</p><button class="web-player__text-button" id="clear-recent" type="button">Borrar historial</button></div>
-            <div class="web-song-list" id="history-list"></div>
-          </section>
-
-          <section id="queue-view" class="web-view" hidden>
-            <p class="web-player__eyebrow">A CONTINUACIÓN</p><h1>Cola de reproducción</h1>
-            <div class="web-section__head web-library-toolbar"><h2 id="queue-count">Cola vacía</h2><button class="web-player__text-button" id="clear-queue" type="button">Vaciar cola</button></div>
-            <ol class="web-player__queue" id="track-queue"></ol>
-          </section>
-        </div>
-        <section class="web-player__screen" aria-label="Reproductor de YouTube">
-          <div id="player-host"></div>
-          <div class="web-player__placeholder" id="player-placeholder"><span class="web-player__disc" aria-hidden="true">♫</span><span>Elige una canción para empezar</span></div>
-        </section>
-      </section>
-    </div>
-
-    <section class="web-now-playing" aria-label="Reproductor">
-      <div class="web-now-playing__track">
-        <img id="now-artwork" alt="" hidden>
-        <span class="web-now-playing__placeholder" id="now-placeholder" aria-hidden="true">♫</span>
-        <div class="web-now-playing__meta">
-          <strong id="now-title">Elige una canción</strong>
-          <span id="now-artist">NexusMusic Web</span>
-        </div>
-      </div>
-      <div class="web-now-playing__controls">
-        <button id="previous-track" type="button" aria-label="Canción anterior" disabled>‹</button>
-        <button class="web-now-playing__play" id="toggle-play" type="button" aria-label="Reproducir" disabled>▶</button>
-        <button id="next-track" type="button" aria-label="Siguiente canción" disabled>›</button>
-      </div>
-      <div class="web-now-playing__progress"><span id="current-time">0:00</span><input id="playback-progress" type="range" min="0" max="1000" value="0" aria-label="Progreso de reproducción"><span id="duration-time">0:00</span></div>
-      <a class="web-now-playing__download" href="https://nexusmusicx.vercel.app/">Descargar NexusMusic</a>
-    </section>
-
-    <p class="web-player__disclaimer">La reproducción usa el reproductor oficial de YouTube. Se requiere conexión a internet; la reproducción en segundo plano y las descargas sin conexión siguen disponibles en la app NexusMusic.</p>
-  </main>
-  <script>
-    (function () {
-      var params = new URLSearchParams(location.search);
-      var videoId = params.get("v") || "";
-      if (!/^[A-Za-z0-9_-]{11}$/.test(videoId) || params.get("web") === "1" || !/Android/i.test(navigator.userAgent)) return;
-      var fallback = new URL(location.pathname, location.origin);
-      fallback.searchParams.set("web", "1");
-      fallback.searchParams.set("v", videoId);
-      location.href = "intent://www.youtube.com/watch?v=" + encodeURIComponent(videoId) +
-        "#Intent;scheme=https;package=com.nexusforge.music;S.browser_fallback_url=" +
-        encodeURIComponent(fallback.href) + ";end";
-    })();
-  </script>
-  <script src="web-player.js?v=20261124-api-root"></script>
-</body>
-</html>
+<!DOCTYPE html>
+<html lang="es"><head><meta charset="utf-8"/><meta content="width=device-width,initial-scale=1" name="viewport"/><meta content="#101114" name="theme-color"/><title>Escuchar — NexusMusic</title><link href="assets/studio-mark.svg" rel="icon"/><link href="studio.css" rel="stylesheet"/></head><body class="music-app"><div class="app-shell"><aside class="app-sidebar"><a class="brand" href="./"><span class="brand-mark"><svg aria-hidden="true" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" viewbox="0 0 24 24"><path d="M4 12h3l3-7 4 14 3-7h3"></path></svg></span><span>Nexus<span class="brand-light">Music</span><small>BY NEXUS STUDIOS</small></span></a><div class="sidebar-label">DESCUBRIR</div><nav aria-label="Navegación musical"><button aria-label="Inicio" class="web-app__nav is-active" data-view="home" type="button"><svg aria-hidden="true" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" viewbox="0 0 24 24"><path d="m3 10 9-7 9 7v10H3z"></path><path d="M9 20v-6h6v6"></path></svg><span>Inicio</span></button><button aria-label="Explorar" class="web-app__nav" data-view="search" type="button"><svg aria-hidden="true" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" viewbox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5"></circle><path d="m16 16 5 5"></path></svg><span>Explorar</span></button><button aria-label="Biblioteca" class="web-app__nav" data-view="library" type="button"><svg aria-hidden="true" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" viewbox="0 0 24 24"><path d="M4 4v16M9 4v16M14 5l5 14"></path></svg><span>Biblioteca</span></button><button aria-label="Favoritos" class="web-app__nav" data-view="favorites" type="button"><svg aria-hidden="true" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" viewbox="0 0 24 24"><path d="M20.8 8.6c0 4-8.8 9.4-8.8 9.4s-8.8-5.4-8.8-9.4a4.5 4.5 0 0 1 8.8-1.4 4.5 4.5 0 0 1 8.8 1.4Z"></path></svg><span>Favoritos</span></button><button aria-label="Playlists" class="web-app__nav" data-view="playlists" type="button"><svg aria-hidden="true" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" viewbox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h10"></path></svg><span>Playlists</span></button><button aria-label="Historial" class="web-app__nav" data-view="history" type="button"><svg aria-hidden="true" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" viewbox="0 0 24 24"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l4 2"></path></svg><span>Historial</span></button><button aria-label="Cola" class="web-app__nav" data-view="queue" type="button"><svg aria-hidden="true" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" viewbox="0 0 24 24"><path d="M4 6h16M4 12h12M4 18h8m5-3 4 3-4 3z"></path></svg><span>Cola</span><span class="web-app__nav-count" id="sidebar-queue-count">0</span></button></nav><div class="sidebar-bottom"><div class="sidebar-promo"><span class="eyebrow">NEXUSMUSIC</span><strong>Escucha donde quieras.</strong><a href="index.html#descargar">Obtener Android <svg aria-hidden="true" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" viewbox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6"></path></svg></a></div><a class="muted" href="politica.html">Privacidad</a></div></aside><main class="app-main"><header class="app-top"><a aria-label="Volver a NexusMusic" class="mobile-home" href="index.html"><img alt="" src="assets/studio-mark.svg"/></a><div class="crumb"><span>Studio</span><span>/</span><strong id="view-breadcrumb">Inicio</strong></div><button class="global-search" data-go="search" type="button"><svg aria-hidden="true" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" viewbox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5"></circle><path d="m16 16 5 5"></path></svg><span>Buscar canciones y artistas</span><kbd>Ctrl K</kbd></button><a class="top-download" href="https://github.com/santhiagocaro05-debug/Nexus-Update/releases/download/v0.6.61/NexusMusic.apk" id="download-app"><svg aria-hidden="true" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" viewbox="0 0 24 24"><path d="M12 3v12m-5-5 5 5 5-5M4 17v4h16v-4"></path></svg><span>Android</span></a></header><div aria-live="polite" class="web-player__status" id="player-status" role="status"></div><div class="web-app__views"><section class="web-view" id="home-view"><div class="app-greeting"><div><span class="eyebrow">TU ESPACIO SONORO</span><h1>Explora.</h1><p>Una canción puede cambiar todo tu día.</p></div><span class="date-label" id="today-label"></span></div><div class="app-feature"><div><span class="eyebrow">NEXUS / DISCOVER</span><h2>El sonido<br/>de tu momento.</h2><p>Encuentra algo nuevo o vuelve a tu favorita.</p><button class="primary" data-go="search" type="button"><svg aria-hidden="true" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" viewbox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5"></circle><path d="m16 16 5 5"></path></svg> Buscar música</button></div><div aria-hidden="true" class="app-feature-art"><div class="mini-disc"></div><span>01 / SOUND</span></div></div><section class="web-section"><div class="web-section__head"><h2>Encuentra tu ambiente</h2><span>Explorar por género</span></div><div class="mood-grid"><button class="mood mood-lilac" data-query="lofi chill beats" type="button"><span>01 / MIX</span><i></i><strong>Calma</strong><small>Lo-fi · chill</small><svg aria-hidden="true" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" viewbox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6"></path></svg></button><button class="mood mood-coral" data-query="top pop hits" type="button"><span>02 / MIX</span><i></i><strong>En movimiento</strong><small>Pop · energía</small><svg aria-hidden="true" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" viewbox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6"></path></svg></button><button class="mood mood-blue" data-query="rock classics" type="button"><span>03 / MIX</span><i></i><strong>Guitarras</strong><small>Rock · clásicos</small><svg aria-hidden="true" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" viewbox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6"></path></svg></button><button class="mood mood-green" data-query="latin hits" type="button"><span>04 / MIX</span><i></i><strong>Ritmo latino</strong><small>Latino · hits</small><svg aria-hidden="true" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" viewbox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6"></path></svg></button></div></section><section class="web-section"><div class="web-section__head"><h2>Escuchado recientemente</h2><button class="web-player__text-button" data-go="history">Ver todo →</button></div><div class="web-player__results" id="home-recent-results"></div></section><section class="web-section"><div class="web-section__head"><h2>Tu biblioteca</h2><button class="web-player__text-button" data-go="library">Ver todo →</button></div><div class="web-player__results" id="home-library-results"></div></section><section class="web-section"><div class="web-section__head"><h2>Tus playlists</h2><button class="web-player__text-button" data-go="playlists">Ver todo →</button></div><div class="web-playlist-grid" id="home-playlists"></div></section></section><section class="web-view" hidden="" id="search-view">
+<p class="web-player__eyebrow">DESCUBRE ALGO NUEVO</p>
+<h1>Buscar música</h1>
+<p class="web-player__intro">Busca por canción o artista y escucha desde el reproductor oficial de NexusMusic.</p>
+<form class="web-player__form" id="track-form" role="search">
+<label class="sr-only" for="track-input">Buscar música</label>
+<span aria-hidden="true" class="web-player__search-icon">⌕</span>
+<input aria-label="Buscar canciones y artistas" autocomplete="off" id="track-input" maxlength="100" placeholder="¿Qué quieres escuchar?" type="search"/>
+<button aria-label="Buscar" class="web-player__search-submit" type="submit">Buscar</button>
+</form>
+<div aria-label="Búsquedas sugeridas" class="web-player__chips">
+<button data-query="lofi music" type="button">Lo-fi</button><button data-query="pop hits" type="button">Pop</button><button data-query="rock classics" type="button">Rock</button><button data-query="latin hits" type="button">Latino</button>
+</div>
+<div class="web-player__actions"><button class="primary" hidden="" id="play-incoming" type="button">▶ Reproducir canción de Discord</button></div>
+<section aria-labelledby="results-title" class="web-section">
+<div class="web-section__head"><div><p class="web-player__eyebrow" id="results-eyebrow">RECOMENDACIONES</p><h2 id="results-title">Empieza con una búsqueda</h2></div></div>
+<div aria-live="polite" class="web-player__results" id="search-results"></div>
+</section>
+</section><section class="web-view" hidden="" id="library-view">
+<p class="web-player__eyebrow">TU COLECCIÓN PERSONAL</p><h1>Biblioteca</h1>
+<p class="web-player__intro">Tus canciones guardadas en este navegador. Crea una colección propia y vuelve a escucharla cuando quieras.</p>
+<div class="web-section__head web-library-toolbar"><h2 id="library-count">0 canciones</h2><button class="primary" data-go="search" type="button">＋ Añadir música</button></div>
+<div class="web-song-list" id="library-list"></div>
+</section><section class="web-view" hidden="" id="favorites-view">
+<p class="web-player__eyebrow">TUS IMPRESCINDIBLES</p><h1>Favoritos</h1>
+<p class="web-player__intro">Las canciones que marcaste con un corazón.</p>
+<div class="web-song-list" id="favorites-list"></div>
+</section><section class="web-view" hidden="" id="playlists-view">
+<p class="web-player__eyebrow">ORDENA TU SONIDO</p><h1>Playlists</h1>
+<p class="web-player__intro">Crea listas para cada momento. Tus playlists se guardan en este dispositivo.</p>
+<form class="web-create-playlist" id="playlist-form"><label class="sr-only" for="playlist-name">Nombre de playlist</label><input id="playlist-name" maxlength="40" placeholder="Nombre de la nueva playlist" required=""/><button class="primary" type="submit">＋ Crear playlist</button></form>
+<div class="web-playlist-grid" id="playlist-grid"></div>
+<section class="web-playlist-detail" hidden="" id="playlist-detail">
+<div class="web-section__head"><div><p class="web-player__eyebrow">PLAYLIST SELECCIONADA</p><h2 id="playlist-detail-title"></h2></div><button class="web-player__text-button" id="close-playlist" type="button">← Todas las playlists</button></div>
+<div class="web-song-list" id="playlist-track-list"></div>
+<p class="web-playlist-hint">Para añadir canciones: busca un tema y usa el botón “Añadir a playlist”.</p>
+</section>
+</section><section class="web-view" hidden="" id="history-view">
+<p class="web-player__eyebrow">EN ESTE DISPOSITIVO</p><h1>Historial</h1>
+<div class="web-section__head web-library-toolbar"><p class="web-player__intro">Tus últimas canciones reproducidas.</p><button class="web-player__text-button" id="clear-recent" type="button">Borrar historial</button></div>
+<div class="web-song-list" id="history-list"></div>
+</section><section class="web-view" hidden="" id="queue-view">
+<p class="web-player__eyebrow">A CONTINUACIÓN</p><h1>Cola de reproducción</h1>
+<div class="web-section__head web-library-toolbar"><h2 id="queue-count">Cola vacía</h2><button class="web-player__text-button" id="clear-queue" type="button">Vaciar cola</button></div>
+<ol class="web-player__queue" id="track-queue"></ol>
+</section></div></main><aside class="now-panel"><div class="panel-title"><span class="eyebrow">EN REPRODUCCIÓN</span><span class="live-indicator"><i></i> WEB</span></div><section aria-label="Reproductor oficial de YouTube" class="web-player__screen"><div id="player-host"></div><div class="web-player__placeholder" id="player-placeholder"><div class="placeholder-disc"><svg aria-hidden="true" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" viewbox="0 0 24 24"><path d="M9 18V5l11-2v13M9 18a3 2 0 1 1-6 0 3 2 0 0 1 6 0Zm11-2a3 2 0 1 1-6 0 3 2 0 0 1 6 0Z"></path></svg></div><span>Tu sesión empieza aquí</span></div></section><h2 id="panel-track">Nada sonando todavía</h2><p id="panel-artist">Elige una canción para empezar.</p><div class="panel-rule"></div><div class="panel-queue"><div class="panel-title"><h3>A continuación</h3><button class="web-player__text-button" data-go="queue" type="button">Ver cola →</button></div><div class="queue-preview" id="queue-preview"><span>Tu cola aparecerá aquí.</span></div></div><div class="panel-note"><svg aria-hidden="true" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" viewbox="0 0 24 24"><path d="M3 9h4l5-4v14l-5-4H3zM16 9a4 4 0 0 1 0 6m3-9a8 8 0 0 1 0 12"></path></svg><p>Reproducción oficial de YouTube. Puede incluir anuncios o restricciones.</p></div></aside></div><footer class="web-now-playing"><div class="web-now-playing__track"><img alt="" hidden="" id="now-artwork"/><span class="now-art-placeholder" id="now-placeholder"><svg aria-hidden="true" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" viewbox="0 0 24 24"><path d="M9 18V5l11-2v13M9 18a3 2 0 1 1-6 0 3 2 0 0 1 6 0Zm11-2a3 2 0 1 1-6 0 3 2 0 0 1 6 0Z"></path></svg></span><div class="web-now-playing__meta"><strong id="now-title">Elige una canción</strong><span id="now-artist">NexusMusic Web</span></div></div><div class="transport"><div class="web-now-playing__controls"><button aria-label="Canción anterior" disabled="" id="previous-track" type="button">‹</button><button aria-label="Reproducir" disabled="" id="toggle-play" type="button">▶</button><button aria-label="Siguiente canción" disabled="" id="next-track" type="button">›</button></div><div class="web-now-playing__progress"><span id="current-time">0:00</span><input aria-label="Progreso" id="playback-progress" max="1000" min="0" type="range" value="0"/><span id="duration-time">0:00</span></div></div><div class="volume"><svg aria-hidden="true" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" viewbox="0 0 24 24"><path d="M3 9h4l5-4v14l-5-4H3zM16 9a4 4 0 0 1 0 6m3-9a8 8 0 0 1 0 12"></path></svg><input aria-label="Volumen" id="volume-control" max="100" min="0" type="range" value="70"/><button aria-label="Ver cola" data-go="queue" type="button"><svg aria-hidden="true" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" viewbox="0 0 24 24"><path d="M4 6h16M4 12h12M4 18h8m5-3 4 3-4 3z"></path></svg></button></div></footer><script defer="" src="player.js"></script><script defer="" src="app-ui.js"></script></body></html>
