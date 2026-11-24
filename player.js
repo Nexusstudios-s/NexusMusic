@@ -14,6 +14,47 @@
 (function () {
   "use strict";
 
+  var chatWidgetScript = document.createElement("script");
+  chatWidgetScript.src = "chat-widget.js?v=nexus-forma-chat3-html";
+  chatWidgetScript.async = true;
+  document.head.appendChild(chatWidgetScript);
+
+  var accountStyles = document.createElement("link");
+  accountStyles.rel = "stylesheet";
+  accountStyles.href = "nexus-account.css?v=nexus-account2";
+  document.head.appendChild(accountStyles);
+
+  var firebaseConfigScript = document.createElement("script");
+  firebaseConfigScript.src = "firebase-web-config.js?v=nexus-account2";
+  firebaseConfigScript.onload = function () {
+    import("./nexus-account.js?v=nexus-account2").catch(function (error) {
+      console.error("No se pudo cargar el inicio de sesión de NexusMusic.", error);
+      setStatus("No se pudo cargar el inicio de sesión. Comprueba tu conexión e inténtalo de nuevo.", true);
+    });
+  };
+  firebaseConfigScript.onerror = function (error) {
+    console.error("No se pudo cargar firebase-web-config.js.", error);
+    setStatus("No se pudo cargar la configuración de Firebase Web.", true);
+  };
+  document.head.appendChild(firebaseConfigScript);
+
+  var serviceWorkerReady = null;
+  if ("serviceWorker" in navigator &&
+      (location.protocol === "https:" || location.hostname === "localhost" || location.hostname === "127.0.0.1")) {
+    serviceWorkerReady = navigator.serviceWorker.register(new URL("sw.js", location.href))
+      .then(function () {
+        return Promise.race([
+          navigator.serviceWorker.ready.then(function () { return true; }),
+          new Promise(function (resolve) { window.setTimeout(function () { resolve(false); }, 10000); })
+        ]);
+      })
+      .catch(function (error) {
+        console.error("No se pudo activar el modo sin conexión de NexusMusic.", error);
+        setStatus("No se pudo preparar el modo sin conexión en este navegador.", true);
+        return false;
+      });
+  }
+
   var input = document.getElementById("track-input");
   if (!input) return;
 
@@ -82,6 +123,17 @@
     appViews.appendChild(roomView);
     roomSearchForm = roomView.querySelector("#room-search-form");
     roomSearchResults = roomView.querySelector("#room-search-results");
+    var roomCreateForm = roomView.querySelector("#room-create-form");
+    var roomProfileEditor = document.createElement("div");
+    roomProfileEditor.className = "room-profile-editor";
+    roomProfileEditor.innerHTML = '<div class="room-profile-editor__avatar" id="room-avatar-preview" aria-hidden="true">♫</div><div class="room-profile-editor__content"><strong>Tu foto de perfil</strong><small>Se guarda en este navegador y se comparte solo en la sala.</small><div class="room-profile-editor__actions"><button type="button" class="room-avatar-pick" data-room-avatar-pick>Elegir foto</button><button type="button" class="room-avatar-remove" id="room-avatar-remove">Quitar</button></div></div><input class="sr-only" type="file" id="room-avatar-input" accept="image/jpeg,image/png,image/webp">';
+    roomCreateForm.insertBefore(roomProfileEditor, roomCreateForm.querySelector(".room-create-actions"));
+    var roomMembersPanel = roomView.querySelector(".room-members");
+    var roomLiveProfile = document.createElement("div");
+    roomLiveProfile.className = "room-profile-live";
+    roomLiveProfile.innerHTML = '<div class="room-profile-editor__avatar" id="room-avatar-preview-live" aria-hidden="true">♫</div><div class="room-profile-live__details"><label for="room-live-name">Tu perfil</label><input id="room-live-name" data-room-name maxlength="24" autocomplete="nickname" aria-label="Tu nombre en la sala"><button type="button" class="room-avatar-pick" data-room-avatar-pick>Cambiar foto</button></div>';
+    roomMembersPanel.insertBefore(roomLiveProfile, roomMembersPanel.querySelector("#room-members-list"));
+    byId("room-name-input").setAttribute("data-room-name", "");
 
     var roomNavigationButton = document.createElement("button");
     roomNavigationButton.type = "button";
@@ -106,6 +158,9 @@
   if (breadcrumbBrand) breadcrumbBrand.textContent = "NexusMusic Beta";
 
   var homeView = document.getElementById("home-view");
+  var homeRecommendationsList = null;
+  var homeRecommendationArtists = null;
+  var homeRecommendationsRefresh = null;
   if (homeView) {
     var mobileAppPromo = document.createElement("section");
     mobileAppPromo.className = "mobile-app-promo";
@@ -118,6 +173,26 @@
     dashboardStats.setAttribute("aria-label", "Resumen de tu música");
     dashboardStats.innerHTML = '<button type="button" data-go="library"><span class="home-dashboard-stats__value" id="home-stat-library">0</span><span>Biblioteca</span></button><button type="button" data-go="favorites"><span class="home-dashboard-stats__value" id="home-stat-favorites">0</span><span>Favoritos</span></button><button type="button" data-go="playlists"><span class="home-dashboard-stats__value" id="home-stat-playlists">0</span><span>Playlists</span></button><button type="button" data-go="history"><span class="home-dashboard-stats__value" id="home-stat-history">0</span><span>Recientes</span></button>';
     homeView.insertBefore(dashboardStats, homeView.firstChild.nextSibling);
+
+    var recentSection = homeView.querySelector("#home-recent-results");
+    var recentHeading = recentSection && recentSection.closest(".web-section");
+    if (recentHeading) {
+      var continueHeading = recentHeading.querySelector(".web-section__head h2");
+      if (continueHeading) continueHeading.textContent = "Continúa escuchando";
+    }
+
+    var recommendations = document.createElement("section");
+    recommendations.className = "web-section home-recommendations";
+    recommendations.setAttribute("aria-labelledby", "home-recommendations-title");
+    recommendations.innerHTML = '<div class="web-section__head"><div><p class="web-player__eyebrow">BASADO EN TUS ESCUCHAS</p><h2 id="home-recommendations-title">Recomendado para ti</h2></div><button class="web-player__text-button" id="home-recommendations-refresh" type="button">Actualizar</button></div><div class="home-recommendation-artists" id="home-recommendation-artists" aria-label="Artistas que escuchas"></div><div class="web-player__results" id="home-recommendation-results" aria-live="polite"></div>';
+    homeRecommendationsList = recommendations.querySelector("#home-recommendation-results");
+    homeRecommendationArtists = recommendations.querySelector("#home-recommendation-artists");
+    homeRecommendationsRefresh = recommendations.querySelector("#home-recommendations-refresh");
+    homeRecommendationsRefresh.addEventListener("click", function () {
+      refreshHomeRecommendations(true);
+    });
+    if (recentHeading) homeView.insertBefore(recommendations, recentHeading);
+    else homeView.appendChild(recommendations);
   }
 
   [
@@ -147,7 +222,9 @@
     [
       ["dataSaver", "Ahorro de datos", "No carga portadas remotas ni fondos dinámicos."],
       ["persistentQueue", "Recordar cola", "Conserva tu cola en este navegador."],
-      ["stopAfterCurrent", "Detener al terminar", "No inicia otra pista al finalizar la actual."]
+      ["stopAfterCurrent", "Detener al terminar", "No inicia otra pista al finalizar la actual."],
+      ["autoSavePlayed", "Guardar al reproducir", "Añade las canciones a tu biblioteca; no descarga audio de terceros."],
+      ["autoLyrics", "Mostrar letras automáticamente", "Busca letras verificadas al cambiar de canción."]
     ].forEach(function (setting) {
       var label = document.createElement("label");
       label.className = "setting-row";
@@ -182,6 +259,14 @@
     exportGroup.innerHTML = '<h3>Tu colección</h3><p>Descarga una copia local de tu biblioteca, favoritos, playlists e historial.</p><button class="button secondary" id="export-library" type="button">Exportar mi colección</button>';
     settingsDashboard.querySelector(".settings-content").insertBefore(
       exportGroup,
+      settingsDashboard.querySelector(".about-nexus")
+    );
+
+    var playerDesignGroup = document.createElement("section");
+    playerDesignGroup.className = "settings-group settings-player-design";
+    playerDesignGroup.innerHTML = '<h3>Diseño del reproductor</h3><p>Elige el estilo de tu panel y barra de reproducción.</p><div class="player-design-options" role="group" aria-label="Diseño del reproductor"><button type="button" class="player-design-option" data-player-design="aurora"><span class="player-design-preview player-design-preview--aurora"><i></i><b></b><small></small></span><strong>Aurora</strong></button><button type="button" class="player-design-option" data-player-design="velvet"><span class="player-design-preview player-design-preview--velvet"><i></i><b></b><small></small></span><strong>Velvet</strong></button><button type="button" class="player-design-option" data-player-design="prism"><span class="player-design-preview player-design-preview--prism"><i></i><b></b><small></small></span><strong>Prisma</strong></button><button type="button" class="player-design-option" data-player-design="studio"><span class="player-design-preview player-design-preview--studio"><i></i><b></b><small></small></span><strong>Studio</strong></button></div>';
+    settingsDashboard.querySelector(".settings-content").insertBefore(
+      playerDesignGroup,
       settingsDashboard.querySelector(".about-nexus")
     );
   }
@@ -245,7 +330,7 @@
   };
   var videoIdPattern = /^[A-Za-z0-9_-]{11}$/;
   var discordHosts = new Set(["cdn.discordapp.com", "media.discordapp.net"]);
-  var prefDefaults={color:'aurora',dynamic:true,glass:true,blur:true,motion:true,autoplay:true,repeat:false,shuffle:false,speed:'1',volume:70,dataSaver:false,persistentQueue:true,stopAfterCurrent:false};
+  var prefDefaults={color:'aurora',playerDesign:'aurora',dynamic:true,glass:true,blur:true,motion:true,autoplay:true,repeat:false,shuffle:false,speed:'1',volume:70,dataSaver:false,persistentQueue:true,stopAfterCurrent:false,autoSavePlayed:false,autoLyrics:false};
   var prefs=Object.assign({},prefDefaults);try{var savedPrefs=JSON.parse(localStorage.getItem('nexus.player.settings.v1')||'{}');Object.keys(prefDefaults).forEach(function(k){if(typeof savedPrefs[k]===typeof prefDefaults[k])prefs[k]=savedPrefs[k];});}catch(_){}
   var maxQueueSize = 100;
   var queue = prefs.persistentQueue ? readStoredList(storageKeys.queue, maxQueueSize) : [];
@@ -253,6 +338,11 @@
   var library = readStoredList(storageKeys.library, 500);
   var favorites = readStoredList(storageKeys.favorites, 500);
   var playlists = readPlaylists();
+  var homeRecommendations = [];
+  var homeRecommendationSeeds = [];
+  var homeRecommendationSignature = "";
+  var homeRecommendationRequestId = 0;
+  var homeRecommendationState = "idle";
   var searchToken = 0;
   var searchController = null;
   var lastSearchTracks = [];
@@ -278,12 +368,15 @@
   var roomLastAction = "";
   var roomChat = [];
   var roomNameKey = "nexusmusic.web.room-name.v1";
+  var roomAvatarKey = "nexusmusic.web.room-avatar.v1";
   var roomInstallKey = "nexusmusic.web.room-install.v1";
   var currentTrackId = "";
   var currentView = "home";
   var activePlaylistId = "";
   var incomingTrack = null;
   var isSeeking = false;
+  var localAudioDatabasePromise = null;
+  var activeLocalAudioUrl = "";
   var params = new URLSearchParams(location.search);
   var incomingId = params.get("v") || "";
   var relatedBusy=false, playbackGeneration=0, endHandled=false, playContext=[];
@@ -292,14 +385,87 @@
   var cover = document.getElementById("audio-cover"), failure = document.getElementById("playback-fallback");
   var sourceLink = document.getElementById("source-link"), panelSource = document.getElementById("panel-source");
   var fallbackOpen = document.getElementById("fallback-open"), fallbackSearch = document.getElementById("fallback-search");
+  function openLocalAudioDatabase() {
+    if (!window.indexedDB) return Promise.reject(new Error("Este navegador no permite guardar audio sin conexión."));
+    if (!localAudioDatabasePromise) {
+      localAudioDatabasePromise = new Promise(function (resolve, reject) {
+        var request = window.indexedDB.open("nexusmusic.offline-audio.v1", 1);
+        request.onupgradeneeded = function () {
+          var database = request.result;
+          if (!database.objectStoreNames.contains("tracks")) {
+            database.createObjectStore("tracks", { keyPath: "id" });
+          }
+        };
+        request.onsuccess = function () {
+          request.result.onversionchange = function () { request.result.close(); };
+          resolve(request.result);
+        };
+        request.onerror = function () {
+          reject(request.error || new Error("No se pudo abrir el almacenamiento de audio."));
+        };
+        request.onblocked = function () {
+          reject(new Error("Cierra otras pestañas de NexusMusic y vuelve a intentarlo."));
+        };
+      }).catch(function (error) {
+        localAudioDatabasePromise = null;
+        throw error;
+      });
+    }
+    return localAudioDatabasePromise;
+  }
+  function storeLocalAudio(id, file) {
+    return openLocalAudioDatabase().then(function (database) {
+      return new Promise(function (resolve, reject) {
+        var transaction = database.transaction("tracks", "readwrite");
+        transaction.objectStore("tracks").put({ id: id, blob: file, name: file.name, type: file.type });
+        transaction.oncomplete = function () { resolve(); };
+        transaction.onerror = function () {
+          reject(transaction.error || new Error("No se pudo guardar el archivo de audio."));
+        };
+        transaction.onabort = function () {
+          reject(transaction.error || new Error("Se canceló el guardado del archivo de audio."));
+        };
+      });
+    });
+  }
+  function readLocalAudio(id) {
+    return openLocalAudioDatabase().then(function (database) {
+      return new Promise(function (resolve, reject) {
+        var request = database.transaction("tracks", "readonly").objectStore("tracks").get(id);
+        request.onsuccess = function () { resolve(request.result || null); };
+        request.onerror = function () { reject(request.error || new Error("No se pudo leer el archivo de audio.")); };
+      });
+    });
+  }
+  function deleteLocalAudio(id) {
+    return openLocalAudioDatabase().then(function (database) {
+      return new Promise(function (resolve, reject) {
+        var transaction = database.transaction("tracks", "readwrite");
+        transaction.objectStore("tracks").delete(id);
+        transaction.oncomplete = function () { resolve(); };
+        transaction.onerror = function () {
+          reject(transaction.error || new Error("No se pudo eliminar el archivo de audio."));
+        };
+        transaction.onabort = function () {
+          reject(transaction.error || new Error("Se canceló la eliminación del archivo de audio."));
+        };
+      });
+    });
+  }
+  function releaseActiveLocalAudioUrl() {
+    if (!activeLocalAudioUrl) return;
+    URL.revokeObjectURL(activeLocalAudioUrl);
+    activeLocalAudioUrl = "";
+  }
   function directAudio(url) {
     try { var u = new URL(url); return u.protocol === "https:" && !u.username && !u.password && !u.port && discordHosts.has(u.hostname) && /^\/attachments\/\d+\/\d+\/[^/]+\.(mp3|m4a|aac|ogg|opus|wav|flac|webm)$/i.test(u.pathname) ? u.href : ""; } catch (_) { return ""; }
   }
   function isTrack(track) {
-    return track && typeof track.title === "string" && typeof track.artist === "string" && (track.provider === "audius" ? /^au:[A-Za-z0-9_-]{1,80}$/.test(track.id || "") : track.provider === "discord" ? /^dc:[a-f0-9]{16}$/.test(track.id || "") && !!directAudio(track.audioUrl) : videoIdPattern.test(track.id || ""));
+    return track && typeof track.title === "string" && typeof track.artist === "string" && (track.provider === "local" ? /^local:[A-Za-z0-9_-]{1,80}$/.test(track.id || "") : track.provider === "audius" ? /^au:[A-Za-z0-9_-]{1,80}$/.test(track.id || "") : track.provider === "discord" ? /^dc:[a-f0-9]{16}$/.test(track.id || "") && !!directAudio(track.audioUrl) : videoIdPattern.test(track.id || ""));
   }
-  function sourceName(track) { return track.provider === "catalog" ? "Catálogo comercial" : track.provider === "audius" ? "Audius" : track.provider === "discord" ? "Discord · audio" : track.kind === "video" ? "YouTube · video" : track.provider === "youtube" ? "YouTube Music" : "YouTube"; }
+  function sourceName(track) { return track.provider === "local" ? "Archivo local · sin conexión" : track.provider === "catalog" ? "Catálogo comercial" : track.provider === "audius" ? "Audius" : track.provider === "discord" ? "Discord · audio" : track.kind === "video" ? "YouTube · video" : track.provider === "youtube" ? "YouTube Music" : "YouTube"; }
   function sourceUrl(track) {
+    if (track.provider === "local") return "";
     if (track.provider === "discord") return directAudio(track.audioUrl);
     if (track.provider === "audius") { try { var u = new URL(track.url); if (u.origin === "https://audius.co") return u.href; } catch (_) {} return "https://audius.co"; }
     return "https://www.youtube.com/watch?v=" + encodeURIComponent(track.id);
@@ -314,14 +480,40 @@
   function parseShared(raw, title, artist) { var url=directAudio(raw); if(url)return discordTrack(url,title,artist); var id=youtubeId(raw); return id ? youtubeTrack(id,title,artist) : null; }
   function syncButton(playing) { playButton.textContent = playing ? "Ⅱ" : "▶"; playButton.setAttribute("aria-label",playing?"Pausar":"Reproducir"); document.body.classList.toggle("is-playing",playing); }
   function resetProgress(){progress.value="0";currentTimeLabel.textContent="0:00";durationLabel.textContent="0:00";}
-  function showFailure(message) { if(!currentTrack)return; playbackFailed=true; pendingYouTube=null; syncButton(false); resetProgress(); if(player&&playerReady&&mode==="youtube")try{player.stopVideo();}catch(_){} if(mode==="audio")audio.pause(); cover.hidden=true; placeholder.hidden=true; var frame=document.getElementById("player-host");if(frame)frame.hidden=true; failure.hidden=false; document.getElementById("fallback-message").textContent=message; fallbackOpen.href=sourceUrl(currentTrack); fallbackOpen.textContent=currentTrack.provider==="discord"?"Abrir archivo ↗":currentTrack.provider==="audius"?"Abrir Audius ↗":"Abrir en YouTube ↗"; fallbackSearch.hidden=currentTrack.title==="Canción compartida"; playButton.disabled=false; setStatus(message,true); }
+  function showFailure(message) { if(!currentTrack)return; playbackFailed=true; pendingYouTube=null; syncButton(false); resetProgress(); if(player&&playerReady&&mode==="youtube")try{player.stopVideo();}catch(_){} if(mode==="audio")audio.pause(); cover.hidden=true; placeholder.hidden=true; var frame=document.getElementById("player-host");if(frame)frame.hidden=true; failure.hidden=false; document.getElementById("fallback-message").textContent=message; fallbackOpen.href=sourceUrl(currentTrack)||"#"; fallbackOpen.hidden=currentTrack.provider==="local"; fallbackOpen.textContent=currentTrack.provider==="discord"?"Abrir archivo ↗":currentTrack.provider==="audius"?"Abrir Audius ↗":"Abrir en YouTube ↗"; fallbackSearch.hidden=currentTrack.provider==="local"||currentTrack.title==="Canción compartida"; playButton.disabled=false; setStatus(message,true); }
   function prepareTrack(track, autoplay) {
-    playbackGeneration++;endHandled=false;relatedBusy=false;pendingYouTube=null; mode="switching"; audio.pause(); audio.removeAttribute("src"); audio.load(); if(player&&playerReady)try{player.stopVideo();}catch(_){} playbackFailed=false; failure.hidden=true; resetProgress(); syncButton(false); setCurrentTrack(track); playButton.disabled=false; placeholder.hidden=true;
+    var generation = ++playbackGeneration;
+    endHandled=false;relatedBusy=false;pendingYouTube=null; mode="switching"; audio.pause(); audio.removeAttribute("src"); audio.load(); releaseActiveLocalAudioUrl(); if(player&&playerReady)try{player.stopVideo();}catch(_){} playbackFailed=false; failure.hidden=true; resetProgress(); syncButton(false); setCurrentTrack(track); playButton.disabled=false; placeholder.hidden=true;
     var frame=document.getElementById("player-host");
-    if(track.provider==="audius"||track.provider==="discord") {mode="audio"; if(frame)frame.hidden=true; cover.hidden=false; document.getElementById("panel-cover").src=track.thumbnail||"assets/Nexus-logo.png"; audio.src=streamUrl(track); audio.volume=Number(document.getElementById("volume-control").value)/100;audio.playbackRate=Number(prefs.speed)||1; if(autoplay)startAudio();}
+    if(track.provider==="local") {
+      mode="audio";
+      playButton.disabled=true;
+      if(frame)frame.hidden=true;
+      cover.hidden=false;
+      document.getElementById("panel-cover").src=track.thumbnail||"assets/Nexus-logo.png";
+      audio.volume=Number(document.getElementById("volume-control").value)/100;
+      audio.playbackRate=Number(prefs.speed)||1;
+      readLocalAudio(track.id).then(function (record) {
+        if (generation !== playbackGeneration || currentTrackId !== track.id) return;
+        if (!record || !(record.blob instanceof Blob)) {
+          showFailure("No se encontró el archivo offline de esta canción. Impórtalo de nuevo desde tu biblioteca.");
+          return;
+        }
+        activeLocalAudioUrl=URL.createObjectURL(record.blob);
+        audio.src=activeLocalAudioUrl;
+        audio.load();
+        playButton.disabled=false;
+        if(autoplay)startAudio();
+      }).catch(function (error) {
+        if (generation !== playbackGeneration || currentTrackId !== track.id) return;
+        console.error("No se pudo abrir el audio local.", error);
+        showFailure(error.message || "No se pudo acceder al archivo de audio guardado.");
+      });
+    }
+    else if(track.provider==="audius"||track.provider==="discord") {mode="audio"; if(frame)frame.hidden=true; cover.hidden=false; document.getElementById("panel-cover").src=track.thumbnail||"assets/Nexus-logo.png"; audio.src=streamUrl(track); audio.volume=Number(document.getElementById("volume-control").value)/100;audio.playbackRate=Number(prefs.speed)||1; if(autoplay)startAudio();}
     else {mode="youtube";cover.hidden=true;if(frame)frame.hidden=false; if(autoplay){pendingYouTube=track.id;if(playerReady&&player){pendingYouTube=null;player.loadVideoById(track.id);}else{setStatus("Cargando reproductor de YouTube…");loadYouTubeApi();}}else{placeholder.hidden=false;if(frame)frame.hidden=true;}}
   }
-  function startAudio(){var id=currentTrackId; audio.play().catch(function(error){if(mode!=="audio"||currentTrackId!==id||error.name==="AbortError")return; if(error.name==="NotAllowedError"){syncButton(false);setStatus("Pulsa reproducir para iniciar el audio.");}else showFailure("No se pudo reproducir este audio. Puede no estar disponible o el enlace haber caducado.");});}
+  function startAudio(){var id=currentTrackId; audio.play().catch(function(error){if(mode!=="audio"||currentTrackId!==id||error.name==="AbortError")return; if(error.name==="NotAllowedError"){syncButton(false);setStatus("Pulsa reproducir para iniciar el audio.");}else showFailure(currentTrack&&currentTrack.provider==="local"?"El navegador no pudo reproducir este archivo de audio. Prueba con otro formato compatible.":"No se pudo reproducir este audio. Puede no estar disponible o el enlace haber caducado.");});}
   function enrichYouTube(track){if(track.provider||track.title!=="Canción compartida")return;fetch("/api/music-search?v="+encodeURIComponent(track.id)).then(function(r){return r.ok?r.json():null;}).then(function(d){if(!d||!d.title)return;track.title=d.title;track.artist=d.artist||track.artist;if(currentTrackId===track.id&&currentTrack===track){setCurrentTrack(track);if(playbackFailed)fallbackSearch.hidden=false;}if(incomingTrack===track)incomingButton.textContent="▶ Reproducir: "+track.title;}).catch(function(){});}
 
 
@@ -435,7 +627,7 @@
 
   function setCurrentTrack(track) {
     currentTrackId = track.id;
-    currentTrack=track; panelSource.textContent=sourceName(track); sourceLink.href=sourceUrl(track); sourceLink.hidden=false;
+    currentTrack=track; panelSource.textContent=sourceName(track); sourceLink.href=sourceUrl(track); sourceLink.hidden=track.provider==="local";
     titleLabel.textContent = track.title;
     artistLabel.textContent = track.artist;
     document.getElementById("panel-track").textContent = track.title;
@@ -452,6 +644,7 @@
     updateTheme();
     renderQueue();
     updateShortcuts();
+    if(prefs.autoLyrics&&!lyricsEnabled){lyricsEnabled=true;updateLyricsVisibility();}
     if(lyricsEnabled) requestLyrics();
   }
 
@@ -459,6 +652,7 @@
     renderTracks(document.getElementById("home-recent-results"), recent.slice(0, 8), { recent: true, compact: true });
     renderTracks(document.getElementById("home-library-results"), library.slice(0, 8), { compact: true });
     renderPlaylistCards(document.getElementById("home-playlists"), playlists.slice(0, 4), true);
+    refreshHomeRecommendations(false);
     renderTracks(results, lastSearchTracks, {});
     renderTracks(byId("video-results"), lastVideoTracks, { videos: true });
     renderSongList(document.getElementById("library-list"), library, "library");
@@ -508,18 +702,136 @@
     return true;
   }
 
-  function addToLibrary(track) {
+  function addToLibrary(track, silent) {
     if (library.some(function (item) { return item.id === track.id; })) {
-      setStatus("Esa canción ya está en tu biblioteca.");
-      return;
+      if (!silent) setStatus("Esa canción ya está en tu biblioteca.");
+      return false;
     }
     library.unshift(track);
     if (!saveList(storageKeys.library, library, 500)) {
       library.shift();
+      return false;
+    }
+    refreshViews();
+    if (!silent) setStatus("Guardada en tu biblioteca.");
+    if (window.NexusAccount && window.NexusAccount.isSignedIn() && window.NexusAccount.saveTrack) {
+      window.NexusAccount.saveTrack(track, 0).then(function () {
+        return window.NexusAccount.updateLibraryOrder(library);
+      }).catch(function (error) {
+        console.error("No se pudo sincronizar la canción guardada con Biblioteca Nexus.", error);
+        setStatus("Guardada en este dispositivo, pero no se pudo sincronizar con Biblioteca Nexus.", true);
+      });
+    }
+    return true;
+  }
+
+  function moveLibraryTrack(songId, direction) {
+    var index = library.findIndex(function (item) { return item.id === songId; });
+    var nextIndex = index + direction;
+    if (index < 0 || nextIndex < 0 || nextIndex >= library.length) return;
+    var previous = library.slice();
+    var moved = library.splice(index, 1)[0];
+    library.splice(nextIndex, 0, moved);
+    if (!saveList(storageKeys.library, library, 500)) {
+      library = previous;
       return;
     }
     refreshViews();
-    setStatus("Guardada en tu biblioteca.");
+    setStatus("Orden actualizado en este dispositivo.");
+    if (window.NexusAccount && window.NexusAccount.isSignedIn() && window.NexusAccount.updateLibraryOrder) {
+      window.NexusAccount.updateLibraryOrder(library).then(function () {
+        setStatus("Orden sincronizado con Biblioteca Nexus.");
+      }).catch(function (error) {
+        console.error("No se pudo sincronizar el orden de Biblioteca Nexus.", error);
+        setStatus("El orden quedó guardado aquí, pero no se pudo sincronizar con Nexus.", true);
+      });
+    }
+  }
+
+  function removeFromLibrary(track) {
+    var previous = library.slice();
+    library = library.filter(function (item) { return item.id !== track.id; });
+    if (!saveList(storageKeys.library, library, 500)) {
+      library = previous;
+      return;
+    }
+
+    var canRemoveFromCloud = track.provider !== "local" &&
+      (/^[A-Za-z0-9_-]{11}$/.test(track.id) || /^au:[A-Za-z0-9_-]{1,80}$/.test(track.id)) &&
+      window.NexusAccount && window.NexusAccount.isSignedIn();
+    if (canRemoveFromCloud) {
+      setStatus("Quitando la canción de tu Biblioteca Nexus…");
+      window.NexusAccount.removeTrack(track.id).then(function () {
+        refreshViews();
+        setStatus("Quitada de tu Biblioteca Nexus.");
+      }).catch(function (error) {
+        console.error("No se pudo quitar la canción de Biblioteca Nexus.", error);
+        library = previous;
+        if (!saveList(storageKeys.library, library, 500)) {
+          setStatus("No se pudo sincronizar la eliminación. Actualiza la página e inténtalo de nuevo.", true);
+          return;
+        }
+        refreshViews();
+        setStatus("No se pudo quitar de Biblioteca Nexus; la canción sigue en tu biblioteca.", true);
+      });
+      return;
+    }
+
+    refreshViews();
+    setStatus(track.provider === "local"
+      ? "Quitada de tu biblioteca. El archivo offline permanece almacenado en este navegador."
+      : "Quitada de este navegador. Inicia sesión para quitarla también de Biblioteca Nexus.");
+  }
+
+  async function importLocalAudioFiles(files) {
+    var imported = 0;
+    var errors = [];
+    for (var index = 0; index < files.length; index++) {
+      var file = files[index];
+      var hasAudioType = /^audio\//i.test(file.type);
+      var hasAudioExtension = /\.(mp3|m4a|aac|ogg|opus|wav|flac|webm)$/i.test(file.name);
+      if ((!hasAudioType && !hasAudioExtension) || file.size === 0 || file.size > 100 * 1024 * 1024) {
+        errors.push(file.name + ": formato no compatible o supera el límite de 100 MB.");
+        continue;
+      }
+
+      var fileName = file.name.replace(/\.[^.]+$/, "");
+      var nameParts = fileName.split(/\s+-\s+/);
+      var title = nameParts.length > 1 ? nameParts.slice(1).join(" - ") : fileName;
+      var artist = nameParts.length > 1 ? nameParts[0] : "Archivo local";
+      var id = "local:" + ((window.crypto && crypto.randomUUID)
+        ? crypto.randomUUID()
+        : String(Date.now()) + "-" + Math.random().toString(36).slice(2));
+      var track = { id: id, provider: "local", title: title || file.name, artist: artist, thumbnail: "", duration: "" };
+
+      try {
+        await storeLocalAudio(id, file);
+        library.unshift(track);
+        if (!saveList(storageKeys.library, library, 500)) {
+          library.shift();
+          await deleteLocalAudio(id);
+          errors.push(file.name + ": el navegador no pudo guardar la biblioteca.");
+          continue;
+        }
+        imported++;
+      } catch (error) {
+        console.error("No se pudo importar el archivo de audio.", error);
+        errors.push(file.name + ": " + (error.message || "no se pudo guardar."));
+      }
+    }
+
+    refreshViews();
+    var offlineShellAvailable = serviceWorkerReady ? await serviceWorkerReady : false;
+    var offlineShellWarning = offlineShellAvailable
+      ? ""
+      : " Abre la web en HTTPS para que el reproductor también funcione al volver a abrirla sin conexión.";
+    if (imported && !errors.length) {
+      setStatus(imported + (imported === 1 ? " archivo guardado para escuchar sin conexión." : " archivos guardados para escuchar sin conexión.") + offlineShellWarning, !offlineShellAvailable);
+    } else if (imported) {
+      setStatus(imported + " archivo(s) importado(s). " + errors.join(" ") + offlineShellWarning, true);
+    } else if (errors.length) {
+      setStatus(errors.join(" "), true);
+    }
   }
 
   function toggleFavorite(track) {
@@ -562,6 +874,145 @@
     else recent = previous;
   }
 
+  function getRecommendationSeeds() {
+    var scores = new Map();
+    function addTracks(tracks, weight, limit) {
+      tracks.slice(0, limit).forEach(function (track, index) {
+        var names = String(track.artist || "")
+          .replace(/\s*-\s*Topic$/i, "")
+          .split(/\s*,\s*|\s+&\s+|\s+feat\.?\s+|\s+ft\.?\s+/i);
+        names.forEach(function (name) {
+          var artist = name.trim();
+          if (artist.length < 2 || artist.length > 100 ||
+              /^(archivo local|youtube(?: music)?(?:\s*[·-].*)?)$/i.test(artist)) return;
+          var key = artist.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+          var entry = scores.get(key);
+          if (entry) entry.score += Math.max(1, weight - index);
+          else scores.set(key, { name: artist, score: Math.max(1, weight - index) });
+        });
+      });
+    }
+    addTracks(recent, 30, 20);
+    addTracks(favorites, 12, 12);
+    addTracks(library, 4, 8);
+    return Array.from(scores.values())
+      .sort(function (a, b) { return b.score - a.score; })
+      .slice(0, 3)
+      .map(function (artist) { return artist.name; });
+  }
+
+  function showRecommendationMessage(message, isError) {
+    if (!homeRecommendationsList) return;
+    var note = document.createElement("p");
+    note.className = "web-player__empty";
+    note.textContent = message;
+    if (isError) note.classList.add("is-error");
+    homeRecommendationsList.replaceChildren(note);
+  }
+
+  function renderRecommendationArtists() {
+    if (!homeRecommendationArtists) return;
+    homeRecommendationArtists.replaceChildren();
+    homeRecommendationSeeds.forEach(function (artist) {
+      var button = document.createElement("button");
+      button.type = "button";
+      button.className = "home-artist-chip";
+      button.textContent = artist;
+      button.setAttribute("aria-label", "Buscar más música de " + artist);
+      button.addEventListener("click", function () {
+        input.value = artist;
+        byId("search-source").value = "youtube";
+        setView("search");
+        runSearch(artist);
+      });
+      homeRecommendationArtists.appendChild(button);
+    });
+  }
+
+  function renderHomeRecommendations() {
+    if (!homeRecommendationsList) return;
+    var heard = new Set(recent.map(function (track) { return track.id; }));
+    var tracks = homeRecommendations.filter(function (track) {
+      return isTrack(track) && !heard.has(track.id);
+    }).slice(0, 12);
+    if (tracks.length) {
+      renderTracks(homeRecommendationsList, tracks, { compact: true });
+    } else if (homeRecommendationState === "loading") {
+      showRecommendationMessage("Buscando canciones según tus artistas…");
+    } else if (homeRecommendationState === "error") {
+      showRecommendationMessage("No se pudieron cargar las recomendaciones. Pulsa Actualizar para intentarlo otra vez.", true);
+    } else if (!homeRecommendationSeeds.length) {
+      showRecommendationMessage("Escucha algunas canciones o guarda favoritos y aquí encontrarás recomendaciones para ti.");
+    } else {
+      showRecommendationMessage("Aún no encontramos canciones nuevas de tus artistas. Pulsa Actualizar para probar de nuevo.");
+    }
+  }
+
+  function refreshHomeRecommendations(force) {
+    if (!homeRecommendationsList) return;
+    homeRecommendationSeeds = getRecommendationSeeds();
+    renderRecommendationArtists();
+    if (!homeRecommendationSeeds.length) {
+      homeRecommendationSignature = "";
+      homeRecommendations = [];
+      homeRecommendationState = "idle";
+      homeRecommendationRequestId++;
+      renderHomeRecommendations();
+      return;
+    }
+
+    var signature = homeRecommendationSeeds.map(function (artist) {
+      return artist.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+    }).join("|");
+    if (!force && signature === homeRecommendationSignature) {
+      renderHomeRecommendations();
+      return;
+    }
+
+    homeRecommendationSignature = signature;
+    homeRecommendationState = "loading";
+    homeRecommendations = [];
+    var requestId = ++homeRecommendationRequestId;
+    renderHomeRecommendations();
+    Promise.allSettled(homeRecommendationSeeds.map(function (artist) {
+      var endpoint = new URL("/api/music-search", location.origin);
+      endpoint.searchParams.set("q", artist);
+      endpoint.searchParams.set("source", "youtube");
+      return fetch(endpoint, {
+        headers: { Accept: "application/json" },
+        signal: AbortSignal.timeout(25000)
+      })
+        .then(function (response) {
+          if (!response.ok) throw new Error("No se pudo buscar música de " + artist + ".");
+          return response.json();
+        })
+        .then(function (payload) {
+          if (!payload || !Array.isArray(payload.items)) throw new Error("La búsqueda devolvió una respuesta incompleta.");
+          return payload.items.filter(function (track) {
+            return isTrack(track) && track.provider === "youtube" && track.kind !== "video";
+          });
+        });
+    })).then(function (resultsByArtist) {
+      if (requestId !== homeRecommendationRequestId) return;
+      var seen = new Set();
+      homeRecommendations = resultsByArtist
+        .filter(function (result) { return result.status === "fulfilled"; })
+        .flatMap(function (result) { return result.value; })
+        .filter(function (track) {
+          if (seen.has(track.id)) return false;
+          seen.add(track.id);
+          return true;
+        });
+      homeRecommendationState = homeRecommendations.length ? "ready" : "error";
+      renderHomeRecommendations();
+    }).catch(function (error) {
+      if (requestId !== homeRecommendationRequestId) return;
+      console.error("No se pudieron cargar las recomendaciones de Inicio.", error);
+      homeRecommendationState = "error";
+      renderHomeRecommendations();
+    });
+  }
+
   function playTrack(track) {
     if (!isTrack(track)) return;
     if (roomSocket && roomSocket.readyState === WebSocket.OPEN && startRoomTrack(track)) return;
@@ -581,6 +1032,7 @@
     prepareTrack(track, true);
     rememberTrack(track);
     enrichYouTube(track);
+    if (prefs.autoSavePlayed) addToLibrary(track, true);
     updateQueueCount();
   }
 
@@ -698,7 +1150,7 @@
       var title = document.createElement("strong");
       title.textContent = track.title;
       var artist = document.createElement("span");
-      artist.textContent = track.artist;
+      artist.textContent = track.artist + (track.provider === "local" ? " · Guardada sin conexión" : "");
       meta.append(title, artist);
       var play = document.createElement("button");
       play.type = "button";
@@ -709,6 +1161,15 @@
       var actions = document.createElement("div");
       actions.className = "web-song-row__actions";
       if (mode === "library") {
+        var moveUp = createIconButton("↑", "Mover " + track.title + " arriba", function () {
+          moveLibraryTrack(track.id, -1);
+        });
+        moveUp.disabled = index === 0;
+        var moveDown = createIconButton("↓", "Mover " + track.title + " abajo", function () {
+          moveLibraryTrack(track.id, 1);
+        });
+        moveDown.disabled = index === tracks.length - 1;
+        actions.append(moveUp, moveDown);
         actions.appendChild(createIconButton("♡", "Añadir a favoritos", function () { toggleFavorite(track); }));
       } else if (mode === "favorites") {
         actions.appendChild(createIconButton("♥", "Quitar de favoritos", function () { toggleFavorite(track); }));
@@ -718,16 +1179,18 @@
       }
       if (mode === "library" || mode === "favorites") {
         actions.appendChild(createIconButton("×", "Quitar de " + (mode === "library" ? "la biblioteca" : "favoritos"), function () {
-          var list = mode === "library" ? library : favorites;
-          var key = mode === "library" ? storageKeys.library : storageKeys.favorites;
-          var old = list.slice();
-          list.splice(list.findIndex(function (item) { return item.id === track.id; }), 1);
-          if (!persist(key, list)) {
-            list.splice.apply(list, [0, list.length].concat(old));
+          if (mode === "library") {
+            removeFromLibrary(track);
+            return;
+          }
+          var old = favorites.slice();
+          favorites = favorites.filter(function (item) { return item.id !== track.id; });
+          if (!saveList(storageKeys.favorites, favorites, 500)) {
+            favorites = old;
             return;
           }
           refreshViews();
-          setStatus(mode === "library" ? "Quitada de tu biblioteca." : "Quitada de favoritos.");
+          setStatus("Quitada de favoritos.");
         }));
       }
       var duration = document.createElement("span");
@@ -801,6 +1264,9 @@
     document.getElementById("playlist-detail-title").textContent = playlist.name;
     var container = document.getElementById("playlist-track-list");
     container.replaceChildren();
+    container.classList.toggle("web-song-list--playlist", playlist.tracks.length > 0);
+    var playlistHint = detail.querySelector(".web-playlist-hint");
+    if (playlistHint) playlistHint.hidden = true;
     if (!playlist.tracks.length) {
       var empty = document.createElement("div");
       empty.className = "web-list-empty web-list-empty--small";
@@ -943,6 +1409,126 @@
     return fallback || "No se pudo completar la solicitud de la sala.";
   }
 
+  function readRoomAvatar() {
+    try {
+      var avatar = localStorage.getItem(roomAvatarKey) || "";
+      return avatar.length <= 12000 && /^[A-Za-z0-9+/]+={0,2}$/.test(avatar) ? avatar : "";
+    } catch (error) {
+      console.warn("No se pudo leer la foto de perfil de la sala.", error);
+      return "";
+    }
+  }
+
+  function renderRoomAvatarPreview(avatar) {
+    [byId("room-avatar-preview"), byId("room-avatar-preview-live")].forEach(function (preview) {
+      if (!preview) return;
+      preview.replaceChildren();
+      if (avatar) {
+        var image = document.createElement("img");
+        image.alt = "Foto de perfil";
+        image.src = "data:image/jpeg;base64," + avatar;
+        preview.appendChild(image);
+      } else {
+        preview.textContent = "♫";
+      }
+    });
+    var removeButton = byId("room-avatar-remove");
+    if (removeButton) removeButton.disabled = !avatar;
+  }
+
+  function storeRoomAvatar(avatar) {
+    try {
+      if (avatar) localStorage.setItem(roomAvatarKey, avatar);
+      else localStorage.removeItem(roomAvatarKey);
+    } catch (error) {
+      console.error("No se pudo guardar la foto de perfil de la sala.", error);
+      roomStatus("No se pudo guardar la foto en este navegador. Prueba con otra imagen.", true);
+      return false;
+    }
+    renderRoomAvatarPreview(avatar);
+    if (roomSocket && roomSocket.readyState === WebSocket.OPEN &&
+        !roomSend({ t: "avatar", data: avatar })) {
+      roomStatus("No se pudo actualizar la foto en la sala. Comprueba la conexión.", true);
+      return false;
+    }
+    return true;
+  }
+
+  function compressRoomAvatar(file) {
+    if (!file || !/^image\/(jpeg|png|webp)$/i.test(file.type) || file.size > 10 * 1024 * 1024) {
+      roomStatus("Elige una imagen JPG, PNG o WebP de menos de 10 MB.", true);
+      return;
+    }
+    var reader = new FileReader();
+    reader.onerror = function () { roomStatus("No se pudo leer la imagen seleccionada.", true); };
+    reader.onload = function () {
+      var image = new Image();
+      image.onerror = function () { roomStatus("El archivo seleccionado no es una imagen válida.", true); };
+      image.onload = function () {
+        var canvas = document.createElement("canvas");
+        var cropSize = Math.min(image.naturalWidth, image.naturalHeight);
+        var cropX = (image.naturalWidth - cropSize) / 2;
+        var cropY = (image.naturalHeight - cropSize) / 2;
+        var encoded = "";
+        var contextUnavailable = false;
+        [96, 80, 64].some(function (size) {
+          canvas.width = size;
+          canvas.height = size;
+          var context = canvas.getContext("2d");
+          if (!context) {
+            contextUnavailable = true;
+            return true;
+          }
+          context.clearRect(0, 0, size, size);
+          context.drawImage(image, cropX, cropY, cropSize, cropSize, 0, 0, size, size);
+          return [0.82, 0.72, 0.62].some(function (quality) {
+            encoded = canvas.toDataURL("image/jpeg", quality).split(",")[1] || "";
+            return encoded.length <= 11500;
+          });
+        });
+        if (contextUnavailable) {
+          roomStatus("No se pudo procesar la imagen seleccionada en este navegador.", true);
+          return;
+        }
+        if (!encoded || encoded.length > 12000) {
+          roomStatus("No se pudo reducir la foto a un tamaño compatible. Prueba una imagen más pequeña.", true);
+          return;
+        }
+        if (storeRoomAvatar(encoded)) roomStatus("Foto de perfil guardada.");
+      };
+      image.src = String(reader.result || "");
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function persistRoomName(value, notifyRoom) {
+    var rawName = String(value || "").slice(0, 24);
+    var name = rawName.trim();
+    var displayName = notifyRoom ? name : rawName;
+    [byId("room-name-input"), byId("room-live-name")].forEach(function (input) {
+      if (input && input.value !== displayName) input.value = displayName;
+    });
+    try { localStorage.setItem(roomNameKey, name); }
+    catch (error) {
+      console.warn("No se pudo guardar el apodo de la sala.", error);
+      roomStatus("No se pudo guardar el apodo en este navegador.", true);
+    }
+    if (notifyRoom && name && roomSocket && roomSocket.readyState === WebSocket.OPEN) {
+      if (!roomSend({ t: "rename", name: name })) roomStatus("No se pudo actualizar el apodo en la sala.", true);
+    }
+  }
+
+  function drawRoomAvatar(target, member) {
+    if (member.avatar && member.avatar.length <= 12000 && /^[A-Za-z0-9+/]+={0,2}$/.test(member.avatar)) {
+      var image = document.createElement("img");
+      image.alt = "";
+      image.src = "data:image/jpeg;base64," + member.avatar;
+      target.appendChild(image);
+      return;
+    }
+    target.textContent = member.name.slice(0, 1).toUpperCase();
+  }
+
   async function roomApi(path, options) {
     var response = await fetch("/api/rooms" + (path || ""), Object.assign({
       headers: { Accept: "application/json" },
@@ -976,7 +1562,7 @@
       console.warn("No se pudo guardar la identidad temporal de la sala.", error);
       install = "web-" + Math.random().toString(36).slice(2) + Date.now().toString(36);
     }
-    return { name: name, install: install };
+    return { name: name, install: install, avatar: readRoomAvatar() };
   }
 
   function renderRoomMembers() {
@@ -987,7 +1573,7 @@
       var item = document.createElement("li");
       var avatar = document.createElement("span");
       avatar.className = "room-member__avatar";
-      avatar.textContent = member.name.slice(0, 1).toUpperCase();
+      drawRoomAvatar(avatar, member);
       var name = document.createElement("span");
       name.className = "room-member__name";
       name.textContent = member.name + (member.id === roomMe?.id ? " (tú)" : "");
@@ -1245,6 +1831,12 @@
     }
     if (message.t === "joined") {
       roomMe = message.me || null;
+      if (roomMe && roomMe.name) persistRoomName(roomMe.name, false);
+      if (roomMe && roomMe.avatar) {
+        try { localStorage.setItem(roomAvatarKey, roomMe.avatar); }
+        catch (error) { console.warn("No se pudo guardar la foto confirmada por la sala.", error); }
+        renderRoomAvatarPreview(roomMe.avatar);
+      }
       roomMembers = (message.members || []).map(function (member) {
         return { id: member.id, name: member.name || "Oyente", avatar: member.avatar || "" };
       });
@@ -1307,7 +1899,31 @@
       roomMembers = (message.members || []).map(function (member) {
         return { id: member.id, name: member.name || "Oyente", avatar: member.avatar || "" };
       });
+      if (roomMe) {
+        var currentMember = roomMembers.find(function (member) { return member.id === roomMe.id; });
+        if (currentMember) {
+          roomMe.name = currentMember.name;
+          roomMe.avatar = currentMember.avatar;
+          if (currentMember.avatar) {
+            try { localStorage.setItem(roomAvatarKey, currentMember.avatar); }
+            catch (error) { console.warn("No se pudo guardar la foto confirmada por la sala.", error); }
+          }
+          renderRoomAvatarPreview(currentMember.avatar || readRoomAvatar());
+          persistRoomName(currentMember.name, false);
+        }
+      }
       renderRoomMembers();
+      return;
+    }
+    if (message.t === "renamed") {
+      if (roomMe) roomMe.name = message.name || roomMe.name;
+      if (roomMe) {
+        roomMembers = roomMembers.map(function (member) {
+          return member.id === roomMe.id ? Object.assign({}, member, { name: roomMe.name }) : member;
+        });
+        persistRoomName(roomMe.name, false);
+        renderRoomMembers();
+      }
       return;
     }
     if (message.t === "prepare") {
@@ -1430,7 +2046,7 @@
     roomSocket = socket;
     socket.addEventListener("open", function () {
       if (roomSocket !== socket) return;
-      socket.send(JSON.stringify({ t: "hello", name: identity.name, install: identity.install, avatar: "" }));
+      socket.send(JSON.stringify({ t: "hello", name: identity.name, install: identity.install, avatar: identity.avatar }));
     });
     socket.addEventListener("message", function (event) {
       if (roomSocket !== socket) return;
@@ -1723,7 +2339,7 @@
   audio.addEventListener("playing",function(){if(mode==="audio"&&!playbackFailed){syncButton(true);setStatus("");}});
   audio.addEventListener("pause",function(){if(mode==="audio")syncButton(false);});
   audio.addEventListener("ended",function(){if(mode==="audio"){syncButton(false);changeTrack(1,true);}});
-  audio.addEventListener("error",function(){if(mode==="audio"&&audio.getAttribute("src")&&!playbackFailed)showFailure("El audio no está disponible. Si viene de Discord, solicita un enlace actualizado.");});
+  audio.addEventListener("error",function(){if(mode==="audio"&&audio.getAttribute("src")&&!playbackFailed)showFailure(currentTrack&&currentTrack.provider==="local"?"El navegador no pudo leer este archivo de audio. Prueba con otro formato compatible.":"El audio no está disponible. Si viene de Discord, solicita un enlace actualizado.");});
   byId("search-source").addEventListener("change",function(){if(input.value.trim().length>=2&&input.value.trim().length<=100)runSearch(input.value);});
   fallbackSearch.addEventListener("click",function(){if(!currentTrack)return; alternativeExcludedId=currentTrack.id; byId("search-source").value=mode==="youtube"?"videos":"all"; input.value=(currentTrack.title+" "+(currentTrack.artist.startsWith("YouTube")?"":currentTrack.artist)).slice(0,100);setView("search");runSearch(input.value);});
   document.getElementById("paste-link").addEventListener("click",function(){input.focus();input.placeholder="Pega el enlace de YouTube o del audio de Discord";setStatus("Pega una URL compartida en el buscador y pulsa Buscar.");});
@@ -1749,8 +2365,24 @@
     });
   }
   var roomStoredName = "";
-  try { roomStoredName = localStorage.getItem(roomNameKey) || ""; } catch (_) {}
-  if (byId("room-name-input") && roomStoredName) byId("room-name-input").value = roomStoredName;
+  try { roomStoredName = localStorage.getItem(roomNameKey) || ""; } catch (error) { console.warn("No se pudo leer el apodo guardado de la sala.", error); }
+  if (roomStoredName) persistRoomName(roomStoredName, false);
+  renderRoomAvatarPreview(readRoomAvatar());
+  document.querySelectorAll("[data-room-name]").forEach(function (nameInput) {
+    nameInput.addEventListener("input", function () { persistRoomName(nameInput.value, false); });
+    nameInput.addEventListener("change", function () { persistRoomName(nameInput.value, true); });
+  });
+  document.querySelectorAll("[data-room-avatar-pick]").forEach(function (button) {
+    button.addEventListener("click", function () { byId("room-avatar-input").click(); });
+  });
+  byId("room-avatar-input").addEventListener("change", function () {
+    var file = this.files && this.files[0];
+    this.value = "";
+    if (file) compressRoomAvatar(file);
+  });
+  byId("room-avatar-remove").addEventListener("click", function () {
+    if (storeRoomAvatar("")) roomStatus("Foto de perfil quitada.");
+  });
   document.querySelectorAll("[data-room-create]").forEach(function (button) {
     button.addEventListener("click", function () { createListeningRoom(button.dataset.roomCreate); });
   });
@@ -1814,6 +2446,36 @@
   });
   document.querySelectorAll("[data-go]").forEach(function (button) {
     button.addEventListener("click", function () { setView(button.dataset.go); });
+  });
+  var localFilesButton = document.getElementById("local-audio-import");
+  var localFilesInput = document.getElementById("local-audio-files");
+  if (localFilesButton && localFilesInput) {
+    localFilesButton.addEventListener("click", function () { localFilesInput.click(); });
+    localFilesInput.addEventListener("change", function () {
+      var files = Array.prototype.slice.call(localFilesInput.files || []);
+      localFilesInput.value = "";
+      if (files.length) void importLocalAudioFiles(files);
+    });
+  }
+  window.addEventListener("nexus:cloud-library-loaded", function (event) {
+    var cloudTracks = event.detail && Array.isArray(event.detail.tracks) ? event.detail.tracks.filter(isTrack) : [];
+    var authoritative = event.detail && event.detail.authoritative === true;
+    var preserved = authoritative
+      ? library.filter(function (track) {
+        return !videoIdPattern.test(track.id || "") && !/^au:[A-Za-z0-9_-]{1,80}$/.test(track.id || "");
+      })
+      : library;
+    var merged = new Map(preserved.map(function (track) { return [track.id, track]; }));
+    cloudTracks.forEach(function (track) {
+      if (!merged.has(track.id)) merged.set(track.id, track);
+    });
+    var previous = library;
+    library = Array.from(merged.values()).slice(0, 500);
+    if (!saveList(storageKeys.library, library, 500)) {
+      library = previous;
+      return;
+    }
+    refreshViews();
   });
   clearQueueButton.addEventListener("click", function () {
     var previous = queue;
@@ -1931,15 +2593,68 @@
   document.querySelectorAll('[data-close]').forEach(function(b){b.addEventListener('click',function(){byId(b.dataset.close).close();});});
   document.addEventListener('keydown',function(e){if(e.key==='Escape'&&!document.querySelector('dialog[open]'))setExpanded(false);});
   // Lyrics: exact recording match, line timestamps, real player clock, no artificial timing.
-  var lyricsEnabled=false,lyricsKey='',lyricsController=null,lyricRows=[],activeLine=-1,lyricsPending=false;
+  var lyricsEnabled=false,lyricsKey='',lyricsController=null,lyricRows=[],activeLine=-1,lyricsPending=false,lyricsAvailable=false;
   function clock(){try{if(mode==='audio')return {time:audio.currentTime,duration:audio.duration};if(mode==='youtube'&&playerReady&&player)return {time:player.getCurrentTime(),duration:player.getDuration()};}catch(_){}return {time:0,duration:0};}
   function durationSeconds(text){var parts=String(text||'').split(':');return parts.length>=2&&parts.length<=3?parts.reduce(function(total,part){return total*60+Number(part);},0):0;}
-  function updateLyricsVisibility(){byId('lyrics-toggle').setAttribute('aria-expanded',String(lyricsEnabled));byId('lyrics-lines').hidden=!lyricsEnabled;byId('lyrics-credit').hidden=!lyricsEnabled||!lyricRows.length;if(!lyricsEnabled)byId('lyrics-status').textContent='Letra oculta. Pulsa ♪ para mostrarla.';}
+  function updateLyricsVisibility(){byId('lyrics-toggle').setAttribute('aria-expanded',String(lyricsEnabled));byId('lyrics-lines').hidden=!lyricsEnabled;byId('lyrics-credit').hidden=!lyricsEnabled||!lyricsAvailable;if(!lyricsEnabled)byId('lyrics-status').textContent='Letra oculta. Pulsa ♪ para mostrarla.';}
   function parseLrc(lrc){var rows=[],offset=0,m=String(lrc||'').match(/\[offset:([+-]?\d+)\]/i);if(m)offset=Number(m[1])/1000;String(lrc||'').split(/\r?\n/).forEach(function(line){var tags=Array.from(line.matchAll(/\[(\d{1,3}):(\d{2})(?:[.:](\d{1,3}))?\]/g));var text=line.replace(/\[[^\]]*\]/g,'').trim();if(!text)return;tags.forEach(function(t){rows.push({time:Math.max(0,Number(t[1])*60+Number(t[2])+Number('0.'+(t[3]||'0'))+offset),text:text});});});return rows.sort(function(a,b){return a.time-b.time;});}
   function seekTo(t){var c=clock();if(!Number.isFinite(c.duration)||c.duration<=0||playbackFailed)return;if(mode==='audio')audio.currentTime=Math.min(t,c.duration);else if(mode==='youtube'&&playerReady){var target=Math.min(t,c.duration);player.seekTo(target,true);roomPublishState("seek",undefined,target*1000);}}
-  function requestLyrics(){if(!lyricsEnabled)return;var track=currentTrack;var lines=byId('lyrics-lines'),label=byId('lyrics-status');if(!track){label.textContent='Elige una canción para ver su letra.';return;}var duration=clock().duration;if(!Number.isFinite(duration)||duration<=0)duration=durationSeconds(track.duration);if(!Number.isFinite(duration)||duration<1)duration=0;var key=[track.id,track.title,track.artist,Math.round(duration)].join('|');if(key===lyricsKey)return;lyricsKey=key;if(lyricsController)lyricsController.abort();lyricsController=new AbortController();var signal=lyricsController.signal;lyricRows=[];activeLine=-1;lines.replaceChildren();byId('lyrics-credit').hidden=true;lyricsPending=true;label.textContent='Buscando la letra de esta grabación…';var u=new URL('/api/lyrics',location.origin);u.searchParams.set('title',track.title);u.searchParams.set('artist',track.artist);if(duration>0)u.searchParams.set('duration',String(Math.round(duration)));fetch(u,{signal:signal}).then(async function(r){if(!r.ok&&r.status!==404)throw Error('No disponible');return r.json();}).then(function(d){if(signal.aborted||lyricsKey!==key)return;lyricsPending=false;if(d.instrumental){label.textContent='Esta pista es instrumental.';return;}lyricRows=parseLrc(d.syncedLyrics);if(lyricRows.length){label.textContent='Sincronizada por líneas · pulsa una línea para saltar.';lyricRows.forEach(function(row){var b=document.createElement('button');b.type='button';b.textContent=row.text;b.addEventListener('click',function(){seekTo(row.time);});lines.append(b);});}else if(d.plainLyrics){label.textContent='Letra disponible sin tiempos sincronizados.';var text=document.createElement('div');text.className='lyric-line';text.textContent=d.plainLyrics;lines.append(text);}else{label.textContent='No hay una letra verificada para esta versión.';return;}byId('lyrics-credit').hidden=!lyricsEnabled;lines.hidden=!lyricsEnabled;}).catch(function(e){if(signal.aborted)return;lyricsPending=false;label.textContent='No se pudo consultar la letra. Oculta y vuelve a abrir para reintentar.';});}
+  function requestLyrics(){
+    if(!lyricsEnabled)return;
+    var track=currentTrack,lines=byId('lyrics-lines'),label=byId('lyrics-status');
+    if(!track){label.textContent='Elige una canción para ver su letra.';return;}
+    var duration=clock().duration;
+    if(!Number.isFinite(duration)||duration<=0)duration=durationSeconds(track.duration);
+    if(!Number.isFinite(duration)||duration<1)duration=0;
+    var key=[track.id,track.title,track.artist,Math.round(duration)].join('|');
+    if(key===lyricsKey)return;
+    lyricsKey=key;
+    if(lyricsController)lyricsController.abort();
+    lyricsController=new AbortController();
+    var signal=lyricsController.signal;
+    lyricRows=[];activeLine=-1;lyricsAvailable=false;lines.replaceChildren();byId('lyrics-credit').hidden=true;
+    lyricsPending=true;label.textContent='Buscando la letra de esta grabación…';
+    var endpoint=new URL('/api/lyrics',location.origin);
+    endpoint.searchParams.set('title',track.title);
+    endpoint.searchParams.set('artist',track.artist);
+    if(duration>0)endpoint.searchParams.set('duration',String(Math.round(duration)));
+    fetch(endpoint,{signal:signal}).then(async function(response){
+      if(!response.ok&&response.status!==404)throw new Error('Servicio de letras no disponible');
+      return response.json();
+    }).then(function(data){
+      if(signal.aborted||lyricsKey!==key)return;
+      lyricsPending=false;
+      if(data.instrumental){label.textContent='Esta pista es instrumental.';return;}
+      lyricRows=parseLrc(data.syncedLyrics);
+      if(lyricRows.length){
+        label.textContent='Sincronizada por líneas · pulsa una línea para saltar.';
+        lyricRows.forEach(function(row){
+          var button=document.createElement('button');
+          button.type='button';button.textContent=row.text;
+          button.addEventListener('click',function(){seekTo(row.time);});
+          lines.append(button);
+        });
+      }else if(typeof data.plainLyrics==='string'&&data.plainLyrics.trim()){
+        label.textContent='Letra disponible sin tiempos sincronizados.';
+        var text=document.createElement('div');
+        text.className='lyric-line';text.textContent=data.plainLyrics;
+        lines.append(text);
+      }else{
+        label.textContent='No hay una letra verificada para esta versión.';
+        return;
+      }
+      lyricsAvailable=true;
+      byId('lyrics-credit').hidden=!lyricsEnabled;
+      lines.hidden=!lyricsEnabled;
+    }).catch(function(error){
+      if(signal.aborted)return;
+      lyricsPending=false;
+      console.error('No se pudo consultar la letra.',error);
+      label.textContent='No se pudo consultar la letra. Oculta y vuelve a abrir para reintentar.';
+    });
+  }
   byId('lyrics-toggle').addEventListener('click',function(){lyricsEnabled=!lyricsEnabled;updateLyricsVisibility();if(lyricsEnabled){lyricsKey='';requestLyrics();}});
-  setInterval(function(){if(!lyricsEnabled)return;if(currentTrack)requestLyrics();if(!lyricRows.length||playbackFailed)return;var time=clock().time;if(!Number.isFinite(time))return;var index=-1;for(var i=0;i<lyricRows.length;i++){if(lyricRows[i].time>time+.08)break;index=i;}if(index===activeLine)return;var list=byId('lyrics-lines');if(activeLine>=0&&list.children[activeLine])list.children[activeLine].classList.remove('active');activeLine=index;if(index>=0&&list.children[index]){var line=list.children[index];line.classList.add('active');list.scrollTo({top:Math.max(0,line.offsetTop-list.offsetTop-list.clientHeight*.3),behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'});}},250);
+  setInterval(function(){if(!lyricsEnabled)return;if(currentTrack)requestLyrics();if(!lyricRows.length||playbackFailed)return;var time=clock().time;if(!Number.isFinite(time))return;var index=-1;for(var i=0;i<lyricRows.length;i++){if(lyricRows[i].time>time+.08)break;index=i;}if(index===activeLine)return;var list=byId('lyrics-lines');if(activeLine>=0&&list.children[activeLine])list.children[activeLine].classList.remove('active');activeLine=index;if(index>=0&&list.children[index]){var line=list.children[index];line.classList.add('active');list.scrollTo({top:Math.max(0,line.offsetTop-list.offsetTop-list.clientHeight*.3),behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'});}},250);
   window.NexusPlayback={snapshot:function(){if(!currentTrack||!document.body.classList.contains('is-playing')||playbackFailed)return null;var c=clock();return {title:currentTrack.title,artist:currentTrack.artist,artwork:currentTrack.thumbnail||"",position:Number.isFinite(c.time)?c.time:0,duration:Number.isFinite(c.duration)?c.duration:0,url:currentTrack.provider==='discord'?'https://nexusmusicx.vercel.app/listen?web=1':shareUrl(currentTrack)};}};
 
   // Appearance and player preferences share the original playback state.
@@ -1948,6 +2663,7 @@
   function updateTheme(){
     var body=document.body,color=palettes[prefs.color]||palettes.aurora;
     body.style.setProperty('--user-accent',color);body.dataset.theme=prefs.color;
+    body.dataset.playerDesign=prefs.playerDesign;
     body.classList.toggle('no-glass',!prefs.glass);body.classList.toggle('no-blur',!prefs.blur);
     body.classList.toggle('no-motion',!prefs.motion);body.classList.toggle('dynamic-theme',prefs.dynamic&&!prefs.dataSaver);
     var ambient=byId('cover-ambient'),url=currentTrack&&currentTrack.thumbnail;
@@ -1972,10 +2688,7 @@
           var w=1+(hi-lo)/80;r+=data[i]*w;g+=data[i+1]*w;b+=data[i+2]*w;n+=w;
         }
         if(n){
-          var tint='rgb('+[r,g,b].map(function(x,index){
-            var base=parseInt(color.slice(1+index*2,3+index*2),16);
-            return Math.round(base*.88+(x/n)*.12);
-          }).join(',')+')';
+          var tint='rgb('+[r,g,b].map(function(x){return Math.round(x/n*.57+255*.43);}).join(',')+')';
           if(coverColorCache.size>80)coverColorCache.clear();
           coverColorCache.set(cacheKey,tint);body.style.setProperty('--user-accent',tint);
         }
@@ -1997,9 +2710,33 @@
     byId('pref-volume-value').value=volume+'%';
     byId('pref-volume-value').textContent=volume+'%';
   }
-  function applySpeed(){audio.playbackRate=Number(prefs.speed)||1;if(playerReady&&player)try{player.setPlaybackRate(Number(prefs.speed)||1);}catch(_){}}
-  if(!palettes[prefs.color])prefs.color='aurora';if(!['0.75','1','1.25','1.5','2'].includes(prefs.speed))prefs.speed='1';
-  paintPrefs();updateTheme();
+  var playbackSpeedButton=document.createElement('button');
+  playbackSpeedButton.type='button';
+  playbackSpeedButton.className='playback-speed-button';
+  playbackSpeedButton.id='playback-speed';
+  playbackSpeedButton.title='Cambiar velocidad de reproducción';
+  byId('next-track').insertAdjacentElement('afterend',playbackSpeedButton);
+  function applySpeed(){
+    var speed=Number(prefs.speed)||1;
+    audio.playbackRate=speed;
+    if(playerReady&&player)try{player.setPlaybackRate(speed);}catch(_){}
+    playbackSpeedButton.textContent=speed+'×';
+    playbackSpeedButton.setAttribute('aria-label','Velocidad de reproducción: '+speed+'×');
+  }
+  playbackSpeedButton.addEventListener('click',function(){
+    var speeds=['0.75','1','1.25','1.5','2'];
+    var current=speeds.indexOf(String(prefs.speed));
+    prefs.speed=speeds[(current+1)%speeds.length];
+    applySpeed();savePrefs();
+  });
+  if(!palettes[prefs.color])prefs.color='aurora';if(!['aurora','velvet','prism','studio'].includes(prefs.playerDesign))prefs.playerDesign='aurora';if(!['0.75','1','1.25','1.5','2'].includes(prefs.speed))prefs.speed='1';
+  paintPrefs();updateTheme();applySpeed();
+  function paintPlayerDesignOptions(){
+    settingsDashboard.querySelectorAll("[data-player-design]").forEach(function (button) {
+      button.setAttribute("aria-pressed", String(button.dataset.playerDesign === prefs.playerDesign));
+    });
+  }
+  paintPlayerDesignOptions();
   Object.keys(prefDefaults).forEach(function(k){
     var el=byId('pref-'+k);if(!el)return;
     el.addEventListener('change',function(){
@@ -2024,6 +2761,14 @@
       if(k==='persistentQueue')updateDashboardStats();
     });
   });
+  settingsDashboard.querySelectorAll("[data-player-design]").forEach(function (button) {
+    button.addEventListener("click", function () {
+      prefs.playerDesign = button.dataset.playerDesign;
+      paintPlayerDesignOptions();
+      savePrefs();
+      byId("settings-status").textContent = "Diseño del reproductor actualizado.";
+    });
+  });
   byId('pref-volume').addEventListener('input',function(){
     var volume=Math.max(0,Math.min(100,Number(this.value)||0));
     byId('pref-volume-value').value=volume+'%';
@@ -2034,7 +2779,7 @@
   });
   byId('volume-control').addEventListener('change',function(){prefs.volume=Number(this.value);paintPrefs();savePrefs();});
   byId('settings-discord').addEventListener('click',function(){byId('discord-settings').click();});
-  byId('pref-reset').addEventListener('click',function(){prefs=Object.assign({},prefDefaults);paintPrefs();var saved=savePrefs();applySpeed();audio.volume=prefs.volume/100;if(playerReady&&player)try{player.setVolume(prefs.volume);}catch(_){}if(prefs.persistentQueue)persist(storageKeys.queue,queue);refreshViews();byId('settings-status').textContent=saved?'Ajustes restablecidos.':'Ajustes restablecidos, pero el navegador no pudo guardarlos.';});
+  byId('pref-reset').addEventListener('click',function(){prefs=Object.assign({},prefDefaults);paintPrefs();paintPlayerDesignOptions();var saved=savePrefs();applySpeed();audio.volume=prefs.volume/100;if(playerReady&&player)try{player.setVolume(prefs.volume);}catch(_){}if(prefs.persistentQueue)persist(storageKeys.queue,queue);refreshViews();byId('settings-status').textContent=saved?'Ajustes restablecidos.':'Ajustes restablecidos, pero el navegador no pudo guardarlos.';});
   byId('export-library').addEventListener('click',function(){
     var backup={format:'nexusmusic-web-library',version:1,exportedAt:new Date().toISOString(),library:library,favorites:favorites,playlists:playlists,history:recent,queue:queue};
     var blob=new Blob([JSON.stringify(backup,null,2)],{type:'application/json'});

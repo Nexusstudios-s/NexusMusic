@@ -969,7 +969,7 @@
         } else {
           // Si el usuario tenía las notificaciones bloqueadas en el navegador
           showToast("Notificaciones bloqueadas en el navegador", "Activa los permisos en el candado del navegador o únete a Discord para no perderte el lanzamiento.");
-          setTimeout(function () { window.open("https://nexusforgex.xyz", "_blank"); }, 2000);
+          setTimeout(function () { window.open("https://nexusforgex.vercel.app", "_blank"); }, 2000);
         }
       } else {
         fallbackSubscribe("¡Anotado en la lista!", "Tu navegador no soporta notificaciones de sistema, pero te avisaremos en Nexus Forge.");
@@ -996,7 +996,7 @@
       if (btnText) btnText.textContent = "✓ ¡Anotado para el 27 Sept. 2027!";
       btn.classList.add("pro-card__btn--active");
       showToast(title, body);
-      setTimeout(function () { window.open("https://nexusforgex.xyz", "_blank"); }, 1600);
+      setTimeout(function () { window.open("https://nexusforgex.vercel.app", "_blank"); }, 1600);
     }
 
     toast.addEventListener("click", function () {
