@@ -99,7 +99,7 @@
   function isTrack(track) {
     return track && typeof track.title === "string" && typeof track.artist === "string" && (track.provider === "audius" ? /^au:[A-Za-z0-9_-]{1,80}$/.test(track.id || "") : track.provider === "discord" ? /^dc:[a-f0-9]{16}$/.test(track.id || "") && !!directAudio(track.audioUrl) : videoIdPattern.test(track.id || ""));
   }
-  function sourceName(track) { return track.provider === "catalog" ? "Catálogo comercial" : track.provider === "audius" ? "Audius" : track.provider === "discord" ? "Discord · audio" : "YouTube"; }
+  function sourceName(track) { return track.provider === "catalog" ? "Catálogo comercial" : track.provider === "audius" ? "Audius" : track.provider === "discord" ? "Discord · audio" : track.provider === "youtube" ? "YouTube Music" : "YouTube"; }
   function sourceUrl(track) {
     if (track.provider === "discord") return directAudio(track.audioUrl);
     if (track.provider === "audius") { try { var u = new URL(track.url); if (u.origin === "https://audius.co") return u.href; } catch (_) {} return "https://audius.co"; }
@@ -683,7 +683,10 @@
     document.querySelector(".web-app__views").scrollTop = 0;
   }
 
+  var alternativeExcludedId = "";
   function runSearch(query) {
+    var excluded = alternativeExcludedId; alternativeExcludedId = "";
+    var providerLabel=byId("search-provider-status"); providerLabel.textContent="";
     var raw = query.trim();
     var shared = /^https:\/\//i.test(raw) ? parseShared(raw) : null;
     if(shared){ if(searchController)searchController.abort(); searchToken++; document.querySelector(".web-player__search-submit").disabled=false; lastSearchTracks=[shared];resultsTitle.textContent="Enlace compartido";resultsEyebrow.textContent=sourceName(shared);renderTracks(results,lastSearchTracks,{});playTrack(shared);return; }
@@ -720,6 +723,7 @@
 
     var endpoint = new URL("/api/music-search", location.origin);
     endpoint.searchParams.set("q", cleanQuery);
+    endpoint.searchParams.set("source",byId("search-source").value);
     fetch(endpoint, { headers: { Accept: "application/json" }, cache: "no-store", signal: controller.signal })
       .then(function (response) {
         return response.text().then(function (body) {
@@ -734,11 +738,15 @@
           }
           if (!response.ok) throw new Error(getApiErrorMessage(payload && payload.error, response.status));
           if (!payload || !Array.isArray(payload.items)) throw new Error("El servidor devolvió una respuesta de búsqueda incompleta.");
-          return payload.items.filter(function(t){return isTrack(t)||isCatalog(t);});
+          return {tracks:payload.items.filter(function(t){return (isTrack(t)||isCatalog(t))&&t.id!==excluded;}),providers:payload.providers||{}};
         });
       })
-      .then(function (tracks) {
+      .then(function (data) {
         if (requestId !== searchToken) return;
+        var tracks=data.tracks;
+        var failed=Object.keys(data.providers).filter(function(k){return data.providers[k]!=="ok";});
+        var names={youtube:"YouTube Music",videos:"YouTube Music (videos)",audius:"Audius",catalog:"Apple"};
+        providerLabel.textContent=failed.length?"Temporalmente sin respuesta: "+failed.map(function(k){return names[k]||k;}).join(", "):"";
         resultsTitle.textContent = "Resultados para “" + cleanQuery + "”";
         resultsEyebrow.textContent = "RESULTADOS";
         if (!tracks.length) {
@@ -749,7 +757,7 @@
         }
         lastSearchTracks = tracks;
         renderTracks(results, tracks, {});
-        setStatus(tracks.filter(isTrack).length+" reproducibles aquí · "+tracks.filter(isCatalog).length+" en catálogo comercial.");
+        setStatus(tracks.length+" resultados · "+tracks.filter(function(t){return t.provider==="youtube";}).length+" de YouTube Music (según permisos de reproducción) · "+tracks.filter(function(t){return t.provider==="audius";}).length+" de Audius · "+tracks.filter(isCatalog).length+" externos.");
       })
       .catch(function (error) {
         if (requestId !== searchToken) return;
@@ -784,7 +792,7 @@
   var ytRequested=false, ytTimer;
   function createPlayer(){
     if(player||!window.YT||!YT.Player)return;
-    player=new YT.Player(host,{width:"100%",height:"100%",playerVars:{autoplay:0,controls:1,playsinline:1,rel:0,origin:location.origin},events:{onReady:function(e){clearTimeout(ytTimer);playerReady=true;player.setVolume(Number(document.getElementById("volume-control").value));if(mode==="youtube"&&pendingYouTube&&pendingYouTube===currentTrackId){var id=pendingYouTube;pendingYouTube=null;player.loadVideoById(id);}else if(mode!=="youtube"||playbackFailed){var frame=document.getElementById("player-host");if(frame)frame.hidden=true;}},onStateChange:onPlayerStateChange,onError:function(e){if(mode!=="youtube"||playbackFailed)return;showFailure([101,150,152].includes(e.data)?"El titular no permite reproducir este video fuera de YouTube. Abre el original o busca una versión disponible en Audius.":"YouTube no pudo reproducir este video. Abre el original o busca otra versión.");},onAutoplayBlocked:function(){if(mode==="youtube"&&!playbackFailed){syncButton(false);setStatus("Pulsa reproducir para iniciar el video.");}}}});
+    player=new YT.Player(host,{width:"100%",height:"100%",playerVars:{autoplay:0,controls:1,playsinline:1,rel:0,origin:location.origin},events:{onReady:function(e){clearTimeout(ytTimer);playerReady=true;player.setVolume(Number(document.getElementById("volume-control").value));if(mode==="youtube"&&pendingYouTube&&pendingYouTube===currentTrackId){var id=pendingYouTube;pendingYouTube=null;player.loadVideoById(id);}else if(mode!=="youtube"||playbackFailed){var frame=document.getElementById("player-host");if(frame)frame.hidden=true;}},onStateChange:onPlayerStateChange,onError:function(e){if(mode!=="youtube"||playbackFailed)return;showFailure([101,150,152].includes(e.data)?"El titular no permite reproducir este video fuera de YouTube. Abre el original o busca otra versión.":"YouTube no pudo reproducir este video. Abre el original o busca otra versión.");},onAutoplayBlocked:function(){if(mode==="youtube"&&!playbackFailed){syncButton(false);setStatus("Pulsa reproducir para iniciar el video.");}}}});
   }
   function loadYouTubeApi(){
     if(window.YT&&YT.Player){createPlayer();clearTimeout(ytTimer);ytTimer=setTimeout(function(){if(!playerReady&&mode==="youtube"&&pendingYouTube)showFailure("YouTube no respondió. Abre el original o vuelve a intentar.");},15000);return;}
@@ -797,7 +805,8 @@
   audio.addEventListener("pause",function(){if(mode==="audio")syncButton(false);});
   audio.addEventListener("ended",function(){if(mode==="audio"){syncButton(false);changeTrack(1);}});
   audio.addEventListener("error",function(){if(mode==="audio"&&audio.getAttribute("src")&&!playbackFailed)showFailure("El audio no está disponible. Si viene de Discord, solicita un enlace actualizado.");});
-  fallbackSearch.addEventListener("click",function(){if(!currentTrack)return; input.value=(currentTrack.title+" "+(currentTrack.artist.startsWith("YouTube")?"":currentTrack.artist)).slice(0,100);setView("search");runSearch(input.value);});
+  byId("search-source").addEventListener("change",function(){if(input.value.trim().length>=2&&input.value.trim().length<=100)runSearch(input.value);});
+  fallbackSearch.addEventListener("click",function(){if(!currentTrack)return; alternativeExcludedId=currentTrack.id; byId("search-source").value=mode==="youtube"?"videos":"all"; input.value=(currentTrack.title+" "+(currentTrack.artist.startsWith("YouTube")?"":currentTrack.artist)).slice(0,100);setView("search");runSearch(input.value);});
   document.getElementById("paste-link").addEventListener("click",function(){input.focus();input.placeholder="Pega el enlace de YouTube o del audio de Discord";setStatus("Pega una URL compartida en el buscador y pulsa Buscar.");});
 
   form.addEventListener("submit", function (event) {
@@ -903,7 +912,7 @@
   // Lyrics: exact recording match, line timestamps, real player clock, no artificial timing.
   var lyricsEnabled=false,lyricsKey='',lyricsController=null,lyricRows=[],activeLine=-1,lyricsPending=false;
   function clock(){try{if(mode==='audio')return {time:audio.currentTime,duration:audio.duration};if(mode==='youtube'&&playerReady&&player)return {time:player.getCurrentTime(),duration:player.getDuration()};}catch(_){}return {time:0,duration:0};}
-  function durationSeconds(text){var parts=String(text||'').split(':');return parts.length===2?Number(parts[0])*60+Number(parts[1]):0;}
+  function durationSeconds(text){var parts=String(text||'').split(':');return parts.length>=2&&parts.length<=3?parts.reduce(function(total,part){return total*60+Number(part);},0):0;}
   function updateLyricsVisibility(){byId('lyrics-toggle').setAttribute('aria-expanded',String(lyricsEnabled));byId('lyrics-lines').hidden=!lyricsEnabled;byId('lyrics-credit').hidden=!lyricsEnabled||!lyricRows.length;if(!lyricsEnabled)byId('lyrics-status').textContent='Letra oculta. Pulsa ♪ para mostrarla.';}
   function parseLrc(lrc){var rows=[],offset=0,m=String(lrc||'').match(/\[offset:([+-]?\d+)\]/i);if(m)offset=Number(m[1])/1000;String(lrc||'').split(/\r?\n/).forEach(function(line){var tags=Array.from(line.matchAll(/\[(\d{1,3}):(\d{2})(?:[.:](\d{1,3}))?\]/g));var text=line.replace(/\[[^\]]*\]/g,'').trim();if(!text)return;tags.forEach(function(t){rows.push({time:Math.max(0,Number(t[1])*60+Number(t[2])+Number('0.'+(t[3]||'0'))+offset),text:text});});});return rows.sort(function(a,b){return a.time-b.time;});}
   function seekTo(t){var c=clock();if(!Number.isFinite(c.duration)||c.duration<=0||playbackFailed)return;if(mode==='audio')audio.currentTime=Math.min(t,c.duration);else if(mode==='youtube'&&playerReady)player.seekTo(Math.min(t,c.duration),true);}
