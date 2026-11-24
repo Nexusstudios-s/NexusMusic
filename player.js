@@ -49,6 +49,9 @@
 
   var videoView;
   var videoSearchForm;
+  var roomView;
+  var roomSearchForm;
+  var roomSearchResults;
   if (appViews && sidebarNavigation) {
     videoView = document.createElement("section");
     videoView.className = "web-view videos-page";
@@ -67,6 +70,27 @@
     videoNavigationButton.innerHTML = '<svg aria-hidden="true" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" viewBox="0 0 24 24"><rect x="3" y="5" width="13" height="14" rx="2"></rect><path d="m16 10 5-3v10l-5-3z"></path></svg><span>Videos</span>';
     var settingsNavigationButton = sidebarNavigation.querySelector('[data-view="settings"]');
     sidebarNavigation.insertBefore(videoNavigationButton, settingsNavigationButton || null);
+  }
+
+  if (appViews && sidebarNavigation) {
+    roomView = document.createElement("section");
+    roomView.className = "web-view rooms-page";
+    roomView.id = "rooms-view";
+    roomView.hidden = true;
+    roomView.setAttribute("aria-labelledby", "rooms-page-title");
+    roomView.innerHTML = '<header class="rooms-hero"><div><p class="web-player__eyebrow">NEXUS / LISTEN TOGETHER</p><h1 id="rooms-page-title">Escuchen juntos.</h1><p>Crea una sala o entra con un código. Cada persona reproduce el video en su propio dispositivo; la sala sincroniza canción y controles.</p></div><div class="rooms-hero__art" aria-hidden="true">♫</div></header><section class="rooms-lobby"><div class="rooms-lobby__forms"><form id="room-join-form"><label for="room-code-input">Tengo un código</label><div><input id="room-code-input" maxlength="6" minlength="6" autocomplete="off" placeholder="ABC234" required><button class="primary" type="submit">Entrar</button></div></form><form id="room-create-form"><label for="room-name-input">Tu nombre en la sala</label><input id="room-name-input" maxlength="24" autocomplete="nickname" placeholder="Tu apodo"><div class="room-create-actions"><button class="primary" type="button" data-room-create="private">Crear sala privada</button><button type="button" data-room-create="public">Crear sala pública</button></div></form></div><div class="rooms-public"><div class="web-section__head"><div><p class="web-player__eyebrow">SALAS ABIERTAS</p><h2>Únete a alguien</h2></div><button class="web-player__text-button" id="rooms-refresh" type="button">Actualizar</button></div><div class="rooms-public__list" id="rooms-public-list" aria-live="polite"></div></div></section><p class="rooms-status" id="rooms-status" role="status" aria-live="polite">Conectando con el servidor de salas…</p><section class="room-live" id="room-live" hidden aria-labelledby="room-live-title"><header class="room-live__header"><div><p class="web-player__eyebrow" id="room-live-visibility">SALA PRIVADA</p><h2 id="room-live-title">Sala de escucha</h2><p>Código <strong id="room-live-code"></strong> · <span id="room-live-count"></span></p></div><div class="room-live__actions"><button type="button" id="room-copy-code">Copiar código</button><button type="button" id="room-leave" class="room-leave">Salir</button></div></header><div class="room-live__grid"><section class="room-members"><div class="web-section__head"><h3>Escuchando</h3></div><ul id="room-members-list"></ul><div class="room-now-track" id="room-now-track">Todavía no hay música en la sala.</div><div class="room-reactions" aria-label="Reacciones"><button type="button" data-room-reaction="❤️" aria-label="Reaccionar con corazón">❤️</button><button type="button" data-room-reaction="🔥" aria-label="Reaccionar con fuego">🔥</button><button type="button" data-room-reaction="👏" aria-label="Reaccionar con aplausos">👏</button><button type="button" data-room-reaction="🎵" aria-label="Reaccionar con música">🎵</button></div></section><section class="room-music"><h3>Elige la próxima canción</h3><p>Busca videos de YouTube para que funcionen en NexusMusic y en la app Android.</p><form class="video-search-form room-search-form" id="room-search-form"><label class="sr-only" for="room-search-input">Buscar videos para la sala</label><input id="room-search-input" type="search" maxlength="100" placeholder="Buscar canción o artista…" required><button class="primary" type="submit">Buscar</button></form><div class="room-search-results" id="room-search-results" aria-live="polite"></div></section><section class="room-chat"><div class="web-section__head"><h3>Chat de la sala</h3><span>Efímero · no se guarda</span></div><div class="room-chat__messages" id="room-chat-messages" aria-live="polite"></div><form id="room-chat-form"><label class="sr-only" for="room-chat-input">Escribe en el chat de la sala</label><input id="room-chat-input" maxlength="500" autocomplete="off" placeholder="Escribe un mensaje…"><button class="primary" type="submit">Enviar</button></form></section></div></section>';
+    appViews.appendChild(roomView);
+    roomSearchForm = roomView.querySelector("#room-search-form");
+    roomSearchResults = roomView.querySelector("#room-search-results");
+
+    var roomNavigationButton = document.createElement("button");
+    roomNavigationButton.type = "button";
+    roomNavigationButton.className = "web-app__nav";
+    roomNavigationButton.dataset.view = "rooms";
+    roomNavigationButton.setAttribute("aria-label", "Salas");
+    roomNavigationButton.innerHTML = '<svg aria-hidden="true" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"></circle><circle cx="17" cy="9" r="2.5"></circle><path d="M3 19c0-3.1 2.4-5.3 6-5.3s6 2.2 6 5.3m0-4c3.1-.1 5 1.5 5 4"></path></svg><span>Salas</span>';
+    var roomsSettingsButton = sidebarNavigation.querySelector('[data-view="settings"]');
+    sidebarNavigation.insertBefore(roomNavigationButton, roomsSettingsButton || null);
   }
 
   var brand = document.querySelector(".app-sidebar .brand");
@@ -197,6 +221,7 @@
     history: document.getElementById("history-view"),
     queue: document.getElementById("queue-view"),
     videos: document.getElementById("videos-view"),
+    rooms: document.getElementById("rooms-view"),
     settings: document.getElementById("settings-view")
   };
   var viewTitles = {
@@ -208,6 +233,7 @@
     history: "Historial",
     queue: "Cola",
     videos: "Videos",
+    rooms: "Salas",
     settings: "Ajustes"
   };
   var storageKeys = {
@@ -233,6 +259,26 @@
   var lastVideoTracks = [];
   var player = null;
   var playerReady = false;
+  var roomSocket = null;
+  var roomConnectionWanted = false;
+  var roomReconnectTimer = null;
+  var roomPingTimer = null;
+  var roomSyncTimer = null;
+  var roomRetryCount = 0;
+  var roomMe = null;
+  var roomMembers = [];
+  var roomVisibility = "private";
+  var roomServerOffsetMs = 0;
+  var roomRttMs = 0;
+  var roomPingSentAt = 0;
+  var roomPreparing = null;
+  var roomTrackId = "";
+  var roomStartAfterCue = null;
+  var roomSuppressedUntil = 0;
+  var roomLastAction = "";
+  var roomChat = [];
+  var roomNameKey = "nexusmusic.web.room-name.v1";
+  var roomInstallKey = "nexusmusic.web.room-install.v1";
   var currentTrackId = "";
   var currentView = "home";
   var activePlaylistId = "";
@@ -518,6 +564,7 @@
 
   function playTrack(track) {
     if (!isTrack(track)) return;
+    if (roomSocket && roomSocket.readyState === WebSocket.OPEN && startRoomTrack(track)) return;
     if (!queue.some(function (item) { return item.id === track.id; })) {
       if (queue.length >= maxQueueSize) {
         setStatus("La cola está llena. Quita una canción antes de reproducir otra.", true);
@@ -871,8 +918,660 @@
     });
     document.getElementById("view-breadcrumb").textContent = viewTitles[viewName];
     if (viewName === "playlists") renderActivePlaylist();
+    if (viewName === "rooms") refreshPublicRooms();
     if(document.body.classList.contains("player-expanded")) setExpanded(false);
     document.querySelector(".web-app__views").scrollTop = 0;
+  }
+
+  function roomStatus(message, isError) {
+    var status = byId("rooms-status");
+    if (!status) return;
+    status.textContent = message || "";
+    status.classList.toggle("is-error", Boolean(isError));
+  }
+
+  function roomApiError(data, fallback) {
+    if (data && typeof data.detail === "string") return data.detail;
+    if (data && typeof data.error === "string") return data.error;
+    return fallback || "No se pudo completar la solicitud de la sala.";
+  }
+
+  async function roomApi(path, options) {
+    var response = await fetch("/api/rooms" + (path || ""), Object.assign({
+      headers: { Accept: "application/json" },
+      cache: "no-store",
+      signal: AbortSignal.timeout(60000)
+    }, options || {}));
+    var payload = await response.json().catch(function () { return {}; });
+    if (!response.ok) throw new Error(roomApiError(payload));
+    return payload;
+  }
+
+  function roomIdentity() {
+    var nameInput = byId("room-name-input");
+    var name = (nameInput && nameInput.value.trim()) ||
+      (function () { try { return localStorage.getItem(roomNameKey) || ""; } catch (_) { return ""; } })() ||
+      "Oyente";
+    name = name.slice(0, 24);
+    if (nameInput) nameInput.value = name;
+    try { localStorage.setItem(roomNameKey, name); }
+    catch (error) { console.warn("No se pudo guardar el apodo de la sala.", error); }
+    var install = "";
+    try {
+      install = localStorage.getItem(roomInstallKey) || "";
+      if (!/^[\w-]{16,64}$/.test(install)) {
+        install = window.crypto && crypto.randomUUID
+          ? crypto.randomUUID()
+          : "web-" + Math.random().toString(36).slice(2) + Date.now().toString(36);
+        localStorage.setItem(roomInstallKey, install);
+      }
+    } catch (error) {
+      console.warn("No se pudo guardar la identidad temporal de la sala.", error);
+      install = "web-" + Math.random().toString(36).slice(2) + Date.now().toString(36);
+    }
+    return { name: name, install: install };
+  }
+
+  function renderRoomMembers() {
+    var list = byId("room-members-list");
+    if (!list) return;
+    list.replaceChildren();
+    roomMembers.forEach(function (member) {
+      var item = document.createElement("li");
+      var avatar = document.createElement("span");
+      avatar.className = "room-member__avatar";
+      avatar.textContent = member.name.slice(0, 1).toUpperCase();
+      var name = document.createElement("span");
+      name.className = "room-member__name";
+      name.textContent = member.name + (member.id === roomMe?.id ? " (tú)" : "");
+      item.append(avatar, name);
+      list.appendChild(item);
+    });
+    byId("room-live-count").textContent = roomMembers.length + " de 4 personas";
+  }
+
+  function appendRoomMessage(name, text, kind) {
+    var messages = byId("room-chat-messages");
+    if (!messages) return;
+    var item = document.createElement("p");
+    item.className = kind === "system" ? "room-chat__system" : "room-chat__message";
+    if (kind !== "system") {
+      var sender = document.createElement("strong");
+      sender.textContent = name || "Oyente";
+      item.appendChild(sender);
+    }
+    var body = document.createElement("span");
+    body.textContent = text;
+    item.appendChild(body);
+    messages.appendChild(item);
+    while (messages.children.length > 80) messages.firstElementChild.remove();
+    messages.scrollTop = messages.scrollHeight;
+  }
+
+  function renderPublicRooms(rooms) {
+    var container = byId("rooms-public-list");
+    if (!container) return;
+    container.replaceChildren();
+    if (!rooms.length) {
+      var empty = document.createElement("p");
+      empty.className = "web-player__empty";
+      empty.textContent = "No hay salas públicas activas. Crea una e invita a tus amigos con el código.";
+      container.appendChild(empty);
+      return;
+    }
+    rooms.forEach(function (room) {
+      var card = document.createElement("article");
+      card.className = "room-public-card";
+      var cover = document.createElement("img");
+      cover.alt = "";
+      cover.loading = "lazy";
+      cover.src = /^https:\/\//i.test(room.artwork || "") ? room.artwork : "assets/Nexus-logo.png";
+      cover.onerror = function () { this.onerror = null; this.src = "assets/Nexus-logo.png"; };
+      var copy = document.createElement("div");
+      copy.className = "room-public-card__copy";
+      var title = document.createElement("strong");
+      title.textContent = room.title || "Sala de escucha";
+      var details = document.createElement("small");
+      details.textContent = (room.track ? room.track + (room.artist ? " · " + room.artist : "") : "Elige una canción") +
+        " · " + room.members + "/" + (room.max_members || 4);
+      copy.append(title, details);
+      var join = document.createElement("button");
+      join.type = "button";
+      join.className = "primary";
+      join.textContent = "Entrar";
+      join.disabled = room.members >= room.max_members;
+      join.addEventListener("click", function () { connectToRoom(room.code); });
+      card.append(cover, copy, join);
+      container.appendChild(card);
+    });
+  }
+
+  async function refreshPublicRooms() {
+    var list = byId("rooms-public-list");
+    if (!list) return;
+    if (!list.children.length) {
+      var loading = document.createElement("p");
+      loading.className = "web-player__empty";
+      loading.textContent = "Cargando salas públicas…";
+      list.appendChild(loading);
+    }
+    try {
+      var payload = await roomApi("");
+      renderPublicRooms(Array.isArray(payload.rooms) ? payload.rooms : []);
+      if (!roomSocket || roomSocket.readyState !== WebSocket.OPEN) {
+        roomStatus("Servidor de salas conectado.");
+      }
+    } catch (error) {
+      renderPublicRooms([]);
+      var message = list.querySelector(".web-player__empty");
+      if (message) message.textContent = error.message || "No se pudo cargar la lista de salas públicas.";
+      roomStatus(error.message || "No se pudo cargar la lista de salas.", true);
+    }
+  }
+
+  function roomSend(message) {
+    if (!roomSocket || roomSocket.readyState !== WebSocket.OPEN) return false;
+    try {
+      roomSocket.send(JSON.stringify(message));
+      return true;
+    } catch (error) {
+      console.warn("No se pudo enviar el mensaje a la sala.", error);
+      return false;
+    }
+  }
+
+  function roomPublishState(action, playing, positionMs) {
+    if (!roomSocket || roomSocket.readyState !== WebSocket.OPEN || roomPreparing ||
+        Date.now() < roomSuppressedUntil || !currentTrack || currentTrackId !== roomTrackId) return;
+    var sharedTrack = roomTrackData(currentTrack);
+    if (!sharedTrack) return;
+    if (typeof playing !== "boolean") {
+      try { playing = playerReady && player && player.getPlayerState() === YT.PlayerState.PLAYING; }
+      catch (_) { playing = false; }
+    }
+    roomSend({
+      t: "state",
+      action: action,
+      position_ms: Number.isFinite(Number(positionMs)) ? Math.max(0, Math.round(Number(positionMs))) : Math.round(roomPosition()),
+      playing: playing,
+      track: sharedTrack
+    });
+  }
+
+  function roomTrackData(track) {
+    if (!track || !/^[A-Za-z0-9_-]{11}$/.test(track.id || "")) return null;
+    var seconds = track.duration ? durationSeconds(track.duration) : 0;
+    return {
+      id: track.id,
+      title: String(track.title || "Video de YouTube").slice(0, 200),
+      artist: String(track.artist || "YouTube").slice(0, 200),
+      artwork: String(track.thumbnail || "").slice(0, 600),
+      duration_ms: Math.min(24 * 60 * 60 * 1000, Math.max(0, Math.round(seconds * 1000)))
+    };
+  }
+
+  function roomCanPlayTrack(track) {
+    return Boolean(roomTrackData(track) &&
+      (!track.provider || track.provider === "youtube" || track.kind === "video"));
+  }
+
+  function roomTrackFromMessage(data) {
+    if (!data || !/^[A-Za-z0-9_-]{11}$/.test(data.id || "")) return null;
+    return {
+      id: data.id,
+      title: String(data.title || "Video de YouTube"),
+      artist: String(data.artist || "YouTube"),
+      thumbnail: /^https:\/\//i.test(data.artwork || "") ? data.artwork : "https://i.ytimg.com/vi/" + data.id + "/hqdefault.jpg",
+      duration: data.duration_ms > 0 ? formatTime(data.duration_ms / 1000) : "",
+      provider: "youtube",
+      kind: "video"
+    };
+  }
+
+  function roomStopUnsupportedTrack() {
+    roomTrackId = "";
+    roomPreparing = null;
+    roomStartAfterCue = null;
+    roomSuppressedUntil = Date.now() + 2500;
+    if (mode === "audio") audio.pause();
+    else if (mode === "youtube" && playerReady && player) player.pauseVideo();
+    syncButton(false);
+    byId("room-now-track").textContent = "Esta pista no se puede sincronizar en la web.";
+    roomStatus("La sala recibió una pista que no es compatible con el reproductor web.", true);
+  }
+
+  function addRoomTrackToQueue(track) {
+    if (!queue.some(function (item) { return item.id === track.id; })) {
+      if (queue.length >= maxQueueSize) queue.shift();
+      queue.push(track);
+      saveList(storageKeys.queue, queue, maxQueueSize);
+    }
+    updateQueueCount();
+    renderQueue();
+  }
+
+  function roomPosition() {
+    try {
+      if (mode === "youtube" && playerReady && player) return Math.max(0, player.getCurrentTime() * 1000);
+    } catch (_) {}
+    return 0;
+  }
+
+  function roomServerNow() {
+    return Date.now() + roomServerOffsetMs;
+  }
+
+  function roomProjectedPosition(positionMs, serverMs, playing) {
+    var position = Math.max(0, Number(positionMs) || 0);
+    if (playing && Number(serverMs) > 0) position += Math.max(0, roomServerNow() - Number(serverMs));
+    return Math.min(position, 24 * 60 * 60 * 1000);
+  }
+
+  function roomLoadCued(track, prepare) {
+    if (!roomCanPlayTrack(track)) {
+      roomStatus("Esta sala sincroniza videos de YouTube. Elige un resultado de YouTube para todos.", true);
+      return false;
+    }
+    if (prepare && roomPreparing && roomPreparing.seq === prepare.seq && roomPreparing.id === track.id) return true;
+    roomPreparing = prepare ? { seq: prepare.seq, id: track.id, positionMs: prepare.positionMs || 0 } : null;
+    roomStartAfterCue = null;
+    roomSuppressedUntil = Date.now() + 5000;
+    addRoomTrackToQueue(track);
+    currentTrack = track;
+    currentTrackId = track.id;
+    roomTrackId = track.id;
+    prepareTrack(track, false);
+    rememberTrack(track);
+    if (mode !== "youtube") return false;
+    placeholder.hidden = true;
+    var frame = byId("player-host");
+    if (frame) frame.hidden = false;
+    if (playerReady && player) {
+      player.cueVideoById({ videoId: track.id, startSeconds: prepare ? (prepare.positionMs || 0) / 1000 : 0 });
+    } else {
+      loadYouTubeApi();
+    }
+    return true;
+  }
+
+  function roomApplyPlayback(positionMs, playing, serverMs, action) {
+    if (!currentTrack || currentTrackId !== roomTrackId || mode !== "youtube") return;
+    if (!playerReady || !player) {
+      if (!roomPreparing) roomLoadCued(currentTrack, { seq: 0, positionMs: positionMs });
+      roomStartAfterCue = {
+        positionMs: positionMs,
+        playing: playing,
+        serverMs: serverMs,
+        action: action
+      };
+      return;
+    }
+    var target = roomProjectedPosition(positionMs, serverMs, playing) / 1000;
+    roomSuppressedUntil = Date.now() + 1800;
+    try {
+      var duration = player.getDuration();
+      if (Number.isFinite(duration) && duration > 0) target = Math.min(target, duration);
+      var current = player.getCurrentTime();
+      if (action === "seek" || Math.abs(current - target) > 0.7) player.seekTo(target, true);
+      if (playing) player.playVideo();
+      else player.pauseVideo();
+    } catch (error) {
+      console.warn("No se pudo sincronizar la reproducción de la sala.", error);
+    }
+  }
+
+  function roomFinishCue() {
+    if (!roomPreparing || !playerReady || !player || currentTrackId !== roomPreparing.id) return;
+    if (roomPreparing.seq > 0) roomSend({ t: "ready", seq: roomPreparing.seq });
+    if (roomStartAfterCue) {
+      var start = roomStartAfterCue;
+      roomStartAfterCue = null;
+      roomPreparing = null;
+      roomApplyPlayback(start.positionMs, start.playing, start.serverMs, start.action);
+    }
+  }
+
+  function roomHandleMessage(message) {
+    if (Number(message.server_ms) > 0) {
+      var measured = Number(message.server_ms) - Date.now() + roomRttMs / 2;
+      roomServerOffsetMs = roomRttMs ? (roomServerOffsetMs * 3 + measured) / 4 : measured;
+    }
+    if (message.t === "joined") {
+      roomMe = message.me || null;
+      roomMembers = (message.members || []).map(function (member) {
+        return { id: member.id, name: member.name || "Oyente", avatar: member.avatar || "" };
+      });
+      roomVisibility = message.visibility === "public" ? "public" : "private";
+      byId("room-live").hidden = false;
+      byId("room-live-code").textContent = message.code || "";
+      byId("room-live-title").textContent = message.title || "Sala de escucha";
+      byId("room-live-visibility").textContent = roomVisibility === "public" ? "SALA PÚBLICA" : "SALA PRIVADA";
+      byId("room-chat-messages").replaceChildren();
+      renderRoomMembers();
+      var state = message.state || {};
+      var track = roomTrackFromMessage(state.track);
+      var unsupportedRoomTrack = Boolean(state.track && !track);
+      if (track) {
+        if (state.action === "prepare") {
+          roomLoadCued(track, { seq: Number(state.seq) || 0, positionMs: state.position_ms || 0 });
+          byId("room-now-track").textContent = "Preparando: " + track.title + " · " + track.artist;
+        } else {
+          currentTrack = track;
+          currentTrackId = track.id;
+          roomLoadCued(track, { seq: 0, positionMs: state.position_ms || 0 });
+          roomStartAfterCue = {
+            positionMs: state.position_ms || 0,
+            playing: Boolean(state.playing),
+            serverMs: 0,
+            action: "seek"
+          };
+          byId("room-now-track").textContent = "Sincronizando: " + track.title + " · " + track.artist;
+        }
+      } else {
+        if (state.track) roomStopUnsupportedTrack();
+        else {
+          roomTrackId = "";
+          byId("room-now-track").textContent = "Todavía no hay música en la sala.";
+          roomSuppressedUntil = Date.now() + 2500;
+          if (mode === "audio") audio.pause();
+          else if (mode === "youtube" && playerReady && player) player.pauseVideo();
+        }
+      }
+      roomStatus(unsupportedRoomTrack
+        ? "Conectado a la sala, pero su pista actual no es compatible con el reproductor web."
+        : "Conectado a la sala " + (message.code || "") + ".",
+      unsupportedRoomTrack);
+      roomRetryCount = 0;
+      clearInterval(roomPingTimer);
+      clearInterval(roomSyncTimer);
+      roomPingTimer = window.setInterval(function () {
+        roomPingSentAt = Date.now();
+        roomSend({ t: "ping", at: roomPingSentAt });
+      }, 20000);
+      roomSyncTimer = window.setInterval(function () {
+        if (roomSocket && roomSocket.readyState === WebSocket.OPEN && roomTrackId && roomTrackId === currentTrackId && mode === "youtube" && playerReady && window.YT) {
+          roomSend({ t: "sync", position_ms: Math.round(roomPosition()), playing: playerReady && player.getPlayerState() === YT.PlayerState.PLAYING });
+        }
+      }, 6000);
+      return;
+    }
+    if (message.t === "presence") {
+      roomMembers = (message.members || []).map(function (member) {
+        return { id: member.id, name: member.name || "Oyente", avatar: member.avatar || "" };
+      });
+      renderRoomMembers();
+      return;
+    }
+    if (message.t === "prepare") {
+      var prepared = roomTrackFromMessage(message.track);
+      if (!prepared) {
+        roomStopUnsupportedTrack();
+        return;
+      }
+      roomLoadCued(prepared, { seq: Number(message.seq) || 0, positionMs: Number(message.position_ms) || 0 });
+      byId("room-now-track").textContent = "Preparando: " + prepared.title + " · " + prepared.artist;
+      roomStatus((message.name || "Alguien") + " está preparando una canción…");
+      return;
+    }
+    if (message.t === "go") {
+      var goTrack = roomTrackFromMessage(message.track);
+      if (message.track && !goTrack) {
+        roomStopUnsupportedTrack();
+        return;
+      }
+      if (goTrack && goTrack.id !== currentTrackId) {
+        roomLoadCued(goTrack, { seq: 0, positionMs: Number(message.position_ms) || 0 });
+        roomStartAfterCue = {
+          positionMs: Number(message.position_ms) || 0,
+          playing: Boolean(message.playing),
+          serverMs: Number(message.server_ms) || 0,
+          action: "seek"
+        };
+        byId("room-now-track").textContent = goTrack.title + " · " + goTrack.artist;
+      } else {
+        if (goTrack) roomTrackId = goTrack.id;
+        roomPreparing = null;
+        roomApplyPlayback(message.position_ms, Boolean(message.playing), message.server_ms, "seek");
+      }
+      roomStatus("Reproduciendo en sincronía.");
+      return;
+    }
+    if (message.t === "state") {
+      var stateTrack = roomTrackFromMessage(message.track);
+      if (message.track && !stateTrack) {
+        roomStopUnsupportedTrack();
+        return;
+      }
+      if (stateTrack && stateTrack.id !== currentTrackId) {
+        roomLoadCued(stateTrack, { seq: 0, positionMs: Number(message.position_ms) || 0 });
+        roomStartAfterCue = {
+          positionMs: Number(message.position_ms) || 0,
+          playing: Boolean(message.playing),
+          serverMs: Number(message.server_ms) || 0,
+          action: message.action || "seek"
+        };
+        byId("room-now-track").textContent = stateTrack.title + " · " + stateTrack.artist;
+      } else {
+        if (stateTrack) roomTrackId = stateTrack.id;
+        if (stateTrack) byId("room-now-track").textContent = stateTrack.title + " · " + stateTrack.artist;
+        roomApplyPlayback(message.position_ms, Boolean(message.playing), message.server_ms, message.action || "play");
+      }
+      return;
+    }
+    if (message.t === "sync") {
+      if (roomTrackId && roomTrackId === currentTrackId && currentTrack && mode === "youtube" && playerReady && player) {
+        var target = roomProjectedPosition(message.position_ms, message.server_ms, Boolean(message.playing)) / 1000;
+        var current = player.getCurrentTime();
+        if (Math.abs(current - target) > 0.75) roomApplyPlayback(target * 1000, Boolean(message.playing), 0, "seek");
+      }
+      return;
+    }
+    if (message.t === "chat") {
+      appendRoomMessage(message.name, message.text || "", "chat");
+      return;
+    }
+    if (message.t === "typing") {
+      roomStatus((message.name || "Alguien") + " está escribiendo…");
+      window.setTimeout(function () {
+        if (roomSocket && roomSocket.readyState === WebSocket.OPEN) roomStatus("Conectado a la sala " + byId("room-live-code").textContent + ".");
+      }, 2500);
+      return;
+    }
+    if (message.t === "reaction") {
+      appendRoomMessage(message.name || "Alguien", "reaccionó " + (message.emoji || "♫"), "chat");
+      return;
+    }
+    if (message.t === "left") {
+      roomMembers = (message.members || []).map(function (member) {
+        return { id: member.id, name: member.name || "Oyente", avatar: member.avatar || "" };
+      });
+      renderRoomMembers();
+      appendRoomMessage("", (message.name || "Alguien") + " salió de la sala.", "system");
+      return;
+    }
+    if (message.t === "room_meta") {
+      byId("room-live-title").textContent = message.title || "Sala de escucha";
+      return;
+    }
+    if (message.t === "pong" && roomPingSentAt) {
+      roomRttMs = Math.max(0, Date.now() - roomPingSentAt);
+      roomServerOffsetMs = Number(message.server_ms) - Date.now() + roomRttMs / 2;
+      return;
+    }
+    if (message.t === "closed" || message.t === "kicked" || message.t === "error") {
+      roomStatus(message.reason || message.msg || "La conexión a la sala se cerró.", true);
+      leaveRoom(false);
+    }
+  }
+
+  function connectToRoom(rawCode, reconnecting) {
+    var code = String(rawCode || "").trim().toUpperCase();
+    if (!/^[A-HJ-NP-Z2-9]{6}$/.test(code)) {
+      roomStatus("Escribe un código de sala válido de 6 caracteres.", true);
+      return;
+    }
+    if (!reconnecting) leaveRoom(false, true);
+    roomConnectionWanted = true;
+    if (!reconnecting) roomRetryCount = 0;
+    roomStatus("Conectando a la sala " + code + "…");
+    var identity = roomIdentity();
+    var url = "wss://openytmusic-analytics-keau.onrender.com/v1/room/" + encodeURIComponent(code) + "/ws";
+    var socket;
+    try { socket = new WebSocket(url); }
+    catch (error) { roomConnectionWanted = false; roomStatus("No se pudo abrir la conexión de salas.", true); return; }
+    roomSocket = socket;
+    socket.addEventListener("open", function () {
+      if (roomSocket !== socket) return;
+      socket.send(JSON.stringify({ t: "hello", name: identity.name, install: identity.install, avatar: "" }));
+    });
+    socket.addEventListener("message", function (event) {
+      if (roomSocket !== socket) return;
+      try { roomHandleMessage(JSON.parse(event.data)); }
+      catch (error) { console.error("Mensaje de sala inválido.", error); }
+    });
+    socket.addEventListener("error", function () {
+      if (roomSocket === socket) roomStatus("No se pudo conectar con la sala. El servidor podría estar despertando.", true);
+    });
+    socket.addEventListener("close", function () {
+      if (roomSocket !== socket) return;
+      roomSocket = null;
+      clearInterval(roomPingTimer);
+      clearInterval(roomSyncTimer);
+      if (roomConnectionWanted && roomRetryCount < 5) {
+        roomRetryCount += 1;
+        roomStatus("Conexión interrumpida. Reintentando…");
+        roomReconnectTimer = window.setTimeout(function () { connectToRoom(code, true); }, Math.min(10000, 1000 * roomRetryCount));
+      } else if (roomConnectionWanted) {
+        roomConnectionWanted = false;
+        roomStatus("No se pudo mantener la conexión. Comprueba el servidor e inténtalo de nuevo.", true);
+      }
+    });
+  }
+
+  function leaveRoom(showMessage, replacing) {
+    roomConnectionWanted = false;
+    clearTimeout(roomReconnectTimer);
+    clearInterval(roomPingTimer);
+    clearInterval(roomSyncTimer);
+    var socket = roomSocket;
+    roomSocket = null;
+    roomPreparing = null;
+    roomTrackId = "";
+    roomStartAfterCue = null;
+    roomMe = null;
+    roomMembers = [];
+    if (socket) {
+      if (socket.readyState === WebSocket.OPEN) socket.send(JSON.stringify({ t: "bye" }));
+      socket.close(1000, "left room");
+    }
+    if (byId("room-live")) byId("room-live").hidden = true;
+    if (byId("room-members-list")) byId("room-members-list").replaceChildren();
+    if (byId("room-chat-messages")) byId("room-chat-messages").replaceChildren();
+    if (showMessage) roomStatus("Saliste de la sala.");
+  }
+
+  function createListeningRoom(visibility) {
+    var identity = roomIdentity();
+    roomStatus("Creando sala…");
+    roomApi("", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Accept: "application/json" },
+      body: JSON.stringify({
+        visibility: visibility,
+        title: "Sala de " + identity.name,
+        artwork: ""
+      })
+    }).then(function (payload) {
+      if (!payload.code) throw new Error("El servidor no devolvió un código de sala.");
+      connectToRoom(payload.code);
+    }).catch(function (error) {
+      roomStatus(error.message || "No se pudo crear la sala.", true);
+    });
+  }
+
+  function startRoomTrack(track) {
+    if (!roomSocket || roomSocket.readyState !== WebSocket.OPEN) return false;
+    var data = roomTrackData(track);
+    if (!data || !roomCanPlayTrack(track)) {
+      roomStatus("Las salas compartidas reproducen videos de YouTube. Elige un resultado de YouTube.", true);
+      return true;
+    }
+    var seq = Math.max(Date.now(), Number(roomPreparing && roomPreparing.seq || 0) + 1);
+    roomTrackId = track.id;
+    var position = 0;
+    if (!roomSend({
+      t: "prepare",
+      seq: seq,
+      position_ms: position,
+      playing: true,
+      track: data
+    })) {
+      roomStatus("Se perdió la conexión con la sala. Espera a que se reconecte.", true);
+      return true;
+    }
+    roomLoadCued(track, { seq: seq, positionMs: position });
+    byId("room-now-track").textContent = "Preparando: " + track.title + " · " + track.artist;
+    roomStatus("Esperando que todos estén listos…");
+    return true;
+  }
+
+  function roomSearch(query) {
+    var clean = String(query || "").trim().replace(/\s+/g, " ");
+    roomSearchResults.replaceChildren();
+    if (clean.length < 2 || clean.length > 100) {
+      roomStatus("Escribe entre 2 y 100 caracteres para buscar.", true);
+      return;
+    }
+    var loading = document.createElement("p");
+    loading.className = "web-player__empty";
+    loading.textContent = "Buscando videos compatibles…";
+    roomSearchResults.appendChild(loading);
+    var endpoint = new URL("/api/music-search", location.origin);
+    endpoint.searchParams.set("q", clean);
+    endpoint.searchParams.set("source", "videos");
+    fetch(endpoint, { headers: { Accept: "application/json" }, cache: "no-store" })
+      .then(function (response) {
+        if (!response.ok) throw new Error("La búsqueda de videos no está disponible.");
+        return response.json();
+      })
+      .then(function (payload) {
+        var tracks = Array.isArray(payload.items) ? payload.items.filter(roomCanPlayTrack) : [];
+        roomSearchResults.replaceChildren();
+        if (!tracks.length) {
+          var empty = document.createElement("p");
+          empty.className = "web-player__empty";
+          empty.textContent = "No encontramos videos compatibles. Prueba otra búsqueda.";
+          roomSearchResults.appendChild(empty);
+          return;
+        }
+        tracks.slice(0, 12).forEach(function (track) {
+          var item = document.createElement("article");
+          item.className = "room-search-result";
+          item.appendChild(createArtwork(track, "room-search-result__art"));
+          var copy = document.createElement("span");
+          copy.className = "room-search-result__copy";
+          var title = document.createElement("strong");
+          title.textContent = track.title;
+          var artist = document.createElement("small");
+          artist.textContent = track.artist;
+          copy.append(title, artist);
+          var play = document.createElement("button");
+          play.type = "button";
+          play.className = "primary";
+          play.textContent = "▶ Poner";
+          play.addEventListener("click", function () { playTrack(track); });
+          item.appendChild(createArtwork(track, "room-search-result__art"));
+          item.append(copy, play);
+          roomSearchResults.appendChild(item);
+        });
+      })
+      .catch(function (error) {
+        roomSearchResults.replaceChildren();
+        var message = document.createElement("p");
+        message.className = "web-player__empty";
+        message.textContent = error.message || "No se pudo buscar videos.";
+        roomSearchResults.appendChild(message);
+      });
   }
 
   var alternativeExcludedId = "";
@@ -991,6 +1690,11 @@
 
   function onPlayerStateChange(event) {
     if(mode!=="youtube"||playbackFailed||!window.YT||!window.YT.PlayerState)return;
+    if(event.data===YT.PlayerState.CUED){roomFinishCue();return;}
+    if(roomSocket&&roomSocket.readyState===WebSocket.OPEN&&!roomPreparing&&Date.now()>=roomSuppressedUntil&&currentTrack){
+      var action=event.data===YT.PlayerState.PLAYING?"play":event.data===YT.PlayerState.PAUSED?"pause":"";
+      if(action)roomPublishState(action, action === "play");
+    }
     if(event.data===YT.PlayerState.PLAYING){try{player.setPlaybackRate(Number(prefs.speed)||1);}catch(_){}syncButton(true);placeholder.hidden=true;setStatus("");}
     if(event.data===YT.PlayerState.PAUSED||event.data===YT.PlayerState.ENDED)syncButton(false);
     if(event.data===YT.PlayerState.ENDED)changeTrack(1,true);
@@ -998,7 +1702,7 @@
   var ytRequested=false, ytTimer;
   function createPlayer(){
     if(player||!window.YT||!YT.Player)return;
-    player=new YT.Player(host,{width:"100%",height:"100%",playerVars:{autoplay:0,controls:1,playsinline:1,rel:0,origin:location.origin},events:{onReady:function(e){clearTimeout(ytTimer);playerReady=true;player.setVolume(Number(document.getElementById("volume-control").value));if(mode==="youtube"&&pendingYouTube&&pendingYouTube===currentTrackId){var id=pendingYouTube;pendingYouTube=null;player.loadVideoById(id);}else if(mode!=="youtube"||playbackFailed){var frame=document.getElementById("player-host");if(frame)frame.hidden=true;}},onStateChange:onPlayerStateChange,onError:function(e){if(mode!=="youtube"||playbackFailed)return;showFailure([101,150,152].includes(e.data)?"El titular no permite reproducir este video fuera de YouTube. Abre el original o busca otra versión.":"YouTube no pudo reproducir este video. Abre el original o busca otra versión.");},onAutoplayBlocked:function(){if(mode==="youtube"&&!playbackFailed){syncButton(false);setStatus("Pulsa reproducir para iniciar el video.");}}}});
+    player=new YT.Player(host,{width:"100%",height:"100%",playerVars:{autoplay:0,controls:1,playsinline:1,rel:0,origin:location.origin},events:{onReady:function(e){clearTimeout(ytTimer);playerReady=true;player.setVolume(Number(document.getElementById("volume-control").value));if(roomPreparing&&roomPreparing.id===currentTrackId){player.cueVideoById({videoId:roomPreparing.id,startSeconds:roomPreparing.positionMs/1000});}else if(mode==="youtube"&&pendingYouTube&&pendingYouTube===currentTrackId){var id=pendingYouTube;pendingYouTube=null;player.loadVideoById(id);}else if(mode!=="youtube"||playbackFailed){var frame=document.getElementById("player-host");if(frame)frame.hidden=true;}},onStateChange:onPlayerStateChange,onError:function(e){if(mode!=="youtube"||playbackFailed)return;showFailure([101,150,152].includes(e.data)?"El titular no permite reproducir este video fuera de YouTube. Abre el original o busca otra versión.":"YouTube no pudo reproducir este video. Abre el original o busca otra versión.");},onAutoplayBlocked:function(){if(mode==="youtube"&&!playbackFailed){syncButton(false);setStatus("Pulsa reproducir para iniciar el video.");}}}});
   }
   function loadYouTubeApi(){
     if(window.YT&&YT.Player){createPlayer();clearTimeout(ytTimer);ytTimer=setTimeout(function(){if(!playerReady&&mode==="youtube"&&pendingYouTube)showFailure("YouTube no respondió. Abre el original o vuelve a intentar.");},15000);return;}
@@ -1028,6 +1732,59 @@
       runSearch(videoInput.value, "videos");
     });
   }
+  var roomJoinForm = byId("room-join-form");
+  if (roomJoinForm) {
+    roomJoinForm.addEventListener("submit", function (event) {
+      event.preventDefault();
+      connectToRoom(byId("room-code-input").value);
+    });
+  }
+  var roomStoredName = "";
+  try { roomStoredName = localStorage.getItem(roomNameKey) || ""; } catch (_) {}
+  if (byId("room-name-input") && roomStoredName) byId("room-name-input").value = roomStoredName;
+  document.querySelectorAll("[data-room-create]").forEach(function (button) {
+    button.addEventListener("click", function () { createListeningRoom(button.dataset.roomCreate); });
+  });
+  byId("rooms-refresh").addEventListener("click", refreshPublicRooms);
+  byId("room-leave").addEventListener("click", function () { leaveRoom(true); });
+  byId("room-copy-code").addEventListener("click", async function () {
+    var code = byId("room-live-code").textContent;
+    try {
+      await navigator.clipboard.writeText(code);
+      roomStatus("Código " + code + " copiado. Compártelo con quien quieras invitar.");
+    } catch (error) {
+      console.warn("El navegador no permitió copiar el código de sala.", error);
+      roomStatus("Copia este código para invitar: " + code);
+    }
+  });
+  document.querySelectorAll("[data-room-reaction]").forEach(function (button) {
+    button.addEventListener("click", function () {
+      if (!roomSend({ t: "reaction", emoji: button.dataset.roomReaction })) roomStatus("Conéctate a una sala para reaccionar.", true);
+    });
+  });
+  byId("room-chat-form").addEventListener("submit", function (event) {
+    event.preventDefault();
+    var input = byId("room-chat-input");
+    var text = input.value.trim().slice(0, 500);
+    if (!text) return;
+    if (!roomSend({ t: "chat", text: text })) {
+      roomStatus("Conéctate a una sala antes de enviar mensajes.", true);
+      return;
+    }
+    input.value = "";
+  });
+  byId("room-chat-input").addEventListener("input", function () {
+    if (roomSocket && roomSocket.readyState === WebSocket.OPEN) roomSend({ t: "typing" });
+  });
+  if (roomSearchForm) {
+    roomSearchForm.addEventListener("submit", function (event) {
+      event.preventDefault();
+      roomSearch(byId("room-search-input").value);
+    });
+  }
+  byId("room-code-input").addEventListener("input", function () {
+    this.value = this.value.toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 6);
+  });
   document.querySelectorAll("[data-video-query]").forEach(function (button) {
     button.addEventListener("click", function () {
       var videoInput = byId("video-search-input");
@@ -1096,7 +1853,7 @@
   playButton.addEventListener("click",function(){if(!currentTrack)return;if(relatedBusy){playbackGeneration++;relatedBusy=false;endHandled=false;}if(playbackFailed){prepareTrack(currentTrack,true);return;}if(mode==="audio"){if(audio.paused)startAudio();else audio.pause();}else if(mode==="youtube"){if(!playerReady||placeholder.hidden===false){prepareTrack(currentTrack,true);return;}if(player.getPlayerState()===YT.PlayerState.PLAYING)player.pauseVideo();else player.playVideo();}});
   incomingButton.addEventListener("click",function(){if(incomingTrack)playTrack(incomingTrack);});
   progress.addEventListener("input",function(){isSeeking=true;});
-  progress.addEventListener("change",function(){var duration=mode==="audio"?audio.duration:mode==="youtube"&&playerReady&&player&&!playbackFailed?player.getDuration():0;if(Number.isFinite(duration)&&duration>0){var t=Number(progress.value)/1000*duration;if(mode==="audio")audio.currentTime=t;else player.seekTo(t,true);}isSeeking=false;});
+  progress.addEventListener("change",function(){var duration=mode==="audio"?audio.duration:mode==="youtube"&&playerReady&&player&&!playbackFailed?player.getDuration():0;if(Number.isFinite(duration)&&duration>0){var t=Number(progress.value)/1000*duration;if(mode==="audio")audio.currentTime=t;else{player.seekTo(t,true);roomPublishState("seek",undefined,t*1000);}}isSeeking=false;});
   window.setInterval(function(){if(isSeeking||playbackFailed)return;var duration,current;if(mode==="audio"){duration=audio.duration;current=audio.currentTime;}else if(mode==="youtube"&&playerReady&&player&&placeholder.hidden){duration=player.getDuration();current=player.getCurrentTime();}if(Number.isFinite(duration)&&duration>0&&Number.isFinite(current)){progress.value=String(Math.round(current/duration*1000));currentTimeLabel.textContent=formatTime(current);durationLabel.textContent=formatTime(duration);}},500);
   document.getElementById("volume-control").addEventListener("input",function(){audio.volume=Number(this.value)/100;if(playerReady&&player)player.setVolume(Number(this.value));});
 
@@ -1170,7 +1927,7 @@
   function durationSeconds(text){var parts=String(text||'').split(':');return parts.length>=2&&parts.length<=3?parts.reduce(function(total,part){return total*60+Number(part);},0):0;}
   function updateLyricsVisibility(){byId('lyrics-toggle').setAttribute('aria-expanded',String(lyricsEnabled));byId('lyrics-lines').hidden=!lyricsEnabled;byId('lyrics-credit').hidden=!lyricsEnabled||!lyricRows.length;if(!lyricsEnabled)byId('lyrics-status').textContent='Letra oculta. Pulsa ♪ para mostrarla.';}
   function parseLrc(lrc){var rows=[],offset=0,m=String(lrc||'').match(/\[offset:([+-]?\d+)\]/i);if(m)offset=Number(m[1])/1000;String(lrc||'').split(/\r?\n/).forEach(function(line){var tags=Array.from(line.matchAll(/\[(\d{1,3}):(\d{2})(?:[.:](\d{1,3}))?\]/g));var text=line.replace(/\[[^\]]*\]/g,'').trim();if(!text)return;tags.forEach(function(t){rows.push({time:Math.max(0,Number(t[1])*60+Number(t[2])+Number('0.'+(t[3]||'0'))+offset),text:text});});});return rows.sort(function(a,b){return a.time-b.time;});}
-  function seekTo(t){var c=clock();if(!Number.isFinite(c.duration)||c.duration<=0||playbackFailed)return;if(mode==='audio')audio.currentTime=Math.min(t,c.duration);else if(mode==='youtube'&&playerReady)player.seekTo(Math.min(t,c.duration),true);}
+  function seekTo(t){var c=clock();if(!Number.isFinite(c.duration)||c.duration<=0||playbackFailed)return;if(mode==='audio')audio.currentTime=Math.min(t,c.duration);else if(mode==='youtube'&&playerReady){var target=Math.min(t,c.duration);player.seekTo(target,true);roomPublishState("seek",undefined,target*1000);}}
   function requestLyrics(){if(!lyricsEnabled)return;var track=currentTrack;var lines=byId('lyrics-lines'),label=byId('lyrics-status');if(!track){label.textContent='Elige una canción para ver su letra.';return;}var duration=clock().duration;if(!Number.isFinite(duration)||duration<=0)duration=durationSeconds(track.duration);if(!Number.isFinite(duration)||duration<1)duration=0;var key=[track.id,track.title,track.artist,Math.round(duration)].join('|');if(key===lyricsKey)return;lyricsKey=key;if(lyricsController)lyricsController.abort();lyricsController=new AbortController();var signal=lyricsController.signal;lyricRows=[];activeLine=-1;lines.replaceChildren();byId('lyrics-credit').hidden=true;lyricsPending=true;label.textContent='Buscando la letra de esta grabación…';var u=new URL('/api/lyrics',location.origin);u.searchParams.set('title',track.title);u.searchParams.set('artist',track.artist);if(duration>0)u.searchParams.set('duration',String(Math.round(duration)));fetch(u,{signal:signal}).then(async function(r){if(!r.ok&&r.status!==404)throw Error('No disponible');return r.json();}).then(function(d){if(signal.aborted||lyricsKey!==key)return;lyricsPending=false;if(d.instrumental){label.textContent='Esta pista es instrumental.';return;}lyricRows=parseLrc(d.syncedLyrics);if(lyricRows.length){label.textContent='Sincronizada por líneas · pulsa una línea para saltar.';lyricRows.forEach(function(row){var b=document.createElement('button');b.type='button';b.textContent=row.text;b.addEventListener('click',function(){seekTo(row.time);});lines.append(b);});}else if(d.plainLyrics){label.textContent='Letra disponible sin tiempos sincronizados.';var text=document.createElement('div');text.className='lyric-line';text.textContent=d.plainLyrics;lines.append(text);}else{label.textContent='No hay una letra verificada para esta versión.';return;}byId('lyrics-credit').hidden=!lyricsEnabled;lines.hidden=!lyricsEnabled;}).catch(function(e){if(signal.aborted)return;lyricsPending=false;label.textContent='No se pudo consultar la letra. Oculta y vuelve a abrir para reintentar.';});}
   byId('lyrics-toggle').addEventListener('click',function(){lyricsEnabled=!lyricsEnabled;updateLyricsVisibility();if(lyricsEnabled){lyricsKey='';requestLyrics();}});
   setInterval(function(){if(!lyricsEnabled)return;if(currentTrack)requestLyrics();if(!lyricRows.length||playbackFailed)return;var time=clock().time;if(!Number.isFinite(time))return;var index=-1;for(var i=0;i<lyricRows.length;i++){if(lyricRows[i].time>time+.08)break;index=i;}if(index===activeLine)return;var list=byId('lyrics-lines');if(activeLine>=0&&list.children[activeLine])list.children[activeLine].classList.remove('active');activeLine=index;if(index>=0&&list.children[index]){var line=list.children[index];line.classList.add('active');list.scrollTo({top:Math.max(0,line.offsetTop-list.offsetTop-list.clientHeight*.3),behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'});}},250);

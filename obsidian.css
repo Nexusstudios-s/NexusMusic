@@ -1,5 +1,5 @@
 @import url('./page-scale.css?v=beta-dashboard2');
-@import url('./dashboard.css?v=beta-panel1');
+@import url('./dashboard.css?v=beta-rooms1');
 /* OBSIDIAN / a quiet, editorial music workspace. No layout or playback dependencies. */
 :root{--bg:#0c1018;--surface:#161c28;--ink:#f6f7fc;--muted:#a6afc3;--accent:#d8e2ff;--dark:#19243d;--line:#d7e2ff19}
 .site,.music-app{background:radial-gradient(ellipse at 8% -12%,#3c577c60,transparent 48%),radial-gradient(ellipse at 100% 85%,#593c6933,transparent 48%),#0b0e16;color:var(--ink)}
