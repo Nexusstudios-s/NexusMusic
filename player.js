@@ -14,6 +14,20 @@
 (function () {
   "use strict";
 
+  if (document.body.classList.contains("music-app")) {
+    var backgroundVideo = document.createElement("video");
+    backgroundVideo.className = "music-app__background-video";
+    backgroundVideo.src = "https://cdn.discordapp.com/attachments/1550670038594363527/1574988106354917516/112722-695433093.mp4?ex=6b07a57a&is=6b0653fa&hm=209fb80b02422c72259c8846b44bcb1ffcbf527461b1a3eaf330f8cf3142dafd&";
+    backgroundVideo.autoplay = true;
+    backgroundVideo.muted = true;
+    backgroundVideo.loop = true;
+    backgroundVideo.playsInline = true;
+    backgroundVideo.preload = "auto";
+    backgroundVideo.setAttribute("aria-hidden", "true");
+    backgroundVideo.tabIndex = -1;
+    document.body.prepend(backgroundVideo);
+  }
+
   var chatWidgetScript = document.createElement("script");
   chatWidgetScript.src = "chat-widget.js?v=nexus-forma-chat3-html";
   chatWidgetScript.async = true;
@@ -1229,9 +1243,10 @@
       open.addEventListener("click", function () {
         activePlaylistId = playlist.id;
         setView("playlists");
+        document.getElementById("playlists-view").classList.add("has-active-playlist");
         renderActivePlaylist();
         document.getElementById("playlist-detail").hidden = false;
-        document.getElementById("playlist-detail").scrollIntoView({ behavior: "smooth", block: "start" });
+        document.querySelector(".web-app__views").scrollTo({ top: 0, behavior: "smooth" });
       });
       card.appendChild(open);
       if (!compact) {
@@ -1258,6 +1273,7 @@
     var playlist = playlists.find(function (item) { return item.id === activePlaylistId; });
     if (!playlist) {
       detail.hidden = true;
+      document.getElementById("playlists-view").classList.remove("has-active-playlist");
       return;
     }
     detail.hidden = false;
@@ -2494,6 +2510,8 @@
   document.getElementById("close-playlist").addEventListener("click", function () {
     activePlaylistId = "";
     document.getElementById("playlist-detail").hidden = true;
+    document.getElementById("playlists-view").classList.remove("has-active-playlist");
+    document.querySelector(".web-app__views").scrollTo({ top: 0, behavior: "smooth" });
   });
   playlistForm.addEventListener("submit", function (event) {
     event.preventDefault();
@@ -2658,7 +2676,7 @@
   window.NexusPlayback={snapshot:function(){if(!currentTrack||!document.body.classList.contains('is-playing')||playbackFailed)return null;var c=clock();return {title:currentTrack.title,artist:currentTrack.artist,artwork:currentTrack.thumbnail||"",position:Number.isFinite(c.time)?c.time:0,duration:Number.isFinite(c.duration)?c.duration:0,url:currentTrack.provider==='discord'?'https://nexusmusicx.vercel.app/listen?web=1':shareUrl(currentTrack)};}};
 
   // Appearance and player preferences share the original playback state.
-  var palettes={aurora:'#b9caff',violet:'#c7a8ff',rose:'#ffc0d7',ocean:'#9ddcf9',emerald:'#a4e4c8',mono:'#d2d5df'};
+  var palettes={aurora:'#e5e6e8',violet:'#c7a8ff',rose:'#ffc0d7',ocean:'#9ddcf9',emerald:'#a4e4c8',mono:'#d2d5df'};
   var coverColorCache=new Map(), themeImageKey='', themeRequest=0;
   function updateTheme(){
     var body=document.body,color=palettes[prefs.color]||palettes.aurora;
