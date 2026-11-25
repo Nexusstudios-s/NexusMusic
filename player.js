@@ -1077,14 +1077,31 @@
       var image = document.createElement("div");
       image.className = "web-song__art";
       image.appendChild(createArtwork(track));
+      var sourceBadge = document.createElement("span");
+      sourceBadge.className = "web-song__source-badge";
+      sourceBadge.textContent = track.kind === "video" ? "VIDEO" : track.provider === "youtube" ? "YT MUSIC" : sourceName(track);
+      image.appendChild(sourceBadge);
+      if (track.duration) {
+        var durationBadge = document.createElement("span");
+        durationBadge.className = "web-song__duration";
+        durationBadge.textContent = track.duration;
+        image.appendChild(durationBadge);
+      }
       var title = document.createElement("div");
       title.className = "web-song__title";
       title.textContent = track.title;
       title.title = track.title;
       var artist = document.createElement("div");
       artist.className = "web-song__artist";
-      artist.textContent = track.artist + " · " + sourceName(track) + (track.duration ? " · " + track.duration : "");
+      artist.textContent = track.artist;
       artist.title = track.artist;
+      var album = null;
+      if (track.album || track.kind === "video") {
+        album = document.createElement("div");
+        album.className = "web-song__album";
+        album.textContent = track.album || "Video de YouTube";
+        album.title = track.album || "";
+      }
       var actions = document.createElement("div");
       actions.className = "web-song__actions";
       var play = document.createElement("button");
@@ -1113,7 +1130,9 @@
         createIconButton("☷", "Añadir a playlist", function () { openQuickPlaylist(track); })
       );
       actions.append(play, actionBar);
-      card.append(image, title, artist, actions);
+      card.append(image, title, artist);
+      if (album) card.appendChild(album);
+      card.appendChild(actions);
       card.classList.toggle("is-current", track.id===currentTrackId);
       container.appendChild(card);
     });
@@ -2356,7 +2375,9 @@
   audio.addEventListener("pause",function(){if(mode==="audio")syncButton(false);});
   audio.addEventListener("ended",function(){if(mode==="audio"){syncButton(false);changeTrack(1,true);}});
   audio.addEventListener("error",function(){if(mode==="audio"&&audio.getAttribute("src")&&!playbackFailed)showFailure(currentTrack&&currentTrack.provider==="local"?"El navegador no pudo leer este archivo de audio. Prueba con otro formato compatible.":"El audio no está disponible. Si viene de Discord, solicita un enlace actualizado.");});
-  byId("search-source").addEventListener("change",function(){if(input.value.trim().length>=2&&input.value.trim().length<=100)runSearch(input.value);});
+  var searchSource = byId("search-source");
+  searchSource.value = "youtube";
+  searchSource.addEventListener("change",function(){if(input.value.trim().length>=2&&input.value.trim().length<=100)runSearch(input.value);});
   fallbackSearch.addEventListener("click",function(){if(!currentTrack)return; alternativeExcludedId=currentTrack.id; byId("search-source").value=mode==="youtube"?"videos":"all"; input.value=(currentTrack.title+" "+(currentTrack.artist.startsWith("YouTube")?"":currentTrack.artist)).slice(0,100);setView("search");runSearch(input.value);});
   document.getElementById("paste-link").addEventListener("click",function(){input.focus();input.placeholder="Pega el enlace de YouTube o del audio de Discord";setStatus("Pega una URL compartida en el buscador y pulsa Buscar.");});
 
