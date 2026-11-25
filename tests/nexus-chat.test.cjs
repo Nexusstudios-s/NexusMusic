@@ -55,6 +55,9 @@ test('forwards a bounded Spanish conversation with the key provided by the HTML 
     assert.equal(upstream.body.model, 'Nexus-Nova');
     assert.equal(upstream.body.max_tokens, 350);
     assert.equal(upstream.body.messages[0].role, 'system');
+    assert.match(upstream.body.messages[0].content, /FUNCIONES ANDROID/);
+    assert.match(upstream.body.messages[0].content, /FUNCIONES WEB/);
+    assert.match(upstream.body.messages[0].content, /No solicites ni reveles secretos/);
     assert.deepEqual(upstream.body.messages[1], { role: 'user', content: '¿Cómo busco música?' });
     assert.equal(response.headers['Cache-Control'], 'no-store');
   } finally {
