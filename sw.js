@@ -1,6 +1,6 @@
 'use strict';
 
-var CACHE_NAME = 'nexusmusic-player-shell-v6';
+var CACHE_NAME = 'nexusmusic-player-shell-v8';
 var SHELL_FILES = [
   './listen.html',
   './player.js',
