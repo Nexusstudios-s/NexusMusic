@@ -33,6 +33,6 @@ module.exports=async function(req,res){
   if(sources.every(r=>r.status==='rejected'))return res.status(502).json({error:'La fuente seleccionada no respondió. Prueba otra fuente o pega un enlace compatible.',providers});
   const seen=new Set();const items=sources.flatMap(r=>r.status==='fulfilled'?r.value:[]).filter(t=>{const k=t.provider+'|'+t.id;if(seen.has(k))return false;seen.add(k);return true;}).sort((a,b)=>score(b)-score(a)).slice(0,48);
   const payload={items,provider:source,providers,partial:sources.some(r=>r.status==='rejected')};
-  if(!payload.partial){if(cache.size>=120)cache.delete(cache.keys().next().value);cache.set(key,{expires:Date.now()+60000,payload});res.setHeader('Cache-Control','public, s-maxage=45, stale-while-revalidate=60');}else res.setHeader('Cache-Control','no-store');
+  if(!payload.partial&&payload.items.length){if(cache.size>=120)cache.delete(cache.keys().next().value);cache.set(key,{expires:Date.now()+60000,payload});res.setHeader('Cache-Control','public, s-maxage=45, stale-while-revalidate=60');}else res.setHeader('Cache-Control','no-store');
   return res.status(200).json(payload);
 };
