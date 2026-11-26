@@ -1,4 +1,4 @@
-# NexusMusic Obsidian — InnerTube + Discord automático
+# NexusMusic Obsidian + Discord automático
 
 ## Publicar en Vercel
 1. Extrae el ZIP y copia su contenido a la raíz del proyecto, incluyendo `api/`. Mantén tu carpeta `assets/` original: en particular `assets/Nexus-logo.png` (no venía adjunta en los archivos). La marca de portada y reproductor apunta a ese PNG.
